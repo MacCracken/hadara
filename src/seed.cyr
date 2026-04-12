@@ -1594,6 +1594,107 @@ fn hadara_seed() {
     hadara_set_figures(jewish, je_figs, 2);
 
     # ================================================================
+    # Cultures 29-38: push toward 50 + subculture wiring
+    # ================================================================
+
+    # 29: Maori — Howe (2006): Polynesian settlers c. 1300 CE, continuous
+    var maori = hadara_add("Maori", 5, CULTURE_ACTIVE, 1300, 0);
+    hadara_set_endonym(maori, "Tangata Whenua", 14);
+    hadara_set_region(maori, "Aotearoa", 8);
+    hadara_set_language(maori, "Te Reo Maori", 12);
+    hadara_set_script(maori, "Latin alphabet", 14);
+    hadara_set_display(maori, 7, 8, 4, 7);
+
+    # 30: Sikh — McLeod (1997): founded 1469 CE, continuous
+    var sikh = hadara_add("Sikh", 4, CULTURE_ACTIVE, 1469, 0);
+    hadara_set_endonym(sikh, "Khalsa", 6);
+    hadara_set_region(sikh, "South Asia", 10);
+    hadara_set_language(sikh, "Punjabi", 7);
+    hadara_set_script(sikh, "Gurmukhi", 8);
+    hadara_set_display(sikh, 6, 7, 5, 8);
+
+    # 31: Ethiopian/Ge'ez — Henze (2000): Aksumite roots 100 CE, continuous
+    var ethiopian = hadara_add("Ethiopian", 9, CULTURE_ACTIVE, 100, 0);
+    hadara_set_endonym(ethiopian, "Habesha", 7);
+    hadara_set_region(ethiopian, "East Africa", 11);
+    hadara_set_language(ethiopian, "Amharic", 7);
+    hadara_set_script(ethiopian, "Ge'ez", 5);
+    hadara_set_display(ethiopian, 7, 6, 3, 5);
+
+    # 32: Tamil — Zvelebil (1973): Sangam period c. 300 BCE, continuous
+    var tamil = hadara_add("Tamil", 5, CULTURE_ACTIVE, 0 - 300, 0);
+    hadara_set_endonym(tamil, "Tamizh", 6);
+    hadara_set_region(tamil, "South Asia", 10);
+    hadara_set_language(tamil, "Tamil", 5);
+    hadara_set_script(tamil, "Tamil script", 12);
+    hadara_set_display(tamil, 7, 7, 5, 6);
+
+    # 33: Javanese — Ricklefs (2001): Hindu-Buddhist period c. 400 CE, continuous
+    var javanese = hadara_add("Javanese", 8, CULTURE_ACTIVE, 400, 0);
+    hadara_set_region(javanese, "Southeast Asia", 14);
+    hadara_set_language(javanese, "Javanese", 8);
+    hadara_set_script(javanese, "Javanese script", 15);
+    hadara_set_display(javanese, 8, 5, 3, 3);
+
+    # 34: Armenian — Hovannisian (1997): Urartu roots c. 600 BCE, continuous
+    var armenian = hadara_add("Armenian", 8, CULTURE_ACTIVE, 0 - 600, 0);
+    hadara_set_endonym(armenian, "Hay", 3);
+    hadara_set_region(armenian, "West Asia", 9);
+    hadara_set_language(armenian, "Armenian", 8);
+    hadara_set_script(armenian, "Armenian alphabet", 17);
+    hadara_set_display(armenian, 6, 7, 6, 7);
+
+    # 35: Romani — Hancock (2002): diaspora from 11th c., continuous
+    var romani = hadara_add("Romani", 6, CULTURE_ACTIVE, 1000, 0);
+    hadara_set_endonym(romani, "Roma", 4);
+    hadara_set_region(romani, "Europe, Diaspora", 16);
+    hadara_set_language(romani, "Romani", 6);
+    hadara_set_display(romani, 3, 9, 6, 7);
+
+    # 36: Basque — Collins (1990): pre-Indo-European, continuous
+    var basque = hadara_add("Basque", 6, CULTURE_ACTIVE, 0 - 3000, 0);
+    hadara_set_endonym(basque, "Euskaldun", 9);
+    hadara_set_region(basque, "Western Europe", 14);
+    hadara_set_language(basque, "Euskara", 7);
+    hadara_set_script(basque, "Latin alphabet", 14);
+    hadara_set_display(basque, 5, 7, 7, 8);
+
+    # 37: Haudenosaunee — Fenton (1998): Iroquois Confederacy c. 1142 CE
+    var haudenosaunee = hadara_add("Haudenosaunee", 13, CULTURE_ACTIVE, 1142, 0);
+    hadara_set_region(haudenosaunee, "North America", 13);
+    hadara_set_language(haudenosaunee, "Mohawk", 6);
+    hadara_set_display(haudenosaunee, 7, 6, 4, 6);
+
+    # 38: East Coast Hip-Hop — subculture of Hip-Hop (#9)
+    var eastcoast = hadara_add("East Coast Hip-Hop", 18, CULTURE_ACTIVE, 1973, 0);
+    hadara_set_region(eastcoast, "North America", 13);
+    hadara_set_language(eastcoast, "English", 7);
+    hadara_set_display(eastcoast, 2, 9, 8, 9);
+
+    # --- Subculture wiring ---
+    # Maori is a subculture of Polynesian
+    var po_subs = alloc(1 * 8);
+    store64(po_subs, maori);
+    hadara_set_subcultures(polynesian, po_subs, 1);
+    var maori_parents = alloc(1 * 8);
+    store64(maori_parents, polynesian);
+    hadara_set_parents(maori, maori_parents, 1);
+
+    # East Coast Hip-Hop is subculture of Hip-Hop
+    var hp_subs = alloc(1 * 8);
+    store64(hp_subs, eastcoast);
+    hadara_set_subcultures(hiphop, hp_subs, 1);
+    var ec_parents = alloc(1 * 8);
+    store64(ec_parents, hiphop);
+    hadara_set_parents(eastcoast, ec_parents, 1);
+
+    # Tamil is related to (but not subculture of) Vedic-Hindu
+    # Sikh branched from Vedic-Hindu
+    var sikh_parents = alloc(1 * 8);
+    store64(sikh_parents, vedic);
+    hadara_set_parents(sikh, sikh_parents, 1);
+
+    # ================================================================
     # Sub-entities for medium-priority cultures
     # ================================================================
 
@@ -2033,6 +2134,76 @@ fn hadara_seed() {
     store64(po_vals + 8, "Tapu");
     store64(po_vals + 16, "Navigation mastery");
     hadara_set_values(polynesian, po_vals, 3);
+
+    # Maori: manaakitanga, kaitiakitanga, whakapapa
+    var ma2_vals = alloc(3 * 8);
+    store64(ma2_vals, "Manaakitanga");
+    store64(ma2_vals + 8, "Kaitiakitanga");
+    store64(ma2_vals + 16, "Whakapapa");
+    hadara_set_values(maori, ma2_vals, 3);
+
+    # Sikh: seva, equality, martial valor
+    var si_vals = alloc(3 * 8);
+    store64(si_vals, "Seva");
+    store64(si_vals + 8, "Equality");
+    store64(si_vals + 16, "Martial valor");
+    hadara_set_values(sikh, si_vals, 3);
+
+    # Ethiopian: faith, sovereignty, coffee ritual
+    var et_vals = alloc(3 * 8);
+    store64(et_vals, "Faith");
+    store64(et_vals + 8, "Sovereignty");
+    store64(et_vals + 16, "Hospitality");
+    hadara_set_values(ethiopian, et_vals, 3);
+
+    # Tamil: sangam, devotion, language pride
+    var ta_vals = alloc(3 * 8);
+    store64(ta_vals, "Sangam");
+    store64(ta_vals + 8, "Bhakti");
+    store64(ta_vals + 16, "Language pride");
+    hadara_set_values(tamil, ta_vals, 3);
+
+    # Javanese: halus (refinement), harmony, mysticism
+    var jv_vals = alloc(3 * 8);
+    store64(jv_vals, "Halus");
+    store64(jv_vals + 8, "Rukun");
+    store64(jv_vals + 16, "Kebatinan");
+    hadara_set_values(javanese, jv_vals, 3);
+
+    # Armenian: survival, faith, education
+    var arm_vals = alloc(3 * 8);
+    store64(arm_vals, "Survival");
+    store64(arm_vals + 8, "Apostolic faith");
+    store64(arm_vals + 16, "Education");
+    hadara_set_values(armenian, arm_vals, 3);
+
+    # Romani: freedom, family, oral tradition
+    var rom_vals = alloc(3 * 8);
+    store64(rom_vals, "Freedom");
+    store64(rom_vals + 8, "Family");
+    store64(rom_vals + 16, "Romanipen");
+    hadara_set_values(romani, rom_vals, 3);
+
+    # Basque: independence, communal labor, oral tradition
+    var bq_vals = alloc(3 * 8);
+    store64(bq_vals, "Auzolan");
+    store64(bq_vals + 8, "Independence");
+    store64(bq_vals + 16, "Bertsolaritza");
+    hadara_set_values(basque, bq_vals, 3);
+
+    # Haudenosaunee: Great Law, consensus, seventh generation
+    var hd_vals = alloc(3 * 8);
+    store64(hd_vals, "Great Law");
+    store64(hd_vals + 8, "Consensus");
+    store64(hd_vals + 16, "Seventh generation");
+    hadara_set_values(haudenosaunee, hd_vals, 3);
+
+    # East Coast Hip-Hop: lyricism, battle, street knowledge
+    var ec_vals = alloc(3 * 8);
+    store64(ec_vals, "Lyricism");
+    store64(ec_vals + 8, "Battle");
+    store64(ec_vals + 16, "Street knowledge");
+    hadara_set_values(eastcoast, ec_vals, 3);
 
     # Aztec: cosmic debt, warrior honor, cyclical destruction/renewal
     var az_vals = alloc(3 * 8);

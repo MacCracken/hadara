@@ -207,3 +207,24 @@ fn hadara_set_children(id, ptr, count) {
     store64(c + CULTURE_CHILD_PTR, ptr);
     store64(c + CULTURE_CHILD_COUNT, count);
 }
+
+# Set subculture IDs on a parent culture
+fn hadara_set_subcultures(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_SUBCULTURES_PTR, ptr);
+    store64(c + CULTURE_SUBCULTURES_COUNT, count);
+}
+
+# Get subcultures
+fn hadara_subculture_count(id) {
+    var c = hadara_get(id);
+    if (c == 0) { return 0; }
+    return load64(c + CULTURE_SUBCULTURES_COUNT);
+}
+
+fn hadara_subculture_ids(id) {
+    var c = hadara_get(id);
+    if (c == 0) { return 0; }
+    return load64(c + CULTURE_SUBCULTURES_PTR);
+}
