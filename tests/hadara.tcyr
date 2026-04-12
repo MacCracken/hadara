@@ -667,6 +667,111 @@ fn main() {
     assert_eq(enough, 1, "total facts > 100");
 
     prints("part 5: consumer integration — PASS\n");
+
+    # ================================================================
+    # Part 6: Bridge — avatara + itihas cross-references
+    # ================================================================
+
+    var bbuf = alloc(16 * 8);
+
+    # --- avatara tradition mapping ---
+
+    # Egyptian → "Egyptian"
+    var nt = hadara_traditions(0, bbuf, 16);
+    assert_eq(nt, 1, "egyptian maps to 1 tradition");
+    assert_eq(streq(load64(bbuf), "Egyptian"), 1, "egyptian tradition is Egyptian");
+
+    # Vedic → Hindu, Buddhist, Jain, Vedic (4 traditions)
+    nt = hadara_traditions(2, bbuf, 16);
+    assert_eq(nt, 4, "vedic maps to 4 traditions");
+    assert_eq(streq(load64(bbuf), "Hindu"), 1, "vedic first tradition is Hindu");
+
+    # Japanese → Shinto, Buddhist
+    nt = hadara_traditions(4, bbuf, 16);
+    assert_eq(nt, 2, "japanese maps to 2 traditions");
+    assert_eq(streq(load64(bbuf), "Shinto"), 1, "japanese first tradition is Shinto");
+
+    # Norse → Norse
+    nt = hadara_traditions(7, bbuf, 16);
+    assert_eq(nt, 1, "norse maps to 1 tradition");
+    assert_eq(streq(load64(bbuf), "Norse"), 1, "norse tradition is Norse");
+
+    # Hip-Hop → none (no mythological tradition)
+    nt = hadara_traditions(9, bbuf, 16);
+    assert_eq(nt, 0, "hiphop has no avatara tradition");
+
+    # Jewish → Kabbalah, Angelic
+    nt = hadara_traditions(18, bbuf, 16);
+    assert_eq(nt, 2, "jewish maps to 2 traditions");
+    assert_eq(streq(load64(bbuf), "Kabbalah"), 1, "jewish first tradition is Kabbalah");
+
+    # Polynesian → Polynesian
+    nt = hadara_traditions(20, bbuf, 16);
+    assert_eq(nt, 1, "polynesian maps to 1 tradition");
+    assert_eq(streq(load64(bbuf), "Polynesian"), 1, "polynesian tradition is Polynesian");
+
+    # Mesopotamian → Mesopotamian
+    nt = hadara_traditions(16, bbuf, 16);
+    assert_eq(nt, 1, "mesopotamian maps to 1 tradition");
+    assert_eq(streq(load64(bbuf), "Mesopotamian"), 1, "mesopotamian tradition match");
+
+    # --- itihas civilization mapping ---
+
+    # Egyptian → "Ancient Egypt"
+    var nc = hadara_civilizations(0, bbuf, 16);
+    assert_eq(nc, 1, "egyptian maps to 1 civilization");
+    assert_eq(streq(load64(bbuf), "Ancient Egypt"), 1, "egyptian civ is Ancient Egypt");
+
+    # Persian → Persian Empire, Parthian, Sassanid
+    nc = hadara_civilizations(1, bbuf, 16);
+    assert_eq(nc, 3, "persian maps to 3 civilizations");
+    assert_eq(streq(load64(bbuf), "Persian Empire"), 1, "persian first civ");
+
+    # West African → Ghana, Mali, Songhai
+    nc = hadara_civilizations(5, bbuf, 16);
+    assert_eq(nc, 3, "westafrican maps to 3 civilizations");
+    assert_eq(streq(load64(bbuf), "Ghana Empire"), 1, "westafrican first civ is Ghana");
+
+    # Mongol → Mongol Empire, Timurid Empire
+    nc = hadara_civilizations(17, bbuf, 16);
+    assert_eq(nc, 2, "mongol maps to 2 civilizations");
+    assert_eq(streq(load64(bbuf), "Mongol Empire"), 1, "mongol first civ");
+
+    # Byzantine → Byzantine Empire
+    nc = hadara_civilizations(19, bbuf, 16);
+    assert_eq(nc, 1, "byzantine maps to 1 civilization");
+    assert_eq(streq(load64(bbuf), "Byzantine Empire"), 1, "byzantine civ match");
+
+    # Hip-Hop → none (modern, not an itihas civilization)
+    nc = hadara_civilizations(9, bbuf, 16);
+    assert_eq(nc, 0, "hiphop has no itihas civilization");
+
+    # --- Reverse lookups ---
+
+    # "Norse" tradition → culture 7 (Norse)
+    var nr = hadara_culture_for_tradition("Norse", bbuf, 16);
+    assert_eq(nr, 1, "Norse tradition maps to 1 culture");
+    assert_eq(load64(bbuf), 7, "Norse tradition → culture 7");
+
+    # "Buddhist" tradition → Vedic(2), Japanese(4), Chinese(11), Korean(14), Tibetan(15)
+    nr = hadara_culture_for_tradition("Buddhist", bbuf, 16);
+    assert_eq(nr, 5, "Buddhist tradition maps to 5 cultures");
+
+    # "Angelic" tradition → Arab(13), Jewish(18), Byzantine(19)
+    nr = hadara_culture_for_tradition("Angelic", bbuf, 16);
+    assert_eq(nr, 3, "Angelic tradition maps to 3 cultures");
+
+    # "Roman Empire" civ → culture 12 (Roman)
+    nr = hadara_culture_for_civilization("Roman Empire", bbuf, 16);
+    assert_eq(nr, 1, "Roman Empire civ maps to 1 culture");
+    assert_eq(load64(bbuf), 12, "Roman Empire → culture 12");
+
+    # "Mali Empire" civ → culture 5 (West African Mande)
+    nr = hadara_culture_for_civilization("Mali Empire", bbuf, 16);
+    assert_eq(nr, 1, "Mali Empire maps to 1 culture");
+    assert_eq(load64(bbuf), 5, "Mali Empire → culture 5");
+
+    prints("part 6: bridge (avatara + itihas) — PASS\n");
     prints("hadara: all tests passed\n");
     return 0;
 }

@@ -21,7 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - **query** — Temporal relation queries: `hadara_relations_at`, `hadara_connected_at`, `hadara_exchanges_at`
 - **seed** — Syncretism: Greek↔Egyptian (Hermes Trismegistus, 300 BCE--200 CE), Vedic↔Chinese (Silk Road Buddhism, 100 BCE--800 CE), Greek absorbed→Roman (146--30 BCE)
 - **consumer** — Phase 3 consumer integration: bhava display rules (formality/expressiveness/individualism/directness), joshua NPC behavior (`hadara_dominant_practice`, `hadara_sacred_ratio`), natya narrative mapping (`hadara_narrative_count`, `hadara_narratives`), jnana knowledge export (`hadara_fact_count`, `hadara_total_facts`)
-- **tests** — 190+ assertions across 5 test sections: registry, seed, graph traversal, temporal relations, consumer integration
+- **bridge** — Cross-reference layer to avatara and itihas: `hadara_traditions` (culture → avatara tradition names), `hadara_civilizations` (culture → itihas civ names), reverse lookups `hadara_culture_for_tradition` and `hadara_culture_for_civilization`
+- **tests** — 283 assertions across 6 test sections: registry, seed, graph traversal, temporal relations, consumer integration, bridge (avatara + itihas)
 
 ## [0.1.0] — 2026-04-12
 

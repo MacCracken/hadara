@@ -1,0 +1,304 @@
+# bridge.cyr -- Cross-reference bridge to avatara and itihas
+#
+# Maps hadara culture IDs to:
+#   - avatara tradition strings (for archetype lookup)
+#   - itihas civilization names (for historical context)
+#
+# These are string-based bridges — no binary dependency on avatara or itihas.
+# Consumers include this module, call the mapping functions, then pass
+# the returned strings to avatara's by_tradition() or itihas lookups.
+#
+# The mapping is many:many in both directions:
+#   - One hadara culture → multiple avatara traditions (e.g., Vedic → Hindu, Buddhist, Jain)
+#   - One hadara culture → multiple itihas civilizations (e.g., Persian → Persian Empire, Sassanid, Parthian)
+
+# ================================================================
+# avatara tradition mapping
+# ================================================================
+# Returns a vec of tradition name strings for a given culture ID.
+# Caller uses these with avatara's by_tradition(name) function.
+
+fn hadara_traditions(culture_id, out_buf, max) {
+    var count = 0;
+
+    # 0: Egyptian → "Egyptian"
+    if (culture_id == 0) {
+        store64(out_buf, "Egyptian");
+        return 1;
+    }
+    # 1: Persian → "Zoroastrian"
+    if (culture_id == 1) {
+        store64(out_buf, "Zoroastrian");
+        return 1;
+    }
+    # 2: Vedic-Hindu → "Hindu", "Buddhist", "Jain", "Vedic"
+    if (culture_id == 2) {
+        store64(out_buf, "Hindu");
+        store64(out_buf + 8, "Buddhist");
+        store64(out_buf + 16, "Jain");
+        store64(out_buf + 24, "Vedic");
+        return 4;
+    }
+    # 3: Ancient Greek → "Greek"
+    if (culture_id == 3) {
+        store64(out_buf, "Greek");
+        return 1;
+    }
+    # 4: Japanese → "Shinto", "Buddhist"
+    if (culture_id == 4) {
+        store64(out_buf, "Shinto");
+        store64(out_buf + 8, "Buddhist");
+        return 2;
+    }
+    # 5: West African Mande → "Yoruba"
+    if (culture_id == 5) {
+        store64(out_buf, "Yoruba");
+        return 1;
+    }
+    # 6: Scottish Gaelic → "Celtic"
+    if (culture_id == 6) {
+        store64(out_buf, "Celtic");
+        return 1;
+    }
+    # 7: Norse → "Norse"
+    if (culture_id == 7) {
+        store64(out_buf, "Norse");
+        return 1;
+    }
+    # 8: Aboriginal Australian → "Indigenous"
+    if (culture_id == 8) {
+        store64(out_buf, "Indigenous");
+        return 1;
+    }
+    # 9: Hip-Hop → (no avatara tradition)
+    if (culture_id == 9) { return 0; }
+    # 10: Maya → "Maya"
+    if (culture_id == 10) {
+        store64(out_buf, "Maya");
+        return 1;
+    }
+    # 11: Chinese → "Taoist", "Buddhist"
+    if (culture_id == 11) {
+        store64(out_buf, "Taoist");
+        store64(out_buf + 8, "Buddhist");
+        return 2;
+    }
+    # 12: Roman → "Greek" (adopted Greek pantheon)
+    if (culture_id == 12) {
+        store64(out_buf, "Greek");
+        return 1;
+    }
+    # 13: Arab-Islamic → "Angelic", "Mystic"
+    if (culture_id == 13) {
+        store64(out_buf, "Angelic");
+        store64(out_buf + 8, "Mystic");
+        return 2;
+    }
+    # 14: Korean → "Shinto", "Buddhist" (shamanic + Buddhist traditions)
+    if (culture_id == 14) {
+        store64(out_buf, "Buddhist");
+        return 1;
+    }
+    # 15: Tibetan → "Buddhist"
+    if (culture_id == 15) {
+        store64(out_buf, "Buddhist");
+        return 1;
+    }
+    # 16: Mesopotamian → "Mesopotamian"
+    if (culture_id == 16) {
+        store64(out_buf, "Mesopotamian");
+        return 1;
+    }
+    # 17: Mongol → (tengriism — no avatara tradition yet)
+    if (culture_id == 17) { return 0; }
+    # 18: Jewish → "Kabbalah", "Angelic"
+    if (culture_id == 18) {
+        store64(out_buf, "Kabbalah");
+        store64(out_buf + 8, "Angelic");
+        return 2;
+    }
+    # 19: Byzantine → "Angelic" (Orthodox Christian)
+    if (culture_id == 19) {
+        store64(out_buf, "Angelic");
+        return 1;
+    }
+    # 20: Polynesian → "Polynesian"
+    if (culture_id == 20) {
+        store64(out_buf, "Polynesian");
+        return 1;
+    }
+    return 0;
+}
+
+# ================================================================
+# itihas civilization mapping
+# ================================================================
+# Returns itihas civilization name strings for a given culture ID.
+# Caller uses these with itihas civ lookup functions.
+
+fn hadara_civilizations(culture_id, out_buf, max) {
+    # 0: Egyptian
+    if (culture_id == 0) {
+        store64(out_buf, "Ancient Egypt");
+        return 1;
+    }
+    # 1: Persian
+    if (culture_id == 1) {
+        store64(out_buf, "Persian Empire");
+        if (max >= 3) {
+            store64(out_buf + 8, "Parthian Empire");
+            store64(out_buf + 16, "Sassanid Empire");
+            return 3;
+        }
+        return 1;
+    }
+    # 2: Vedic-Hindu
+    if (culture_id == 2) {
+        store64(out_buf, "Indus Valley");
+        if (max >= 4) {
+            store64(out_buf + 8, "Chola Dynasty");
+            store64(out_buf + 16, "Vijayanagara Empire");
+            store64(out_buf + 24, "Maratha Empire");
+            return 4;
+        }
+        return 1;
+    }
+    # 3: Ancient Greek
+    if (culture_id == 3) {
+        store64(out_buf, "Ancient Greece");
+        return 1;
+    }
+    # 4: Japanese
+    if (culture_id == 4) {
+        store64(out_buf, "Tokugawa Shogunate");
+        return 1;
+    }
+    # 5: West African Mande
+    if (culture_id == 5) {
+        store64(out_buf, "Ghana Empire");
+        if (max >= 3) {
+            store64(out_buf + 8, "Mali Empire");
+            store64(out_buf + 16, "Songhai Empire");
+            return 3;
+        }
+        return 1;
+    }
+    # 6: Scottish Gaelic → (no direct itihas civilization)
+    if (culture_id == 6) { return 0; }
+    # 7: Norse
+    if (culture_id == 7) {
+        store64(out_buf, "Viking/Norse");
+        return 1;
+    }
+    # 8: Aboriginal → (no itihas civilization)
+    if (culture_id == 8) { return 0; }
+    # 9: Hip-Hop → (no itihas civilization)
+    if (culture_id == 9) { return 0; }
+    # 10: Maya
+    if (culture_id == 10) {
+        store64(out_buf, "Maya");
+        return 1;
+    }
+    # 11: Chinese
+    if (culture_id == 11) {
+        store64(out_buf, "Ancient China");
+        return 1;
+    }
+    # 12: Roman
+    if (culture_id == 12) {
+        store64(out_buf, "Roman Empire");
+        return 1;
+    }
+    # 13: Arab-Islamic
+    if (culture_id == 13) {
+        store64(out_buf, "Arab Caliphates");
+        if (max >= 2) {
+            store64(out_buf + 8, "Ottoman Empire");
+            return 2;
+        }
+        return 1;
+    }
+    # 14: Korean
+    if (culture_id == 14) {
+        store64(out_buf, "Goryeo Dynasty");
+        return 1;
+    }
+    # 15: Tibetan → (no direct itihas civilization)
+    if (culture_id == 15) { return 0; }
+    # 16: Mesopotamian
+    if (culture_id == 16) {
+        store64(out_buf, "Mesopotamia");
+        if (max >= 3) {
+            store64(out_buf + 8, "Assyrian Empire");
+            store64(out_buf + 16, "Hittite Empire");
+            return 3;
+        }
+        return 1;
+    }
+    # 17: Mongol
+    if (culture_id == 17) {
+        store64(out_buf, "Mongol Empire");
+        if (max >= 2) {
+            store64(out_buf + 8, "Timurid Empire");
+            return 2;
+        }
+        return 1;
+    }
+    # 18: Jewish → (no single itihas civ — diaspora culture)
+    if (culture_id == 18) { return 0; }
+    # 19: Byzantine
+    if (culture_id == 19) {
+        store64(out_buf, "Byzantine Empire");
+        return 1;
+    }
+    # 20: Polynesian
+    if (culture_id == 20) {
+        store64(out_buf, "Tonga Empire");
+        if (max >= 2) {
+            store64(out_buf + 8, "Hawaiian Kingdom");
+            return 2;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+# ================================================================
+# Reverse lookups
+# ================================================================
+
+# Given an avatara tradition name, find the hadara culture IDs that map to it.
+fn hadara_culture_for_tradition(tradition, out_buf, max) {
+    var count = 0;
+    var tmp = alloc(8 * 8);
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var n = hadara_traditions(i, tmp, 8);
+        for (var j = 0; j < n; j = j + 1) {
+            if (streq(load64(tmp + j * 8), tradition) == 1) {
+                store64(out_buf + count * 8, i);
+                count = count + 1;
+                j = n;  # break inner
+            }
+        }
+    }
+    return count;
+}
+
+# Given an itihas civilization name, find the hadara culture IDs that map to it.
+fn hadara_culture_for_civilization(civ_name, out_buf, max) {
+    var count = 0;
+    var tmp = alloc(8 * 8);
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var n = hadara_civilizations(i, tmp, 8);
+        for (var j = 0; j < n; j = j + 1) {
+            if (streq(load64(tmp + j * 8), civ_name) == 1) {
+                store64(out_buf + count * 8, i);
+                count = count + 1;
+                j = n;
+            }
+        }
+    }
+    return count;
+}

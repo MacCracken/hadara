@@ -60,11 +60,14 @@
 - [ ] "Cultures with art medium Y" query
 - [ ] Region-based lookup
 
-## Phase 5 — Cross-references (ready when itihas hoosh/bote land)
+## Phase 5 — Cross-references ✓
 
-- [ ] Add `itihas_civ_ids` field to Culture layout (many-to-many mapping)
-- [ ] Seed civilization cross-references for all 21 cultures → itihas civilization names
-- [ ] Shared temporal queries: "what cultures existed during this itihas event?"
+- [x] `bridge.cyr` — string-based mapping layer (no binary dep on avatara/itihas)
+- [x] `hadara_traditions(id, buf, max)` — culture → avatara tradition names (19 of 21 mapped)
+- [x] `hadara_civilizations(id, buf, max)` — culture → itihas civilization names (16 of 21 mapped)
+- [x] `hadara_culture_for_tradition(name, buf, max)` — reverse lookup: tradition → cultures
+- [x] `hadara_culture_for_civilization(name, buf, max)` — reverse lookup: civ → cultures
+- [ ] Shared temporal queries: "what cultures existed during this itihas event?" (needs itihas event API)
 - [ ] Validation: hadara dates align with itihas civilization dates
 
 ## Phase 6 — Future
