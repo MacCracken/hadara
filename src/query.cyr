@@ -1,0 +1,43 @@
+# query.cyr -- Query helpers for the culture registry
+#
+# Scan-based queries over the registry. Returns culture pointers
+# or counts. Callers provide output buffers for multi-result queries.
+
+# Count cultures with a given status
+fn hadara_count_by_status(status) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        var c = hadara_get(i);
+        if (culture_status(c) == status) {
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# Count active (living) cultures
+fn hadara_count_active() {
+    return hadara_count_by_status(CULTURE_ACTIVE);
+}
+
+# Find cultures that existed at a given year
+# Writes CultureIds to out_buf, returns count written
+fn hadara_find_by_year(year, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var c = hadara_get(i);
+        if (culture_existed_at(c, year) != 0) {
+            store64(out_buf + count * 8, i);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# Find cultures that coexisted at a given year (same as find_by_year
+# but the name communicates intent — "which cultures were present
+# simultaneously at this moment in time?")
+fn hadara_coexisting_at(year, out_buf, max) {
+    return hadara_find_by_year(year, out_buf, max);
+}

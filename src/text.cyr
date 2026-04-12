@@ -1,0 +1,33 @@
+# text.cyr -- Sacred and canonical texts
+#
+# Foundational works within a culture — sacred texts, philosophical
+# treatises, canonical literature, oral tradition transcriptions.
+
+# --- Text record layout (heap) ---
+# Offset  Field           Size  Description
+# 0       title_ptr       8     pointer to title string
+# 8       title_len       8     length of title
+# 16      author_ptr      8     pointer to author string (0 if traditional/unknown)
+# 24      author_len      8     length of author
+# 32      year            8     year of composition/publication (negative for BCE, 0 if unknown)
+# 40      desc_ptr        8     pointer to description string
+# 48      desc_len        8     length of description
+# 56      sacred          8     1 = sacred/religious text, 0 = secular canonical
+
+enum TextLayout {
+    TEXT_SIZE = 64;
+    TEXT_TITLE_PTR = 0;
+    TEXT_TITLE_LEN = 8;
+    TEXT_AUTHOR_PTR = 16;
+    TEXT_AUTHOR_LEN = 24;
+    TEXT_YEAR = 32;
+    TEXT_DESC_PTR = 40;
+    TEXT_DESC_LEN = 48;
+    TEXT_SACRED = 56;
+}
+
+fn text_title_ptr(t) { return load64(t + TEXT_TITLE_PTR); }
+fn text_title_len(t) { return load64(t + TEXT_TITLE_LEN); }
+fn text_author_ptr(t) { return load64(t + TEXT_AUTHOR_PTR); }
+fn text_year(t) { return load64(t + TEXT_YEAR); }
+fn text_is_sacred(t) { return load64(t + TEXT_SACRED); }

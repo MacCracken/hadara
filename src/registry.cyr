@@ -1,0 +1,139 @@
+# registry.cyr -- In-memory culture registry
+#
+# Stores cultures in a heap-allocated array. Lookup by ID, scan
+# by status, region, or time period. Consumers call registry
+# functions to find cultures; culture records are accessed via
+# the accessor functions in culture.cyr.
+#
+# Max cultures: REGISTRY_MAX (256 default — expandable)
+
+enum RegistryConfig {
+    REGISTRY_MAX = 256;
+}
+
+var hadara_registry = 0;
+var hadara_count = 0;
+
+fn hadara_init() {
+    if (hadara_registry == 0) {
+        hadara_registry = alloc(REGISTRY_MAX * CULTURE_SIZE);
+    }
+    hadara_count = 0;
+}
+
+# Add a culture to the registry. Returns the CultureId (index).
+fn hadara_add(name_ptr, name_len, status, time_start, time_end) {
+    var idx = hadara_count;
+    if (idx >= REGISTRY_MAX) { return 0 - 1; }
+    var c = hadara_registry + idx * CULTURE_SIZE;
+    store64(c + CULTURE_ID, idx);
+    store64(c + CULTURE_NAME_PTR, name_ptr);
+    store64(c + CULTURE_NAME_LEN, name_len);
+    store64(c + CULTURE_ENDONYM_PTR, 0);
+    store64(c + CULTURE_ENDONYM_LEN, 0);
+    store64(c + CULTURE_STATUS, status);
+    store64(c + CULTURE_TIME_START, time_start);
+    store64(c + CULTURE_TIME_END, time_end);
+    # zero out pointer/count fields
+    store64(c + CULTURE_GEO_ROOTS_PTR, 0);
+    store64(c + CULTURE_GEO_ROOTS_COUNT, 0);
+    store64(c + CULTURE_DIASPORA_PTR, 0);
+    store64(c + CULTURE_DIASPORA_COUNT, 0);
+    store64(c + CULTURE_PARENT_PTR, 0);
+    store64(c + CULTURE_PARENT_COUNT, 0);
+    store64(c + CULTURE_CHILD_PTR, 0);
+    store64(c + CULTURE_CHILD_COUNT, 0);
+    store64(c + CULTURE_VALUES_PTR, 0);
+    store64(c + CULTURE_VALUES_COUNT, 0);
+    store64(c + CULTURE_PRACTICES_PTR, 0);
+    store64(c + CULTURE_PRACTICES_COUNT, 0);
+    store64(c + CULTURE_ART_FORMS_PTR, 0);
+    store64(c + CULTURE_ART_FORMS_COUNT, 0);
+    store64(c + CULTURE_FIGURES_PTR, 0);
+    store64(c + CULTURE_FIGURES_COUNT, 0);
+    store64(c + CULTURE_TEXTS_PTR, 0);
+    store64(c + CULTURE_TEXTS_COUNT, 0);
+    store64(c + CULTURE_ARTIFACTS_PTR, 0);
+    store64(c + CULTURE_ARTIFACTS_COUNT, 0);
+    store64(c + CULTURE_SUBCULTURES_PTR, 0);
+    store64(c + CULTURE_SUBCULTURES_COUNT, 0);
+    store64(c + CULTURE_RELATIONS_PTR, 0);
+    store64(c + CULTURE_RELATIONS_COUNT, 0);
+    hadara_count = hadara_count + 1;
+    return idx;
+}
+
+# Get a culture pointer by ID
+fn hadara_get(id) {
+    if (id < 0) { return 0; }
+    if (id >= hadara_count) { return 0; }
+    return hadara_registry + id * CULTURE_SIZE;
+}
+
+# Get total culture count
+fn hadara_len() {
+    return hadara_count;
+}
+
+# Set endonym on an existing culture
+fn hadara_set_endonym(id, ptr, len) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_ENDONYM_PTR, ptr);
+    store64(c + CULTURE_ENDONYM_LEN, len);
+}
+
+# Set practices array on an existing culture
+fn hadara_set_practices(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_PRACTICES_PTR, ptr);
+    store64(c + CULTURE_PRACTICES_COUNT, count);
+}
+
+# Set art forms array on an existing culture
+fn hadara_set_art_forms(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_ART_FORMS_PTR, ptr);
+    store64(c + CULTURE_ART_FORMS_COUNT, count);
+}
+
+# Set key figures array on an existing culture
+fn hadara_set_figures(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_FIGURES_PTR, ptr);
+    store64(c + CULTURE_FIGURES_COUNT, count);
+}
+
+# Set sacred texts array on an existing culture
+fn hadara_set_texts(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_TEXTS_PTR, ptr);
+    store64(c + CULTURE_TEXTS_COUNT, count);
+}
+
+# Set relations array on an existing culture
+fn hadara_set_relations(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_RELATIONS_PTR, ptr);
+    store64(c + CULTURE_RELATIONS_COUNT, count);
+}
+
+# Set parent/child culture links
+fn hadara_set_parents(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_PARENT_PTR, ptr);
+    store64(c + CULTURE_PARENT_COUNT, count);
+}
+
+fn hadara_set_children(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_CHILD_PTR, ptr);
+    store64(c + CULTURE_CHILD_COUNT, count);
+}

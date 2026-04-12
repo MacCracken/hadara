@@ -1,0 +1,135 @@
+# culture.cyr -- Core Culture entity and status types
+#
+# A Culture is the primary entity in hadara. Everything else
+# (practices, art forms, figures, texts, artifacts, relations)
+# hangs off a Culture via its CultureId.
+#
+# Layout: Culture is heap-allocated via registry. Individual
+# cultures are accessed by CultureId (integer index).
+
+# --- CultureStatus ---
+# Where a culture sits on the lifecycle spectrum.
+#
+# CULTURE_ACTIVE     = 0   Living, practiced today (hip-hop, Persian, Japanese)
+# CULTURE_DORMANT    = 1   Not actively practiced but not lost
+# CULTURE_REVIVED    = 2   Was dormant, now being restored (Scottish Gaelic, Hawaiian)
+# CULTURE_HISTORICAL = 3   Well-documented, no living practitioners in original form
+# CULTURE_EXTINCT    = 4   Lost, minimal documentation
+
+enum CultureStatus {
+    CULTURE_ACTIVE = 0;
+    CULTURE_DORMANT = 1;
+    CULTURE_REVIVED = 2;
+    CULTURE_HISTORICAL = 3;
+    CULTURE_EXTINCT = 4;
+}
+
+# --- Culture record layout (heap) ---
+# Each culture occupies CULTURE_SIZE bytes in the registry.
+#
+# Offset  Field                Size   Description
+# 0       id                   8      CultureId (integer index)
+# 8       name_ptr             8      pointer to name string
+# 16      name_len             8      length of name
+# 24      endonym_ptr          8      pointer to self-designation string (0 if none)
+# 32      endonym_len          8      length of endonym
+# 40      status               8      CultureStatus enum value
+# 48      geo_roots_ptr        8      pointer to geographic roots array
+# 56      geo_roots_count      8      number of geographic roots
+# 64      diaspora_ptr         8      pointer to diaspora regions array
+# 72      diaspora_count       8      number of diaspora regions
+# 80      time_start           8      emergence year (negative for BCE)
+# 88      time_end             8      end year (0 if ongoing)
+# 96      parent_ptr           8      pointer to parent culture IDs array
+# 104     parent_count         8      number of parent cultures
+# 112     child_ptr            8      pointer to child culture IDs array
+# 120     child_count          8      number of child cultures
+# 128     values_ptr           8      pointer to core values array
+# 136     values_count         8      number of core values
+# 144     practices_ptr        8      pointer to practices array
+# 152     practices_count      8      number of practices
+# 160     art_forms_ptr        8      pointer to art forms array
+# 168     art_forms_count      8      number of art forms
+# 176     figures_ptr          8      pointer to key figures array
+# 184     figures_count        8      number of key figures
+# 192     texts_ptr            8      pointer to sacred texts array
+# 200     texts_count          8      number of sacred texts
+# 208     artifacts_ptr        8      pointer to material culture array
+# 216     artifacts_count      8      number of artifacts
+# 224     subcultures_ptr      8      pointer to subculture IDs array
+# 232     subcultures_count    8      number of subcultures
+# 240     relations_ptr        8      pointer to relations array
+# 248     relations_count      8      number of relations
+
+enum CultureLayout {
+    CULTURE_SIZE = 256;
+    CULTURE_ID = 0;
+    CULTURE_NAME_PTR = 8;
+    CULTURE_NAME_LEN = 16;
+    CULTURE_ENDONYM_PTR = 24;
+    CULTURE_ENDONYM_LEN = 32;
+    CULTURE_STATUS = 40;
+    CULTURE_GEO_ROOTS_PTR = 48;
+    CULTURE_GEO_ROOTS_COUNT = 56;
+    CULTURE_DIASPORA_PTR = 64;
+    CULTURE_DIASPORA_COUNT = 72;
+    CULTURE_TIME_START = 80;
+    CULTURE_TIME_END = 88;
+    CULTURE_PARENT_PTR = 96;
+    CULTURE_PARENT_COUNT = 104;
+    CULTURE_CHILD_PTR = 112;
+    CULTURE_CHILD_COUNT = 120;
+    CULTURE_VALUES_PTR = 128;
+    CULTURE_VALUES_COUNT = 136;
+    CULTURE_PRACTICES_PTR = 144;
+    CULTURE_PRACTICES_COUNT = 152;
+    CULTURE_ART_FORMS_PTR = 160;
+    CULTURE_ART_FORMS_COUNT = 168;
+    CULTURE_FIGURES_PTR = 176;
+    CULTURE_FIGURES_COUNT = 184;
+    CULTURE_TEXTS_PTR = 192;
+    CULTURE_TEXTS_COUNT = 200;
+    CULTURE_ARTIFACTS_PTR = 208;
+    CULTURE_ARTIFACTS_COUNT = 216;
+    CULTURE_SUBCULTURES_PTR = 224;
+    CULTURE_SUBCULTURES_COUNT = 232;
+    CULTURE_RELATIONS_PTR = 240;
+    CULTURE_RELATIONS_COUNT = 248;
+}
+
+# --- Accessors ---
+
+fn culture_id(c) { return load64(c + CULTURE_ID); }
+fn culture_name_ptr(c) { return load64(c + CULTURE_NAME_PTR); }
+fn culture_name_len(c) { return load64(c + CULTURE_NAME_LEN); }
+fn culture_status(c) { return load64(c + CULTURE_STATUS); }
+fn culture_time_start(c) { return load64(c + CULTURE_TIME_START); }
+fn culture_time_end(c) { return load64(c + CULTURE_TIME_END); }
+fn culture_practices_ptr(c) { return load64(c + CULTURE_PRACTICES_PTR); }
+fn culture_practices_count(c) { return load64(c + CULTURE_PRACTICES_COUNT); }
+fn culture_art_forms_ptr(c) { return load64(c + CULTURE_ART_FORMS_PTR); }
+fn culture_art_forms_count(c) { return load64(c + CULTURE_ART_FORMS_COUNT); }
+fn culture_figures_ptr(c) { return load64(c + CULTURE_FIGURES_PTR); }
+fn culture_figures_count(c) { return load64(c + CULTURE_FIGURES_COUNT); }
+fn culture_relations_ptr(c) { return load64(c + CULTURE_RELATIONS_PTR); }
+fn culture_relations_count(c) { return load64(c + CULTURE_RELATIONS_COUNT); }
+
+# --- Status check helpers ---
+
+fn culture_is_active(c) {
+    return culture_status(c) == CULTURE_ACTIVE;
+}
+
+fn culture_is_living(c) {
+    var s = culture_status(c);
+    return (s == CULTURE_ACTIVE) + (s == CULTURE_REVIVED);
+}
+
+fn culture_existed_at(c, year) {
+    var start = culture_time_start(c);
+    var end = culture_time_end(c);
+    if (year < start) { return 0; }
+    if (end == 0) { return 1; }
+    if (year > end) { return 0; }
+    return 1;
+}

@@ -1,0 +1,125 @@
+# hadara.tcyr -- Core test suite for hadara
+#
+# Tests: registry, culture creation, status checks, queries
+
+include "lib/string.cyr"
+include "lib/alloc.cyr"
+include "lib/fmt.cyr"
+include "lib/assert.cyr"
+
+include "src/lib.cyr"
+
+fn main() {
+    alloc_init();
+
+    # --- Registry ---
+    hadara_init();
+    assert_eq(hadara_len(), 0, "empty registry");
+
+    # --- Add cultures ---
+    var hiphop = hadara_add(str_from("Hip-Hop"), 7, CULTURE_ACTIVE, 1973, 0);
+    assert_eq(hiphop, 0, "first culture id is 0");
+    assert_eq(hadara_len(), 1, "one culture");
+
+    var persian = hadara_add(str_from("Persian"), 7, CULTURE_ACTIVE, 0 - 550, 0);
+    assert_eq(persian, 1, "second culture id is 1");
+
+    var egyptian = hadara_add(str_from("Egyptian"), 8, CULTURE_HISTORICAL, 0 - 3100, 641);
+    assert_eq(egyptian, 2, "third culture id is 2");
+
+    var scottish = hadara_add(str_from("Scottish"), 8, CULTURE_ACTIVE, 843, 0);
+    assert_eq(scottish, 3, "fourth culture id is 3");
+
+    assert_eq(hadara_len(), 4, "four cultures");
+
+    # --- Get by ID ---
+    var c = hadara_get(hiphop);
+    assert_neq(c, 0, "get hiphop not null");
+    assert_eq(culture_id(c), 0, "hiphop id");
+    assert_eq(culture_status(c), CULTURE_ACTIVE, "hiphop active");
+    assert_eq(culture_time_start(c), 1973, "hiphop start 1973");
+    assert_eq(culture_time_end(c), 0, "hiphop ongoing");
+
+    var c2 = hadara_get(egyptian);
+    assert_eq(culture_status(c2), CULTURE_HISTORICAL, "egyptian historical");
+    assert_eq(culture_time_start(c2), 0 - 3100, "egyptian start -3100");
+    assert_eq(culture_time_end(c2), 641, "egyptian end 641");
+
+    # --- Invalid ID ---
+    assert_eq(hadara_get(0 - 1), 0, "negative id returns null");
+    assert_eq(hadara_get(999), 0, "out of range returns null");
+
+    # --- Status checks ---
+    assert_eq(culture_is_active(hadara_get(hiphop)), 1, "hiphop is active");
+    assert_eq(culture_is_active(hadara_get(egyptian)), 0, "egyptian not active");
+    assert_eq(culture_is_living(hadara_get(hiphop)), 1, "hiphop is living");
+
+    # --- Temporal queries ---
+    assert_eq(culture_existed_at(hadara_get(hiphop), 2026), 1, "hiphop exists in 2026");
+    assert_eq(culture_existed_at(hadara_get(hiphop), 1970), 0, "hiphop not in 1970");
+    assert_eq(culture_existed_at(hadara_get(egyptian), 0 - 1000), 1, "egyptian in 1000 BCE");
+    assert_eq(culture_existed_at(hadara_get(egyptian), 700), 0, "egyptian not in 700 CE");
+    assert_eq(culture_existed_at(hadara_get(persian), 2026), 1, "persian in 2026");
+    assert_eq(culture_existed_at(hadara_get(persian), 0 - 600), 0, "persian not before emergence");
+
+    # --- Count by status ---
+    assert_eq(hadara_count_active(), 3, "three active cultures");
+    assert_eq(hadara_count_by_status(CULTURE_HISTORICAL), 1, "one historical");
+    assert_eq(hadara_count_by_status(CULTURE_EXTINCT), 0, "none extinct");
+
+    # --- Coexistence query ---
+    var buf = alloc(32 * 8);
+    var n = hadara_coexisting_at(2026, buf, 32);
+    assert_eq(n, 3, "three cultures in 2026 (hiphop, persian, scottish)");
+
+    var n2 = hadara_coexisting_at(0 - 500, buf, 32);
+    assert_eq(n2, 2, "two cultures in 500 BCE (persian, egyptian)");
+
+    var n3 = hadara_coexisting_at(0 - 4000, buf, 32);
+    assert_eq(n3, 0, "no cultures in 4000 BCE (egyptian starts -3100)");
+
+    # --- Set and read practices ---
+    var practices = alloc(PRACTICE_SIZE * 2);
+    var p0 = practices;
+    store64(p0 + PRACTICE_NAME_PTR, str_from("Cypher"));
+    store64(p0 + PRACTICE_NAME_LEN, 6);
+    store64(p0 + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p0 + PRACTICE_SACRED, 0);
+    var p1 = practices + PRACTICE_SIZE;
+    store64(p1 + PRACTICE_NAME_PTR, str_from("Block Party"));
+    store64(p1 + PRACTICE_NAME_LEN, 11);
+    store64(p1 + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p1 + PRACTICE_SACRED, 0);
+
+    hadara_set_practices(hiphop, practices, 2);
+    var hh = hadara_get(hiphop);
+    assert_eq(culture_practices_count(hh), 2, "hiphop has 2 practices");
+    assert_eq(practice_category(culture_practices_ptr(hh)), PRACTICE_ART, "first practice is art");
+
+    # --- Set and read figures ---
+    var figures = alloc(FIGURE_SIZE * 1);
+    store64(figures + FIGURE_NAME_PTR, str_from("KRS-One"));
+    store64(figures + FIGURE_NAME_LEN, 7);
+    store64(figures + FIGURE_ROLE_PTR, str_from("Founded Temple of Hiphop"));
+    store64(figures + FIGURE_ROLE_LEN, 24);
+    store64(figures + FIGURE_ERA_START, 1965);
+    store64(figures + FIGURE_ERA_END, 0);
+
+    hadara_set_figures(hiphop, figures, 1);
+    assert_eq(culture_figures_count(hadara_get(hiphop)), 1, "hiphop has 1 figure");
+
+    # --- Set and read relations ---
+    var rels = alloc(RELATION_SIZE * 1);
+    store64(rels + RELATION_SOURCE, egyptian);
+    store64(rels + RELATION_TARGET, persian);
+    store64(rels + RELATION_TYPE, REL_EXCHANGED);
+    store64(rels + RELATION_PERIOD_START, 0 - 525);
+    store64(rels + RELATION_PERIOD_END, 0 - 404);
+
+    hadara_set_relations(egyptian, rels, 1);
+    assert_eq(culture_relations_count(hadara_get(egyptian)), 1, "egyptian has 1 relation");
+    assert_eq(relation_type(culture_relations_ptr(hadara_get(egyptian))), REL_EXCHANGED, "relation is exchange");
+
+    prints("hadara: all tests passed\n");
+    return 0;
+}

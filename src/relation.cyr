@@ -1,0 +1,43 @@
+# relation.cyr -- Relationships between cultures
+#
+# Cultures don't exist in isolation. They influence, syncretize,
+# branch from, conflict with, and exchange with each other.
+# Each relation is directional and optionally time-bounded.
+
+# --- RelationType ---
+enum RelationType {
+    REL_INFLUENCED = 0;       # source influenced target
+    REL_SYNCRETIZED = 1;      # mutual blending (Greek + Egyptian → Hermes Trismegistus)
+    REL_BRANCHED_FROM = 2;    # target branched from source
+    REL_CONFLICTED = 3;       # cultural conflict or suppression
+    REL_EXCHANGED = 4;        # mutual exchange (Silk Road trade cultures)
+    REL_ABSORBED = 5;         # source was absorbed into target
+    REL_REVIVED_FROM = 6;     # target is a revival of source
+}
+
+# --- CultureRelation record layout (heap) ---
+# Offset  Field           Size  Description
+# 0       source_id       8     CultureId of the source
+# 8       target_id       8     CultureId of the target
+# 16      relation_type   8     RelationType
+# 24      period_start    8     start year of relationship (0 if unknown)
+# 32      period_end      8     end year (0 if ongoing/unknown)
+# 40      desc_ptr        8     pointer to description string
+# 48      desc_len        8     length of description
+
+enum RelationLayout {
+    RELATION_SIZE = 56;
+    RELATION_SOURCE = 0;
+    RELATION_TARGET = 8;
+    RELATION_TYPE = 16;
+    RELATION_PERIOD_START = 24;
+    RELATION_PERIOD_END = 32;
+    RELATION_DESC_PTR = 40;
+    RELATION_DESC_LEN = 48;
+}
+
+fn relation_source(r) { return load64(r + RELATION_SOURCE); }
+fn relation_target(r) { return load64(r + RELATION_TARGET); }
+fn relation_type(r) { return load64(r + RELATION_TYPE); }
+fn relation_period_start(r) { return load64(r + RELATION_PERIOD_START); }
+fn relation_period_end(r) { return load64(r + RELATION_PERIOD_END); }

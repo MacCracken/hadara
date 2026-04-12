@@ -1,0 +1,38 @@
+# artifact.cyr -- Material culture
+#
+# Physical things a culture produces — clothing, architecture,
+# food traditions, tools, instruments, crafts.
+
+# --- ArtifactCategory ---
+enum ArtifactCategory {
+    ARTIFACT_CLOTHING = 0;
+    ARTIFACT_ARCHITECTURE = 1;
+    ARTIFACT_FOOD = 2;
+    ARTIFACT_TOOL = 3;
+    ARTIFACT_INSTRUMENT = 4;
+    ARTIFACT_CRAFT = 5;
+    ARTIFACT_WEAPON = 6;
+    ARTIFACT_JEWELRY = 7;
+    ARTIFACT_CONTAINER = 8;
+}
+
+# --- Artifact record layout (heap) ---
+# Offset  Field           Size  Description
+# 0       name_ptr        8     pointer to name string
+# 8       name_len        8     length of name
+# 16      category        8     ArtifactCategory
+# 24      desc_ptr        8     pointer to description string
+# 32      desc_len        8     length of description
+
+enum ArtifactLayout {
+    ARTIFACT_SIZE = 40;
+    ARTIFACT_NAME_PTR = 0;
+    ARTIFACT_NAME_LEN = 8;
+    ARTIFACT_CATEGORY = 16;
+    ARTIFACT_DESC_PTR = 24;
+    ARTIFACT_DESC_LEN = 32;
+}
+
+fn artifact_name_ptr(a) { return load64(a + ARTIFACT_NAME_PTR); }
+fn artifact_name_len(a) { return load64(a + ARTIFACT_NAME_LEN); }
+fn artifact_category(a) { return load64(a + ARTIFACT_CATEGORY); }

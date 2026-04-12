@@ -1,0 +1,54 @@
+# practice.cyr -- Cultural practices
+#
+# Rituals, ceremonies, daily practices, festivals, art practices.
+# Each practice belongs to a Culture and has a category, frequency,
+# and sacred/secular distinction.
+
+# --- PracticeCategory ---
+enum PracticeCategory {
+    PRACTICE_RITUAL = 0;
+    PRACTICE_DAILY = 1;
+    PRACTICE_CEREMONY = 2;
+    PRACTICE_FESTIVAL = 3;
+    PRACTICE_ART = 4;
+    PRACTICE_MARTIAL = 5;
+    PRACTICE_DIETARY = 6;
+    PRACTICE_SOCIAL = 7;
+}
+
+# --- Frequency ---
+enum Frequency {
+    FREQ_DAILY = 0;
+    FREQ_WEEKLY = 1;
+    FREQ_SEASONAL = 2;
+    FREQ_ANNUAL = 3;
+    FREQ_LIFECYCLE = 4;
+    FREQ_SPONTANEOUS = 5;
+}
+
+# --- Practice record layout (heap) ---
+# Offset  Field           Size  Description
+# 0       name_ptr        8     pointer to name string
+# 8       name_len        8     length of name
+# 16      category        8     PracticeCategory
+# 24      desc_ptr        8     pointer to description string
+# 32      desc_len        8     length of description
+# 40      frequency       8     Frequency enum (0 if unspecified)
+# 48      sacred          8     1 = sacred/spiritual, 0 = secular
+
+enum PracticeLayout {
+    PRACTICE_SIZE = 56;
+    PRACTICE_NAME_PTR = 0;
+    PRACTICE_NAME_LEN = 8;
+    PRACTICE_CATEGORY = 16;
+    PRACTICE_DESC_PTR = 24;
+    PRACTICE_DESC_LEN = 32;
+    PRACTICE_FREQUENCY = 40;
+    PRACTICE_SACRED = 48;
+}
+
+fn practice_name_ptr(p) { return load64(p + PRACTICE_NAME_PTR); }
+fn practice_name_len(p) { return load64(p + PRACTICE_NAME_LEN); }
+fn practice_category(p) { return load64(p + PRACTICE_CATEGORY); }
+fn practice_is_sacred(p) { return load64(p + PRACTICE_SACRED); }
+fn practice_frequency(p) { return load64(p + PRACTICE_FREQUENCY); }

@@ -1,0 +1,32 @@
+# lib.cyr -- Hadara library public API
+# Usage: include "hadara/src/lib.cyr"
+#
+# Hadara (Arabic: حضارة — civilization, culture, presence)
+# Culture as a first-class entity for AGNOS.
+#
+# Modules:
+#   culture    - Culture entity, CultureId, CultureStatus
+#   practice   - Practice, PracticeCategory, Frequency
+#   art        - ArtForm, ArtMedium
+#   figure     - Figure (key cultural figures, founders, teachers)
+#   text       - Text (sacred/canonical texts)
+#   artifact   - Artifact (material culture — clothing, architecture, food, tools)
+#   relation   - CultureRelation, RelationType
+#   registry   - in-memory culture registry, lookup by id/region/time/status
+#   query      - query helpers (coexistence, lineage, influence graph)
+#
+# Deps: sakshi (logging)
+# No heap allocation in core types — callers provide buffers for queries.
+# Pure data modeling — no I/O, no rendering, no network.
+
+include "lib/sakshi.cyr"
+
+include "src/culture.cyr"
+include "src/practice.cyr"
+include "src/art.cyr"
+include "src/figure.cyr"
+include "src/text.cyr"
+include "src/artifact.cyr"
+include "src/relation.cyr"
+include "src/registry.cyr"
+include "src/query.cyr"

@@ -1,0 +1,30 @@
+# figure.cyr -- Key cultural figures
+#
+# Founders, teachers, transformative figures within a culture.
+# Linked to a culture via the registry. Figures can appear in
+# multiple cultures (e.g., Cyrus the Great in Persian + Jewish tradition).
+
+# --- Figure record layout (heap) ---
+# Offset  Field           Size  Description
+# 0       name_ptr        8     pointer to name string
+# 8       name_len        8     length of name
+# 16      role_ptr        8     pointer to role/description string
+# 24      role_len        8     length of role
+# 32      era_start       8     approximate start year (negative for BCE)
+# 40      era_end         8     approximate end year (0 if alive/ongoing)
+
+enum FigureLayout {
+    FIGURE_SIZE = 48;
+    FIGURE_NAME_PTR = 0;
+    FIGURE_NAME_LEN = 8;
+    FIGURE_ROLE_PTR = 16;
+    FIGURE_ROLE_LEN = 24;
+    FIGURE_ERA_START = 32;
+    FIGURE_ERA_END = 40;
+}
+
+fn figure_name_ptr(f) { return load64(f + FIGURE_NAME_PTR); }
+fn figure_name_len(f) { return load64(f + FIGURE_NAME_LEN); }
+fn figure_role_ptr(f) { return load64(f + FIGURE_ROLE_PTR); }
+fn figure_era_start(f) { return load64(f + FIGURE_ERA_START); }
+fn figure_era_end(f) { return load64(f + FIGURE_ERA_END); }
