@@ -377,6 +377,28 @@ fn main() {
     assert_eq(culture_relations_count(ko), 1, "korean 1 relation");
     assert_eq(culture_relations_count(je), 1, "jewish 1 relation");
 
+    # Verify new figures
+    assert_eq(culture_figures_count(me), 2, "mesopotamian 2 figures");
+    assert_eq(culture_figures_count(ko), 1, "korean 1 figure");
+    assert_eq(culture_figures_count(hadara_get(15)), 1, "tibetan 1 figure");
+    assert_eq(culture_figures_count(hadara_get(17)), 1, "mongol 1 figure");
+    assert_eq(culture_figures_count(by), 1, "byzantine 1 figure");
+    assert_eq(culture_figures_count(je), 2, "jewish 2 figures");
+
+    # Verify diaspora
+    assert_eq(culture_diaspora_count(je), 4, "jewish 4 diaspora regions");
+    assert_eq(culture_diaspora_count(ch), 3, "chinese 3 diaspora regions");
+    assert_eq(culture_diaspora_count(wa), 3, "westafrican 3 diaspora regions");
+    assert_eq(culture_diaspora_count(hp), 3, "hiphop 3 diaspora regions");
+
+    # Diaspora query: cultures present in Americas
+    var dbuf = alloc(32 * 8);
+    var n_am = hadara_diaspora_in("Americas", 8, dbuf, 32);
+    # Jewish, Chinese, West African, Hip-Hop(?no-"Americas"), Persian = at least 4
+    var am_ok = 0;
+    if (n_am >= 4) { am_ok = 1; }
+    assert_eq(am_ok, 1, "at least 4 cultures with Americas diaspora");
+
     prints("part 2: seed data — PASS\n");
 
     # ================================================================

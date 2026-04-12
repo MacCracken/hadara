@@ -89,6 +89,15 @@ fn hadara_set_endonym(id, ptr, len) {
     store64(c + CULTURE_ENDONYM_LEN, len);
 }
 
+# Set diaspora regions on an existing culture
+# Stored as array of string pointers (8 bytes each)
+fn hadara_set_diaspora(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_DIASPORA_PTR, ptr);
+    store64(c + CULTURE_DIASPORA_COUNT, count);
+}
+
 # Set values array on an existing culture
 # Values are stored as an array of pointers to null-terminated strings (8 bytes each)
 fn hadara_set_values(id, ptr, count) {

@@ -1449,6 +1449,131 @@ fn hadara_seed() {
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
     hadara_set_art_forms(byzantine, by_arts, 2);
 
+    # --- Mesopotamian figures — Kramer (1963) ---
+    var ms_figs = alloc(FIGURE_SIZE * 2);
+    f = ms_figs;
+    store64(f + FIGURE_NAME_PTR, "Hammurabi");
+    store64(f + FIGURE_NAME_LEN, 9);
+    store64(f + FIGURE_ROLE_PTR, "King of Babylon, codified one of earliest written law codes");
+    store64(f + FIGURE_ROLE_LEN, 59);
+    store64(f + FIGURE_ERA_START, 0 - 1810);
+    store64(f + FIGURE_ERA_END, 0 - 1750);
+    f = ms_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Enheduanna");
+    store64(f + FIGURE_NAME_LEN, 10);
+    store64(f + FIGURE_ROLE_PTR, "First named author in history, high priestess and poet");
+    store64(f + FIGURE_ROLE_LEN, 54);
+    store64(f + FIGURE_ERA_START, 0 - 2285);
+    store64(f + FIGURE_ERA_END, 0 - 2250);
+    hadara_set_figures(mesopotamian, ms_figs, 2);
+
+    # --- Korean figure — Eckert et al. (1990) ---
+    var ko_figs = alloc(FIGURE_SIZE * 1);
+    f = ko_figs;
+    store64(f + FIGURE_NAME_PTR, "Sejong the Great");
+    store64(f + FIGURE_NAME_LEN, 16);
+    store64(f + FIGURE_ROLE_PTR, "Created Hangul alphabet, patron of science and culture");
+    store64(f + FIGURE_ROLE_LEN, 55);
+    store64(f + FIGURE_ERA_START, 1397);
+    store64(f + FIGURE_ERA_END, 1450);
+    hadara_set_figures(korean, ko_figs, 1);
+
+    # --- Tibetan figure — Samuel (1993) ---
+    var ti_figs = alloc(FIGURE_SIZE * 1);
+    f = ti_figs;
+    store64(f + FIGURE_NAME_PTR, "Padmasambhava");
+    store64(f + FIGURE_NAME_LEN, 13);
+    store64(f + FIGURE_ROLE_PTR, "Brought Vajrayana Buddhism to Tibet, founded Nyingma school");
+    store64(f + FIGURE_ROLE_LEN, 60);
+    store64(f + FIGURE_ERA_START, 700);
+    store64(f + FIGURE_ERA_END, 800);
+    hadara_set_figures(tibetan, ti_figs, 1);
+
+    # --- Mongol figure — Weatherford (2004) ---
+    var mo_figs = alloc(FIGURE_SIZE * 1);
+    f = mo_figs;
+    store64(f + FIGURE_NAME_PTR, "Genghis Khan");
+    store64(f + FIGURE_NAME_LEN, 12);
+    store64(f + FIGURE_ROLE_PTR, "Unified Mongol tribes, created largest contiguous empire");
+    store64(f + FIGURE_ROLE_LEN, 56);
+    store64(f + FIGURE_ERA_START, 1162);
+    store64(f + FIGURE_ERA_END, 1227);
+    hadara_set_figures(mongol, mo_figs, 1);
+
+    # --- Byzantine figure — Mango (1980) ---
+    var by_figs = alloc(FIGURE_SIZE * 1);
+    f = by_figs;
+    store64(f + FIGURE_NAME_PTR, "Justinian I");
+    store64(f + FIGURE_NAME_LEN, 11);
+    store64(f + FIGURE_ROLE_PTR, "Codified Roman law, built Hagia Sophia, reconquered West");
+    store64(f + FIGURE_ROLE_LEN, 56);
+    store64(f + FIGURE_ERA_START, 482);
+    store64(f + FIGURE_ERA_END, 565);
+    hadara_set_figures(byzantine, by_figs, 1);
+
+    # --- Jewish figures — Seltzer (1980) ---
+    var je_figs = alloc(FIGURE_SIZE * 2);
+    f = je_figs;
+    store64(f + FIGURE_NAME_PTR, "Moses");
+    store64(f + FIGURE_NAME_LEN, 5);
+    store64(f + FIGURE_ROLE_PTR, "Prophet and lawgiver, led Exodus, received Torah at Sinai");
+    store64(f + FIGURE_ROLE_LEN, 57);
+    store64(f + FIGURE_ERA_START, 0 - 1300);
+    store64(f + FIGURE_ERA_END, 0 - 1200);
+    f = je_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Maimonides");
+    store64(f + FIGURE_NAME_LEN, 10);
+    store64(f + FIGURE_ROLE_PTR, "Philosopher, codified Jewish law in Mishneh Torah");
+    store64(f + FIGURE_ROLE_LEN, 49);
+    store64(f + FIGURE_ERA_START, 1138);
+    store64(f + FIGURE_ERA_END, 1204);
+    hadara_set_figures(jewish, je_figs, 2);
+
+    # --- Diaspora data ---
+    # Stored as arrays of string pointers (regions of dispersal)
+
+    # Jewish diaspora — Seltzer (1980): one of history's most significant dispersals
+    var je_dias = alloc(4 * 8);
+    store64(je_dias, "Europe");
+    store64(je_dias + 8, "North Africa");
+    store64(je_dias + 16, "Americas");
+    store64(je_dias + 24, "Central Asia");
+    hadara_set_diaspora(jewish, je_dias, 4);
+
+    # Chinese diaspora — Stearns (2001): Southeast Asia, Americas, worldwide
+    var ch_dias = alloc(3 * 8);
+    store64(ch_dias, "Southeast Asia");
+    store64(ch_dias + 8, "Americas");
+    store64(ch_dias + 16, "Oceania");
+    hadara_set_diaspora(chinese, ch_dias, 3);
+
+    # West African diaspora — Iliffe (2007): transatlantic slave trade dispersal
+    var wa_dias = alloc(3 * 8);
+    store64(wa_dias, "Caribbean");
+    store64(wa_dias + 8, "Americas");
+    store64(wa_dias + 16, "Europe");
+    hadara_set_diaspora(westafrican, wa_dias, 3);
+
+    # Polynesian diaspora — Howe (2006): Pacific expansion
+    var po_dias = alloc(3 * 8);
+    store64(po_dias, "Hawaii");
+    store64(po_dias + 8, "Aotearoa");
+    store64(po_dias + 16, "Rapa Nui");
+    hadara_set_diaspora(polynesian, po_dias, 3);
+
+    # Hip-Hop diaspora — Chang (2005): global spread from NYC
+    var hp_dias = alloc(3 * 8);
+    store64(hp_dias, "Europe");
+    store64(hp_dias + 8, "East Asia");
+    store64(hp_dias + 16, "Africa");
+    hadara_set_diaspora(hiphop, hp_dias, 3);
+
+    # Persian diaspora — Brosius (2006): post-revolution dispersal
+    var pe_dias = alloc(2 * 8);
+    store64(pe_dias, "Americas");
+    store64(pe_dias + 8, "Europe");
+    hadara_set_diaspora(persian, pe_dias, 2);
+
     # ================================================================
     # Values/Worldview — Kottak (2019), Ember & Ember (2015)
     # Each culture gets 3-4 core values as string pointers (8 bytes each)

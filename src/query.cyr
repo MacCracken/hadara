@@ -45,6 +45,35 @@ fn hadara_coexisting_at(year, out_buf, max) {
     return hadara_find_by_year(year, out_buf, max);
 }
 
+# Find cultures with diaspora presence in a region (substring match)
+fn hadara_diaspora_in(region, region_len, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var c = hadara_get(i);
+        var dc = culture_diaspora_count(c);
+        var dp = culture_diaspora_ptr(c);
+        var found = 0;
+        for (var j = 0; j < dc; j = j + 1) {
+            var dstr = load64(dp + j * 8);
+            var dlen = strlen(dstr);
+            if (dlen >= region_len) {
+                var k = 0;
+                while (k <= dlen - region_len) {
+                    if (memeq(dstr + k, region, region_len) == 1) { found = 1; k = dlen; }
+                    k = k + 1;
+                }
+            }
+            if (found == 1) { j = dc; }
+        }
+        if (found == 1) {
+            store64(out_buf + count * 8, i);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
 # ================================================================
 # Phase 2: Relationship Graph Traversal
 # ================================================================

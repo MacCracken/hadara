@@ -136,6 +136,8 @@ fn culture_texts_ptr(c) { return load64(c + CULTURE_TEXTS_PTR); }
 fn culture_texts_count(c) { return load64(c + CULTURE_TEXTS_COUNT); }
 fn culture_values_ptr(c) { return load64(c + CULTURE_VALUES_PTR); }
 fn culture_values_count(c) { return load64(c + CULTURE_VALUES_COUNT); }
+fn culture_diaspora_ptr(c) { return load64(c + CULTURE_DIASPORA_PTR); }
+fn culture_diaspora_count(c) { return load64(c + CULTURE_DIASPORA_COUNT); }
 fn culture_region_ptr(c) { return load64(c + CULTURE_REGION_PTR); }
 fn culture_region_len(c) { return load64(c + CULTURE_REGION_LEN); }
 fn culture_language_ptr(c) { return load64(c + CULTURE_LANGUAGE_PTR); }

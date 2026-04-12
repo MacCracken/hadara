@@ -60,13 +60,21 @@
 - [ ] "Cultures with art medium Y" query
 - [ ] Region-based lookup
 
-## Phase 5 — Future
+## Phase 5 — Cross-references (ready when itihas hoosh/bote land)
+
+- [ ] Add `itihas_civ_ids` field to Culture layout (many-to-many mapping)
+- [ ] Seed civilization cross-references for all 21 cultures → itihas civilization names
+- [ ] Shared temporal queries: "what cultures existed during this itihas event?"
+- [ ] Validation: hadara dates align with itihas civilization dates
+
+## Phase 6 — Future
 
 - [ ] Living culture evolution tracking (status transitions over time)
 - [ ] Consumer: kshetra (spatiotemporal cultural layer)
 - [ ] Consumer: varna (language↔culture associations — uses language/script fields)
-- [ ] Consumer: itihas (cultural context for historical events — post Cyrius port)
+- [ ] Consumer: avatara (archetype → culture context — post avatara port)
 - [ ] 50+ cultures target
+- [ ] Medium-priority cultures: Aztec/Mexica, Inuit, Inca/Quechua, Ottoman, Khmer, Swahili, Yoruba, Berber/Amazigh
 
 ---
 
