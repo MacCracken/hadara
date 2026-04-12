@@ -138,8 +138,8 @@ fn main() {
 
     hadara_init();
     var seeded = hadara_seed();
-    assert_eq(seeded, 13, "seed loaded 13 cultures");
-    assert_eq(hadara_len(), 13, "registry has 13 cultures");
+    assert_eq(seeded, 21, "seed loaded 21 cultures");
+    assert_eq(hadara_len(), 21, "registry has 21 cultures");
 
     # Verify Egyptian — Shaw (2000): 3100 BCE to 641 CE
     var eg = hadara_get(0);
@@ -254,25 +254,29 @@ fn main() {
     # Verify temporal queries on full corpus
     var qbuf = alloc(32 * 8);
 
-    # 2026: Persian, Vedic, Japanese, WestAfrican, Scottish, Aboriginal, HipHop, Maya, Chinese = 9
+    # 2026: Persian, Vedic, Japanese, WestAfrican, Scottish, Aboriginal, HipHop, Maya, Chinese,
+    #        Arab, Korean, Tibetan, Mongol, Jewish, Polynesian = 15 active/revived
     var n4 = hadara_coexisting_at(2026, qbuf, 32);
-    assert_eq(n4, 9, "9 cultures in 2026");
+    assert_eq(n4, 15, "15 cultures in 2026");
 
-    # 1000 BCE: Egyptian(-3100..641), Vedic(-1500), Chinese(-1600), Maya(-2000), Aboriginal(-65000) = 5
+    # 1000 BCE: Egyptian(-3100..641), Vedic(-1500), Chinese(-1600), Maya(-2000), Aboriginal(-65000),
+    #           Mesopotamian(-3500..-539), Jewish(-1200), Polynesian(-1500) = 8
     var n5 = hadara_coexisting_at(0 - 1000, qbuf, 32);
-    assert_eq(n5, 5, "5 cultures in 1000 BCE");
+    assert_eq(n5, 8, "8 cultures in 1000 BCE");
 
-    # 200 CE: Egyptian, Persian, Vedic, Japanese, WestAfrican(300=no), Aboriginal, Maya, Chinese, Roman = 8
+    # 200 CE: Egyptian, Persian, Vedic, Japanese, Aboriginal, Maya, Chinese, Roman,
+    #         Mongol(-200), Jewish, Polynesian = 11 (WestAfrican starts 300=no)
     var n6 = hadara_coexisting_at(200, qbuf, 32);
-    assert_eq(n6, 8, "8 cultures in 200 CE");
+    assert_eq(n6, 11, "11 cultures in 200 CE");
 
-    # 900 CE: Persian, Vedic, Japanese, WestAfrican, Scottish, Norse, Aboriginal, Maya, Chinese = 9
+    # 900 CE: Persian, Vedic, Japanese, WestAfrican, Scottish, Norse, Aboriginal, Maya, Chinese,
+    #         Arab(622), Korean(-57), Tibetan(627), Mongol(-200), Jewish, Byzantine(330), Polynesian = 16
     var n7 = hadara_coexisting_at(900, qbuf, 32);
-    assert_eq(n7, 9, "9 cultures in 900 CE");
+    assert_eq(n7, 16, "16 cultures in 900 CE");
 
-    # Status counts
-    assert_eq(hadara_count_by_status(CULTURE_ACTIVE), 8, "8 active cultures");
-    assert_eq(hadara_count_by_status(CULTURE_HISTORICAL), 4, "4 historical cultures");
+    # Status counts: 8 original active + 6 new active = 14, 4 historical + 2 new = 6, 1 revived
+    assert_eq(hadara_count_by_status(CULTURE_ACTIVE), 14, "14 active cultures");
+    assert_eq(hadara_count_by_status(CULTURE_HISTORICAL), 6, "6 historical cultures");
     assert_eq(hadara_count_by_status(CULTURE_REVIVED), 1, "1 revived culture");
     assert_eq(hadara_count_by_status(CULTURE_DORMANT), 0, "0 dormant cultures");
     assert_eq(hadara_count_by_status(CULTURE_EXTINCT), 0, "0 extinct cultures");
@@ -294,6 +298,39 @@ fn main() {
     # Verify art form mediums
     var jp_ap = culture_art_forms_ptr(jp);
     assert_eq(art_form_medium(jp_ap), ART_CALLIGRAPHY, "shodo is calligraphy");
+
+    # Verify region/language/script fields
+    assert_neq(culture_region_ptr(eg), 0, "egyptian has region");
+    assert_eq(culture_region_len(eg), 12, "egyptian region len 12");
+    assert_neq(culture_language_ptr(jp), 0, "japanese has language");
+    assert_eq(culture_language_len(jp), 8, "japanese language len 8");
+    assert_neq(culture_script_ptr(ch), 0, "chinese has script");
+    assert_eq(culture_script_len(ch), 5, "chinese script len 5");
+
+    # Verify new cultures (13-20)
+    var ar = hadara_get(13);
+    assert_eq(culture_time_start(ar), 622, "arab start 622");
+    assert_eq(culture_status(ar), CULTURE_ACTIVE, "arab active");
+
+    var ko = hadara_get(14);
+    assert_eq(culture_time_start(ko), 0 - 57, "korean start -57");
+
+    var ti = hadara_get(15);
+    assert_eq(culture_time_start(ti), 627, "tibetan start 627");
+
+    var me = hadara_get(16);
+    assert_eq(culture_time_start(me), 0 - 3500, "mesopotamian start -3500");
+    assert_eq(culture_time_end(me), 0 - 539, "mesopotamian end -539");
+    assert_eq(culture_status(me), CULTURE_HISTORICAL, "mesopotamian historical");
+
+    var je = hadara_get(18);
+    assert_eq(culture_time_start(je), 0 - 1200, "jewish start -1200");
+    assert_eq(culture_status(je), CULTURE_ACTIVE, "jewish active");
+
+    var by = hadara_get(19);
+    assert_eq(culture_time_start(by), 330, "byzantine start 330");
+    assert_eq(culture_time_end(by), 1453, "byzantine end 1453");
+    assert_eq(culture_status(by), CULTURE_HISTORICAL, "byzantine historical");
 
     prints("part 2: seed data — PASS\n");
 

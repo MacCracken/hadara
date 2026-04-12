@@ -65,9 +65,15 @@ enum CultureStatus {
 # 232     subcultures_count    8      number of subcultures
 # 240     relations_ptr        8      pointer to relations array
 # 248     relations_count      8      number of relations
+# 256     region_ptr           8      pointer to primary region string
+# 264     region_len           8      length of region
+# 272     language_ptr         8      pointer to primary language name
+# 280     language_len         8      length of language name
+# 288     script_ptr           8      pointer to writing system name
+# 296     script_len           8      length of script name
 
 enum CultureLayout {
-    CULTURE_SIZE = 256;
+    CULTURE_SIZE = 304;
     CULTURE_ID = 0;
     CULTURE_NAME_PTR = 8;
     CULTURE_NAME_LEN = 16;
@@ -100,6 +106,12 @@ enum CultureLayout {
     CULTURE_SUBCULTURES_COUNT = 232;
     CULTURE_RELATIONS_PTR = 240;
     CULTURE_RELATIONS_COUNT = 248;
+    CULTURE_REGION_PTR = 256;
+    CULTURE_REGION_LEN = 264;
+    CULTURE_LANGUAGE_PTR = 272;
+    CULTURE_LANGUAGE_LEN = 280;
+    CULTURE_SCRIPT_PTR = 288;
+    CULTURE_SCRIPT_LEN = 296;
 }
 
 # --- Accessors ---
@@ -122,6 +134,12 @@ fn culture_artifacts_ptr(c) { return load64(c + CULTURE_ARTIFACTS_PTR); }
 fn culture_artifacts_count(c) { return load64(c + CULTURE_ARTIFACTS_COUNT); }
 fn culture_texts_ptr(c) { return load64(c + CULTURE_TEXTS_PTR); }
 fn culture_texts_count(c) { return load64(c + CULTURE_TEXTS_COUNT); }
+fn culture_region_ptr(c) { return load64(c + CULTURE_REGION_PTR); }
+fn culture_region_len(c) { return load64(c + CULTURE_REGION_LEN); }
+fn culture_language_ptr(c) { return load64(c + CULTURE_LANGUAGE_PTR); }
+fn culture_language_len(c) { return load64(c + CULTURE_LANGUAGE_LEN); }
+fn culture_script_ptr(c) { return load64(c + CULTURE_SCRIPT_PTR); }
+fn culture_script_len(c) { return load64(c + CULTURE_SCRIPT_LEN); }
 
 # --- Status check helpers ---
 

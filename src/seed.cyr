@@ -749,7 +749,7 @@ fn hadara_seed() {
     store64(t + TEXT_YEAR, 0 - 400);
     store64(t + TEXT_SACRED, 1);
     t = ch_texts + TEXT_SIZE;
-    store64(t + TEXT_TITLE_PTR, "Analerta");
+    store64(t + TEXT_TITLE_PTR, "Analects");
     store64(t + TEXT_TITLE_LEN, 8);
     store64(t + TEXT_AUTHOR_PTR, "Confucius");
     store64(t + TEXT_AUTHOR_LEN, 9);
@@ -1009,6 +1009,120 @@ fn hadara_seed() {
     store64(f + FIGURE_ERA_START, 1280);
     store64(f + FIGURE_ERA_END, 1337);
     hadara_set_figures(westafrican, wa_figs, 2);
+
+    # --- Region, language, script for existing cultures ---
+    # Daniels & Bright (1996) for scripts, Campbell (2021) for languages
+
+    hadara_set_region(egyptian, "North Africa", 12);
+    hadara_set_language(egyptian, "Egyptian", 8);
+    hadara_set_script(egyptian, "Hieroglyphic", 12);
+
+    hadara_set_region(persian, "West Asia", 9);
+    hadara_set_language(persian, "Farsi", 5);
+    hadara_set_script(persian, "Perso-Arabic", 12);
+
+    hadara_set_region(vedic, "South Asia", 10);
+    hadara_set_language(vedic, "Sanskrit", 8);
+    hadara_set_script(vedic, "Devanagari", 10);
+
+    hadara_set_region(greek, "Mediterranean", 13);
+    hadara_set_language(greek, "Ancient Greek", 12);
+    hadara_set_script(greek, "Greek alphabet", 14);
+
+    hadara_set_region(japanese, "East Asia", 9);
+    hadara_set_language(japanese, "Japanese", 8);
+    hadara_set_script(japanese, "Kanji/Kana", 10);
+
+    hadara_set_region(westafrican, "West Africa", 11);
+    hadara_set_language(westafrican, "Manding", 7);
+    hadara_set_script(westafrican, "N'Ko", 4);
+
+    hadara_set_region(scottish, "British Isles", 13);
+    hadara_set_language(scottish, "Scottish Gaelic", 15);
+    hadara_set_script(scottish, "Latin", 5);
+
+    hadara_set_region(norse, "Scandinavia", 11);
+    hadara_set_language(norse, "Old Norse", 9);
+    hadara_set_script(norse, "Runic", 5);
+
+    hadara_set_region(aboriginal, "Australia", 9);
+    hadara_set_language(aboriginal, "Pama-Nyungan", 12);
+    # No single script — oral tradition culture
+
+    hadara_set_region(hiphop, "North America", 13);
+    hadara_set_language(hiphop, "English", 7);
+    hadara_set_script(hiphop, "Latin", 5);
+
+    hadara_set_region(maya, "Mesoamerica", 11);
+    hadara_set_language(maya, "Mayan", 5);
+    hadara_set_script(maya, "Maya glyphs", 11);
+
+    hadara_set_region(chinese, "East Asia", 9);
+    hadara_set_language(chinese, "Chinese", 7);
+    hadara_set_script(chinese, "Hanzi", 5);
+
+    hadara_set_region(roman, "Mediterranean", 13);
+    hadara_set_language(roman, "Latin", 5);
+    hadara_set_script(roman, "Latin alphabet", 14);
+
+    # ================================================================
+    # High-priority new cultures (P-1 audit findings)
+    # ================================================================
+
+    # 13: Arab/Islamic — Hourani (1991): 7th century CE, continuous
+    var arab = hadara_add("Arab-Islamic", 12, CULTURE_ACTIVE, 622, 0);
+    hadara_set_endonym(arab, "Arabi", 5);
+    hadara_set_region(arab, "West Asia, North Africa", 23);
+    hadara_set_language(arab, "Arabic", 6);
+    hadara_set_script(arab, "Arabic", 6);
+
+    # 14: Korean — Eckert et al. (1990): Three Kingdoms period c. 57 BCE, continuous
+    var korean = hadara_add("Korean", 6, CULTURE_ACTIVE, 0 - 57, 0);
+    hadara_set_endonym(korean, "Hanguk", 6);
+    hadara_set_region(korean, "East Asia", 9);
+    hadara_set_language(korean, "Korean", 6);
+    hadara_set_script(korean, "Hangul", 6);
+
+    # 15: Tibetan — Samuel (1993): Tibetan Empire 7th c., Buddhist from 8th c.
+    var tibetan = hadara_add("Tibetan", 7, CULTURE_ACTIVE, 627, 0);
+    hadara_set_endonym(tibetan, "Bod", 3);
+    hadara_set_region(tibetan, "Central Asia", 12);
+    hadara_set_language(tibetan, "Tibetan", 7);
+    hadara_set_script(tibetan, "Tibetan", 7);
+
+    # 16: Mesopotamian — Kramer (1963): Sumerian city-states c. 3500 BCE to 539 BCE
+    var mesopotamian = hadara_add("Mesopotamian", 12, CULTURE_HISTORICAL, 0 - 3500, 0 - 539);
+    hadara_set_endonym(mesopotamian, "Kiengi", 6);
+    hadara_set_region(mesopotamian, "Near East", 9);
+    hadara_set_language(mesopotamian, "Sumerian", 8);
+    hadara_set_script(mesopotamian, "Cuneiform", 9);
+
+    # 17: Mongol — Weatherford (2004): steppe culture from antiquity, Empire 1206 CE
+    var mongol = hadara_add("Mongol", 6, CULTURE_ACTIVE, 0 - 200, 0);
+    hadara_set_endonym(mongol, "Mongol", 6);
+    hadara_set_region(mongol, "Central Asia", 12);
+    hadara_set_language(mongol, "Mongolian", 9);
+    hadara_set_script(mongol, "Mongolian", 9);
+
+    # 18: Jewish/Hebrew — Seltzer (1980): Israelite emergence c. 1200 BCE, continuous
+    var jewish = hadara_add("Jewish", 6, CULTURE_ACTIVE, 0 - 1200, 0);
+    hadara_set_endonym(jewish, "Yehudi", 6);
+    hadara_set_region(jewish, "Near East, Diaspora", 19);
+    hadara_set_language(jewish, "Hebrew", 6);
+    hadara_set_script(jewish, "Hebrew", 6);
+
+    # 19: Byzantine — Mango (1980): 330 CE (Constantinople) to 1453 CE (Ottoman conquest)
+    var byzantine = hadara_add("Byzantine", 9, CULTURE_HISTORICAL, 330, 1453);
+    hadara_set_endonym(byzantine, "Romaioi", 7);
+    hadara_set_region(byzantine, "Eastern Mediterranean", 21);
+    hadara_set_language(byzantine, "Greek", 5);
+    hadara_set_script(byzantine, "Greek alphabet", 14);
+
+    # 20: Polynesian — Howe (2006): Lapita expansion c. 1500 BCE, continuous
+    var polynesian = hadara_add("Polynesian", 10, CULTURE_ACTIVE, 0 - 1500, 0);
+    hadara_set_region(polynesian, "Pacific Islands", 15);
+    hadara_set_language(polynesian, "Proto-Polynesian", 16);
+    # Oral tradition culture — no indigenous script
 
     return hadara_count;
 }

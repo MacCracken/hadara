@@ -84,20 +84,41 @@ cat tests/hadara.tcyr | cc3 > build/test && ./build/test
 
 ## Development Process
 
+### P(-1): Scaffold Hardening (before any new features)
+
+0. Read roadmap, CHANGELOG, and open issues — know what was intended before auditing what was built
+1. Build check: `cat src/main.cyr | cc3 > build/hadara && chmod +x build/hadara`
+2. Test sweep: `cyrius test tests/hadara.tcyr` — all 190 assertions pass
+3. Internal deep review — correctness (culture data accuracy vs. cited sources), completeness (all fields populated), relationships (graph consistency), consumer API correctness
+4. External research — are dates accurate? newer scholarship? missing cultures that consumers need?
+5. Build + test again — must be clean after review
+6. Additional tests from findings
+7. Documentation audit — CHANGELOG, roadmap, docs/sources/ citations current
+8. Repeat if heavy
+
 ### Work Loop (continuous)
 
-1. Work phase — implement types, seed data, queries
+1. Work phase — implement types, seed data, queries, consumer APIs
 2. Build check: `cyrius build` or manual `cc3` pipeline
 3. Run tests: `cyrius test tests/hadara.tcyr` — assert "0 failed"
 4. Review — correctness (culture data accuracy), completeness (all fields populated), relationships (graph consistency)
 5. Documentation — CHANGELOG, roadmap
 6. Version check — VERSION, cyrius.toml in sync
+7. Return to step 1
 
 ### Task Sizing
 
 - **Low/Medium**: Batch freely (add a culture, add a field, add a query)
 - **Large**: Small bites (new relationship type, consumer integration, seed data expansion)
 - **If unsure**: Treat as large
+
+### Key Principles
+
+- **Never skip tests** — build and test after every change
+- **Cite sources** — no invented cultural data, all claims traceable to docs/sources/
+- **Consumer-driven** — add depth where consumers demand it, not speculatively
+- **One change at a time** — don't bundle unrelated cultural data additions
+- **3 failed attempts = defer and document** — don't burn time on blocked work
 
 ## DO NOT
 

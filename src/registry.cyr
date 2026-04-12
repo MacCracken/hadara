@@ -59,6 +59,12 @@ fn hadara_add(name_ptr, name_len, status, time_start, time_end) {
     store64(c + CULTURE_SUBCULTURES_COUNT, 0);
     store64(c + CULTURE_RELATIONS_PTR, 0);
     store64(c + CULTURE_RELATIONS_COUNT, 0);
+    store64(c + CULTURE_REGION_PTR, 0);
+    store64(c + CULTURE_REGION_LEN, 0);
+    store64(c + CULTURE_LANGUAGE_PTR, 0);
+    store64(c + CULTURE_LANGUAGE_LEN, 0);
+    store64(c + CULTURE_SCRIPT_PTR, 0);
+    store64(c + CULTURE_SCRIPT_LEN, 0);
     hadara_count = hadara_count + 1;
     return idx;
 }
@@ -121,6 +127,30 @@ fn hadara_set_relations(id, ptr, count) {
     if (c == 0) { return; }
     store64(c + CULTURE_RELATIONS_PTR, ptr);
     store64(c + CULTURE_RELATIONS_COUNT, count);
+}
+
+# Set region on an existing culture
+fn hadara_set_region(id, ptr, len) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_REGION_PTR, ptr);
+    store64(c + CULTURE_REGION_LEN, len);
+}
+
+# Set language on an existing culture
+fn hadara_set_language(id, ptr, len) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_LANGUAGE_PTR, ptr);
+    store64(c + CULTURE_LANGUAGE_LEN, len);
+}
+
+# Set script on an existing culture
+fn hadara_set_script(id, ptr, len) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_SCRIPT_PTR, ptr);
+    store64(c + CULTURE_SCRIPT_LEN, len);
 }
 
 # Set artifacts array on an existing culture
