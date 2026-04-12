@@ -71,9 +71,13 @@ enum CultureStatus {
 # 280     language_len         8      length of language name
 # 288     script_ptr           8      pointer to writing system name
 # 296     script_len           8      length of script name
+# 304     formality            8      display rule: 0-10 (0=informal, 10=formal)
+# 312     expressiveness       8      display rule: 0-10 (0=restrained, 10=expressive)
+# 320     individualism        8      display rule: 0-10 (0=collective, 10=individual)
+# 328     directness           8      display rule: 0-10 (0=indirect, 10=direct)
 
 enum CultureLayout {
-    CULTURE_SIZE = 304;
+    CULTURE_SIZE = 336;
     CULTURE_ID = 0;
     CULTURE_NAME_PTR = 8;
     CULTURE_NAME_LEN = 16;
@@ -112,6 +116,10 @@ enum CultureLayout {
     CULTURE_LANGUAGE_LEN = 280;
     CULTURE_SCRIPT_PTR = 288;
     CULTURE_SCRIPT_LEN = 296;
+    CULTURE_FORMALITY = 304;
+    CULTURE_EXPRESSIVENESS = 312;
+    CULTURE_INDIVIDUALISM = 320;
+    CULTURE_DIRECTNESS = 328;
 }
 
 # --- Accessors ---
@@ -144,6 +152,10 @@ fn culture_language_ptr(c) { return load64(c + CULTURE_LANGUAGE_PTR); }
 fn culture_language_len(c) { return load64(c + CULTURE_LANGUAGE_LEN); }
 fn culture_script_ptr(c) { return load64(c + CULTURE_SCRIPT_PTR); }
 fn culture_script_len(c) { return load64(c + CULTURE_SCRIPT_LEN); }
+fn culture_formality(c) { return load64(c + CULTURE_FORMALITY); }
+fn culture_expressiveness(c) { return load64(c + CULTURE_EXPRESSIVENESS); }
+fn culture_individualism(c) { return load64(c + CULTURE_INDIVIDUALISM); }
+fn culture_directness(c) { return load64(c + CULTURE_DIRECTNESS); }
 
 # --- Status check helpers ---
 

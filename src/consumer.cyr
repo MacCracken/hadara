@@ -29,71 +29,23 @@ enum DisplayRuleLayout {
     DISPLAY_DIRECTNESS = 24;
 }
 
+# Data-driven: reads directly from culture record fields.
+# No hardcoded IDs — values seeded via hadara_set_display() in seed.cyr.
 fn hadara_display_rule(culture_id) {
     var rule = alloc(DISPLAY_RULE_SIZE);
-    # Defaults: moderate (5/10 on all axes)
-    store64(rule + DISPLAY_FORMALITY, 5);
-    store64(rule + DISPLAY_EXPRESSIVENESS, 5);
-    store64(rule + DISPLAY_INDIVIDUALISM, 5);
-    store64(rule + DISPLAY_DIRECTNESS, 5);
-
-    # Culture-specific overrides based on anthropological data
-    # Japanese — Varley (2000): high formality, restrained expression, collective
-    if (culture_id == 4) {
-        store64(rule + DISPLAY_FORMALITY, 9);
-        store64(rule + DISPLAY_EXPRESSIVENESS, 3);
-        store64(rule + DISPLAY_INDIVIDUALISM, 2);
-        store64(rule + DISPLAY_DIRECTNESS, 3);
-    }
-    # Hip-Hop — Chang (2005): low formality, high expression, individual
-    elif (culture_id == 9) {
-        store64(rule + DISPLAY_FORMALITY, 2);
-        store64(rule + DISPLAY_EXPRESSIVENESS, 9);
-        store64(rule + DISPLAY_INDIVIDUALISM, 8);
-        store64(rule + DISPLAY_DIRECTNESS, 9);
-    }
-    # Roman — Boatwright (2012): high formality, moderate expression, civic
-    elif (culture_id == 12) {
-        store64(rule + DISPLAY_FORMALITY, 8);
-        store64(rule + DISPLAY_EXPRESSIVENESS, 6);
-        store64(rule + DISPLAY_INDIVIDUALISM, 4);
-        store64(rule + DISPLAY_DIRECTNESS, 7);
-    }
-    # Norse — Price (2019): moderate formality, high expression, individual
-    elif (culture_id == 7) {
-        store64(rule + DISPLAY_FORMALITY, 4);
-        store64(rule + DISPLAY_EXPRESSIVENESS, 8);
-        store64(rule + DISPLAY_INDIVIDUALISM, 7);
-        store64(rule + DISPLAY_DIRECTNESS, 8);
-    }
-    # West African Mande — Iliffe (2007): moderate formality, high expression, collective
-    elif (culture_id == 5) {
-        store64(rule + DISPLAY_FORMALITY, 6);
-        store64(rule + DISPLAY_EXPRESSIVENESS, 8);
-        store64(rule + DISPLAY_INDIVIDUALISM, 3);
-        store64(rule + DISPLAY_DIRECTNESS, 6);
-    }
-    # Vedic-Hindu — Flood (1996): high formality, moderate expression, collective
-    elif (culture_id == 2) {
-        store64(rule + DISPLAY_FORMALITY, 8);
-        store64(rule + DISPLAY_EXPRESSIVENESS, 6);
-        store64(rule + DISPLAY_INDIVIDUALISM, 3);
-        store64(rule + DISPLAY_DIRECTNESS, 4);
-    }
-    # Persian — Brosius (2006): high formality, poetic expression, collective
-    elif (culture_id == 1) {
-        store64(rule + DISPLAY_FORMALITY, 8);
-        store64(rule + DISPLAY_EXPRESSIVENESS, 7);
-        store64(rule + DISPLAY_INDIVIDUALISM, 4);
-        store64(rule + DISPLAY_DIRECTNESS, 4);
-    }
-    # Ancient Greek — Boardman (1970--2005): moderate formality, high expression, individual
-    elif (culture_id == 3) {
+    var c = hadara_get(culture_id);
+    if (c == 0) {
+        # Default for unknown cultures
         store64(rule + DISPLAY_FORMALITY, 5);
-        store64(rule + DISPLAY_EXPRESSIVENESS, 8);
-        store64(rule + DISPLAY_INDIVIDUALISM, 7);
-        store64(rule + DISPLAY_DIRECTNESS, 8);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 5);
+        store64(rule + DISPLAY_INDIVIDUALISM, 5);
+        store64(rule + DISPLAY_DIRECTNESS, 5);
+        return rule;
     }
+    store64(rule + DISPLAY_FORMALITY, culture_formality(c));
+    store64(rule + DISPLAY_EXPRESSIVENESS, culture_expressiveness(c));
+    store64(rule + DISPLAY_INDIVIDUALISM, culture_individualism(c));
+    store64(rule + DISPLAY_DIRECTNESS, culture_directness(c));
     return rule;
 }
 

@@ -138,8 +138,8 @@ fn main() {
 
     hadara_init();
     var seeded = hadara_seed();
-    assert_eq(seeded, 21, "seed loaded 21 cultures");
-    assert_eq(hadara_len(), 21, "registry has 21 cultures");
+    assert_eq(seeded, 29, "seed loaded 29 cultures");
+    assert_eq(hadara_len(), 29, "registry has 29 cultures");
 
     # Verify Egyptian — Shaw (2000): 3100 BCE to 641 CE
     var eg = hadara_get(0);
@@ -254,29 +254,30 @@ fn main() {
     # Verify temporal queries on full corpus
     var qbuf = alloc(32 * 8);
 
-    # 2026: Persian, Vedic, Japanese, WestAfrican, Scottish, Aboriginal, HipHop, Maya, Chinese,
-    #        Arab, Korean, Tibetan, Mongol, Jewish, Polynesian = 15 active/revived
+    # 2026: 15 original active + Inca, Ottoman, Khmer, Swahili, Yoruba, Amazigh, Inuit = 22
+    # (Aztec is historical 1325-1521, so not counted)
     var n4 = hadara_coexisting_at(2026, qbuf, 32);
-    assert_eq(n4, 15, "15 cultures in 2026");
+    assert_eq(n4, 22, "22 cultures in 2026");
 
-    # 1000 BCE: Egyptian(-3100..641), Vedic(-1500), Chinese(-1600), Maya(-2000), Aboriginal(-65000),
-    #           Mesopotamian(-3500..-539), Jewish(-1200), Polynesian(-1500) = 8
+    # 1000 BCE: Egyptian, Vedic, Chinese, Maya, Aboriginal, Mesopotamian, Jewish, Polynesian,
+    #           Inca(-2000), Yoruba(-500=no), Amazigh(-3000) = 9
     var n5 = hadara_coexisting_at(0 - 1000, qbuf, 32);
-    assert_eq(n5, 8, "8 cultures in 1000 BCE");
+    assert_eq(n5, 9, "9 cultures in 1000 BCE");
 
     # 200 CE: Egyptian, Persian, Vedic, Japanese, Aboriginal, Maya, Chinese, Roman,
-    #         Mongol(-200), Jewish, Polynesian = 11 (WestAfrican starts 300=no)
+    #         Mongol(-200), Jewish, Polynesian, Inca(-2000), Swahili(100), Yoruba(-500), Amazigh(-3000) = 15
     var n6 = hadara_coexisting_at(200, qbuf, 32);
-    assert_eq(n6, 11, "11 cultures in 200 CE");
+    assert_eq(n6, 15, "15 cultures in 200 CE");
 
-    # 900 CE: Persian, Vedic, Japanese, WestAfrican, Scottish, Norse, Aboriginal, Maya, Chinese,
-    #         Arab(622), Korean(-57), Tibetan(627), Mongol(-200), Jewish, Byzantine(330), Polynesian = 16
+    # 900 CE: 16 original + Inca(-2000), Khmer(802), Swahili(100), Yoruba(-500), Amazigh(-3000) = 21
+    # (Aztec starts 1325=no, Ottoman starts 1299=no, Inuit starts 1000=no)
     var n7 = hadara_coexisting_at(900, qbuf, 32);
-    assert_eq(n7, 16, "16 cultures in 900 CE");
+    assert_eq(n7, 21, "21 cultures in 900 CE");
 
-    # Status counts: 8 original active + 6 new active = 14, 4 historical + 2 new = 6, 1 revived
-    assert_eq(hadara_count_by_status(CULTURE_ACTIVE), 14, "14 active cultures");
-    assert_eq(hadara_count_by_status(CULTURE_HISTORICAL), 6, "6 historical cultures");
+    # Status: 14 + 7 new active (Inca,Ottoman,Khmer,Swahili,Yoruba,Amazigh,Inuit) = 21 active
+    # Historical: 6 + 1 (Aztec) = 7, Revived: 1
+    assert_eq(hadara_count_by_status(CULTURE_ACTIVE), 21, "21 active cultures");
+    assert_eq(hadara_count_by_status(CULTURE_HISTORICAL), 7, "7 historical cultures");
     assert_eq(hadara_count_by_status(CULTURE_REVIVED), 1, "1 revived culture");
     assert_eq(hadara_count_by_status(CULTURE_DORMANT), 0, "0 dormant cultures");
     assert_eq(hadara_count_by_status(CULTURE_EXTINCT), 0, "0 extinct cultures");
@@ -772,6 +773,62 @@ fn main() {
     assert_eq(load64(bbuf), 5, "Mali Empire → culture 5");
 
     prints("part 6: bridge (avatara + itihas) — PASS\n");
+
+    # ================================================================
+    # Part 7: Query enhancements
+    # ================================================================
+
+    var qb = alloc(32 * 8);
+
+    # Cultures with PRACTICE_MARTIAL: Japanese(budo), Norse? no — check
+    # Japanese has budo=MARTIAL, Chinese has tai chi=MARTIAL
+    var nm = hadara_with_practice_category(PRACTICE_MARTIAL, qb, 32);
+    var mart_ok = 0;
+    if (nm >= 2) { mart_ok = 1; }
+    assert_eq(mart_ok, 1, "at least 2 cultures with martial practices");
+
+    # Cultures with PRACTICE_DIETARY: Arab(ramadan), Jewish(kashrut), Korean(kimjang)
+    var nd = hadara_with_practice_category(PRACTICE_DIETARY, qb, 32);
+    assert_eq(nd, 3, "3 cultures with dietary practices");
+
+    # Cultures with ART_CALLIGRAPHY: Egyptian, Japanese, West African(N'Ko?no), Norse(runes),
+    #   Chinese, Arab, Maya, Mesopotamian = check
+    var nc2 = hadara_with_art_medium(ART_CALLIGRAPHY, qb, 32);
+    var cal_ok = 0;
+    if (nc2 >= 5) { cal_ok = 1; }
+    assert_eq(cal_ok, 1, "at least 5 cultures with calligraphy");
+
+    # Cultures with ART_ORAL_TRADITION: West African, Norse, Aboriginal, Scottish, Polynesian, Korean, Mongol, Roman
+    var no2 = hadara_with_art_medium(ART_ORAL_TRADITION, qb, 32);
+    var oral_ok = 0;
+    if (no2 >= 6) { oral_ok = 1; }
+    assert_eq(oral_ok, 1, "at least 6 cultures with oral tradition");
+
+    # Region search: "East Asia" → Japanese(4), Chinese(11), Korean(14)
+    var ne = hadara_by_region("East Asia", 9, qb, 32);
+    assert_eq(ne, 3, "3 cultures in East Asia");
+
+    # Region search: "Mediterranean" → Greek(3), Roman(12), Byzantine(19)
+    var nmed = hadara_by_region("Mediterranean", 13, qb, 32);
+    assert_eq(nmed, 3, "3 cultures in Mediterranean");
+
+    # Full-text search: "Arabic" → matches Arab(language=Arabic, script=Arabic)
+    var nft = hadara_search_all("Arabic", 6, qb, 32);
+    var ft_ok = 0;
+    if (nft >= 1) { ft_ok = 1; }
+    assert_eq(ft_ok, 1, "full-text finds Arabic");
+
+    # Full-text: "Nihon" → matches Japanese endonym
+    nft = hadara_search_all("Nihon", 5, qb, 32);
+    assert_eq(nft, 1, "full-text finds Nihon (japanese endonym)");
+
+    # Full-text: "Latin" → matches Roman(language=Latin, script=Latin alphabet), Scottish(script=Latin), Hip-Hop(script=Latin)
+    nft = hadara_search_all("Latin", 5, qb, 32);
+    var lat_ok = 0;
+    if (nft >= 3) { lat_ok = 1; }
+    assert_eq(lat_ok, 1, "full-text finds 3+ cultures with Latin");
+
+    prints("part 7: query enhancements — PASS\n");
     prints("hadara: all tests passed\n");
     return 0;
 }

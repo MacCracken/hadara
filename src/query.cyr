@@ -45,6 +45,140 @@ fn hadara_coexisting_at(year, out_buf, max) {
     return hadara_find_by_year(year, out_buf, max);
 }
 
+# Find cultures that have a practice in a given category
+fn hadara_with_practice_category(category, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var c = hadara_get(i);
+        var pc = culture_practices_count(c);
+        var pp = culture_practices_ptr(c);
+        var found = 0;
+        for (var j = 0; j < pc; j = j + 1) {
+            var p = pp + j * PRACTICE_SIZE;
+            if (practice_category(p) == category) { found = 1; j = pc; }
+        }
+        if (found == 1) {
+            store64(out_buf + count * 8, i);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# Find cultures that have an art form in a given medium
+fn hadara_with_art_medium(medium, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var c = hadara_get(i);
+        var ac = culture_art_forms_count(c);
+        var ap = culture_art_forms_ptr(c);
+        var found = 0;
+        for (var j = 0; j < ac; j = j + 1) {
+            var af = ap + j * ART_FORM_SIZE;
+            if (art_form_medium(af) == medium) { found = 1; j = ac; }
+        }
+        if (found == 1) {
+            store64(out_buf + count * 8, i);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# Find cultures by region (substring match on culture region field)
+fn hadara_by_region(region, region_len, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var c = hadara_get(i);
+        var rptr = culture_region_ptr(c);
+        var rlen = culture_region_len(c);
+        if (rptr == 0) { continue; }
+        if (rlen < region_len) { continue; }
+        var found = 0;
+        var k = 0;
+        while (k <= rlen - region_len) {
+            if (memeq(rptr + k, region, region_len) == 1) { found = 1; k = rlen; }
+            k = k + 1;
+        }
+        if (found == 1) {
+            store64(out_buf + count * 8, i);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# Full-text search across all string fields of all cultures
+# Searches: name, endonym, region, language, script
+fn hadara_search_all(query, qlen, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var c = hadara_get(i);
+        var found = 0;
+        # Check name
+        var nptr = culture_name_ptr(c);
+        var nlen = culture_name_len(c);
+        if (qlen <= nlen) {
+            var j = 0;
+            while (j <= nlen - qlen) {
+                if (memeq(nptr + j, query, qlen) == 1) { found = 1; j = nlen; }
+                j = j + 1;
+            }
+        }
+        # Check endonym
+        if (found == 0) {
+            var eptr = load64(c + CULTURE_ENDONYM_PTR);
+            var elen = load64(c + CULTURE_ENDONYM_LEN);
+            if (eptr != 0) {
+                if (qlen <= elen) {
+                    var j = 0;
+                    while (j <= elen - qlen) {
+                        if (memeq(eptr + j, query, qlen) == 1) { found = 1; j = elen; }
+                        j = j + 1;
+                    }
+                }
+            }
+        }
+        # Check region
+        if (found == 0) {
+            var rptr = culture_region_ptr(c);
+            var rlen = culture_region_len(c);
+            if (rptr != 0) {
+                if (qlen <= rlen) {
+                    var j = 0;
+                    while (j <= rlen - qlen) {
+                        if (memeq(rptr + j, query, qlen) == 1) { found = 1; j = rlen; }
+                        j = j + 1;
+                    }
+                }
+            }
+        }
+        # Check language
+        if (found == 0) {
+            var lptr = culture_language_ptr(c);
+            var llen = culture_language_len(c);
+            if (lptr != 0) {
+                if (qlen <= llen) {
+                    var j = 0;
+                    while (j <= llen - qlen) {
+                        if (memeq(lptr + j, query, qlen) == 1) { found = 1; j = llen; }
+                        j = j + 1;
+                    }
+                }
+            }
+        }
+        if (found == 1) {
+            store64(out_buf + count * 8, i);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
 # Find cultures with diaspora presence in a region (substring match)
 fn hadara_diaspora_in(region, region_len, out_buf, max) {
     var count = 0;

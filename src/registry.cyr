@@ -65,6 +65,10 @@ fn hadara_add(name_ptr, name_len, status, time_start, time_end) {
     store64(c + CULTURE_LANGUAGE_LEN, 0);
     store64(c + CULTURE_SCRIPT_PTR, 0);
     store64(c + CULTURE_SCRIPT_LEN, 0);
+    store64(c + CULTURE_FORMALITY, 5);
+    store64(c + CULTURE_EXPRESSIVENESS, 5);
+    store64(c + CULTURE_INDIVIDUALISM, 5);
+    store64(c + CULTURE_DIRECTNESS, 5);
     hadara_count = hadara_count + 1;
     return idx;
 }
@@ -87,6 +91,16 @@ fn hadara_set_endonym(id, ptr, len) {
     if (c == 0) { return; }
     store64(c + CULTURE_ENDONYM_PTR, ptr);
     store64(c + CULTURE_ENDONYM_LEN, len);
+}
+
+# Set display dimensions on an existing culture (formality, expressiveness, individualism, directness)
+fn hadara_set_display(id, formality, expressiveness, individualism, directness) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_FORMALITY, formality);
+    store64(c + CULTURE_EXPRESSIVENESS, expressiveness);
+    store64(c + CULTURE_INDIVIDUALISM, individualism);
+    store64(c + CULTURE_DIRECTNESS, directness);
 }
 
 # Set diaspora regions on an existing culture

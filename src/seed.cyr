@@ -1125,6 +1125,70 @@ fn hadara_seed() {
     # Oral tradition culture — no indigenous script
 
     # ================================================================
+    # Medium-priority cultures (Phase 4a — toward 50 target)
+    # ================================================================
+
+    # 21: Aztec/Mexica — Townsend (2009): 1325 CE (Tenochtitlan) to 1521 CE
+    var aztec = hadara_add("Aztec", 5, CULTURE_HISTORICAL, 1325, 1521);
+    hadara_set_endonym(aztec, "Mexica", 6);
+    hadara_set_region(aztec, "Mesoamerica", 11);
+    hadara_set_language(aztec, "Nahuatl", 7);
+    hadara_set_script(aztec, "Aztec pictographs", 17);
+    hadara_set_display(aztec, 9, 6, 3, 5);
+
+    # 22: Inca/Quechua — D'Altroy (2014): 1438 CE empire, Quechua culture continuous
+    var inca = hadara_add("Inca-Quechua", 12, CULTURE_ACTIVE, 0 - 2000, 0);
+    hadara_set_endonym(inca, "Tawantinsuyu", 12);
+    hadara_set_region(inca, "South America", 13);
+    hadara_set_language(inca, "Quechua", 7);
+    hadara_set_display(inca, 8, 5, 2, 4);
+
+    # 23: Ottoman/Turkish — Finkel (2007): 1299 CE to 1922 CE (empire), Turkish culture continuous
+    var ottoman = hadara_add("Turkish-Ottoman", 15, CULTURE_ACTIVE, 1299, 0);
+    hadara_set_region(ottoman, "West Asia, Southeast Europe", 27);
+    hadara_set_language(ottoman, "Turkish", 7);
+    hadara_set_script(ottoman, "Latin alphabet", 14);
+    hadara_set_display(ottoman, 7, 6, 5, 6);
+
+    # 24: Khmer — Higham (2001): Angkor period 802 CE, Khmer culture continuous
+    var khmer = hadara_add("Khmer", 5, CULTURE_ACTIVE, 802, 0);
+    hadara_set_region(khmer, "Southeast Asia", 14);
+    hadara_set_language(khmer, "Khmer", 5);
+    hadara_set_script(khmer, "Khmer script", 12);
+    hadara_set_display(khmer, 7, 5, 3, 4);
+
+    # 25: Swahili — Nurse & Spear (1985): East African coast from c. 100 CE
+    var swahili = hadara_add("Swahili", 7, CULTURE_ACTIVE, 100, 0);
+    hadara_set_region(swahili, "East Africa", 11);
+    hadara_set_language(swahili, "Kiswahili", 9);
+    hadara_set_script(swahili, "Arabic/Latin", 12);
+    hadara_set_display(swahili, 6, 7, 4, 6);
+
+    # 26: Yoruba — Bascom (1969): pre-1000 CE origins, continuous
+    var yoruba = hadara_add("Yoruba", 6, CULTURE_ACTIVE, 0 - 500, 0);
+    hadara_set_endonym(yoruba, "Yoruba", 6);
+    hadara_set_region(yoruba, "West Africa", 11);
+    hadara_set_language(yoruba, "Yoruba", 6);
+    hadara_set_script(yoruba, "Latin alphabet", 14);
+    hadara_set_display(yoruba, 6, 8, 4, 6);
+
+    # 27: Berber/Amazigh — Brett & Fentress (1996): ancient, continuous
+    var amazigh = hadara_add("Amazigh", 7, CULTURE_ACTIVE, 0 - 3000, 0);
+    hadara_set_endonym(amazigh, "Imazighen", 9);
+    hadara_set_region(amazigh, "North Africa", 12);
+    hadara_set_language(amazigh, "Tamazight", 9);
+    hadara_set_script(amazigh, "Tifinagh", 8);
+    hadara_set_display(amazigh, 5, 7, 5, 7);
+
+    # 28: Inuit — Stern (2004): Arctic cultures, continuous from c. 1000 CE (Thule)
+    var inuit = hadara_add("Inuit", 5, CULTURE_ACTIVE, 1000, 0);
+    hadara_set_endonym(inuit, "Inuit", 5);
+    hadara_set_region(inuit, "Arctic", 6);
+    hadara_set_language(inuit, "Inuktitut", 9);
+    hadara_set_script(inuit, "Syllabics", 9);
+    hadara_set_display(inuit, 5, 5, 4, 5);
+
+    # ================================================================
     # Sub-entities for new cultures (Phase 4a)
     # ================================================================
 
@@ -1528,6 +1592,30 @@ fn hadara_seed() {
     store64(f + FIGURE_ERA_START, 1138);
     store64(f + FIGURE_ERA_END, 1204);
     hadara_set_figures(jewish, je_figs, 2);
+
+    # --- Display dimensions (formality, expressiveness, individualism, directness) ---
+    # Sources: Kottak (2019), Ember & Ember (2015), culture-specific refs
+    hadara_set_display(egyptian, 9, 6, 2, 4);     # highly formal, collective, hieratic society
+    hadara_set_display(persian, 8, 7, 4, 4);      # formal, poetic, communal
+    hadara_set_display(vedic, 8, 6, 3, 4);        # formal, collective, indirect
+    hadara_set_display(greek, 5, 8, 7, 8);        # moderate formality, expressive, individual, direct
+    hadara_set_display(japanese, 9, 3, 2, 3);     # high formality, restrained, collective, indirect
+    hadara_set_display(westafrican, 6, 8, 3, 6);  # moderate formal, expressive, collective
+    hadara_set_display(scottish, 4, 7, 6, 7);     # informal, expressive, fairly direct
+    hadara_set_display(norse, 4, 8, 7, 8);        # informal, expressive, individual, direct
+    hadara_set_display(aboriginal, 7, 6, 2, 4);   # formal elder protocols, collective
+    hadara_set_display(hiphop, 2, 9, 8, 9);       # informal, highly expressive, individual, direct
+    hadara_set_display(maya, 8, 5, 3, 4);         # formal, hieratic, collective
+    hadara_set_display(chinese, 8, 5, 3, 4);      # formal, restrained, collective, indirect
+    hadara_set_display(roman, 8, 6, 4, 7);        # formal, civic, fairly direct
+    hadara_set_display(arab, 8, 7, 4, 5);         # formal, poetic, communal
+    hadara_set_display(korean, 8, 5, 3, 4);       # formal, restrained, collective
+    hadara_set_display(tibetan, 7, 4, 2, 3);      # formal, restrained, collective, gentle
+    hadara_set_display(mesopotamian, 9, 5, 3, 5); # highly formal, hieratic
+    hadara_set_display(mongol, 3, 8, 7, 9);       # informal, bold, individual, very direct
+    hadara_set_display(jewish, 6, 7, 6, 7);       # moderate, argumentative tradition, direct
+    hadara_set_display(byzantine, 9, 5, 3, 4);    # highly formal, liturgical, collective
+    hadara_set_display(polynesian, 6, 8, 4, 6);   # moderate formal, expressive, communal
 
     # --- Diaspora data ---
     # Stored as arrays of string pointers (regions of dispersal)
