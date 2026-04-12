@@ -332,6 +332,51 @@ fn main() {
     assert_eq(culture_time_end(by), 1453, "byzantine end 1453");
     assert_eq(culture_status(by), CULTURE_HISTORICAL, "byzantine historical");
 
+    # Verify values seeded for all 21 cultures
+    assert_eq(culture_values_count(eg), 3, "egyptian 3 values");
+    assert_eq(culture_values_count(hp), 3, "hiphop 3 values");
+    assert_eq(culture_values_count(jp), 3, "japanese 3 values");
+    assert_eq(culture_values_count(ar), 3, "arab 3 values");
+    assert_eq(culture_values_count(je), 3, "jewish 3 values");
+    assert_eq(culture_values_count(by), 3, "byzantine 3 values");
+    assert_eq(culture_values_count(hadara_get(20)), 3, "polynesian 3 values");
+
+    # Verify sub-entities for new cultures
+    assert_eq(culture_practices_count(ar), 3, "arab 3 practices");
+    assert_eq(culture_art_forms_count(ar), 3, "arab 3 art forms");
+    assert_eq(culture_figures_count(ar), 2, "arab 2 figures");
+    var ar_tc = load64(ar + CULTURE_TEXTS_COUNT);
+    assert_eq(ar_tc, 2, "arab 2 texts");
+
+    assert_eq(culture_practices_count(je), 3, "jewish 3 practices");
+    var je_tc = load64(je + CULTURE_TEXTS_COUNT);
+    assert_eq(je_tc, 2, "jewish 2 texts");
+
+    assert_eq(culture_practices_count(me), 2, "mesopotamian 2 practices");
+    assert_eq(culture_art_forms_count(me), 2, "mesopotamian 2 art forms");
+    var me_tc = load64(me + CULTURE_TEXTS_COUNT);
+    assert_eq(me_tc, 2, "mesopotamian 2 texts");
+
+    assert_eq(culture_practices_count(hadara_get(15)), 3, "tibetan 3 practices");
+    assert_eq(culture_art_forms_count(hadara_get(15)), 2, "tibetan 2 art forms");
+
+    assert_eq(culture_practices_count(hadara_get(17)), 2, "mongol 2 practices");
+    assert_eq(culture_art_forms_count(hadara_get(17)), 2, "mongol 2 art forms");
+
+    assert_eq(culture_practices_count(by), 2, "byzantine 2 practices");
+    assert_eq(culture_art_forms_count(by), 2, "byzantine 2 art forms");
+
+    assert_eq(culture_practices_count(hadara_get(20)), 2, "polynesian 2 practices");
+    assert_eq(culture_art_forms_count(hadara_get(20)), 2, "polynesian 2 art forms");
+
+    # Verify new relations
+    assert_eq(culture_relations_count(ar), 1, "arab 1 relation");
+    assert_eq(culture_relations_count(hadara_get(15)), 1, "tibetan 1 relation");
+    assert_eq(culture_relations_count(me), 1, "mesopotamian 1 relation");
+    assert_eq(culture_relations_count(by), 1, "byzantine 1 relation");
+    assert_eq(culture_relations_count(ko), 1, "korean 1 relation");
+    assert_eq(culture_relations_count(je), 1, "jewish 1 relation");
+
     prints("part 2: seed data — PASS\n");
 
     # ================================================================
@@ -584,13 +629,13 @@ fn main() {
     assert_eq(ro_narr, 1, "roman 1 narrative art form");
 
     # --- jnana: knowledge export ---
-    # Fact count for Hip-Hop: 1 (culture) + 4 practices + 4 arts + 3 figs + 0 texts + 3 artifacts + 1 rel = 16
+    # Fact count for Hip-Hop: 1 + 3 values + 4 practices + 4 arts + 3 figs + 0 texts + 3 artifacts + 1 rel = 19
     var hp_facts = hadara_fact_count(9);
-    assert_eq(hp_facts, 16, "hiphop 16 facts");
+    assert_eq(hp_facts, 19, "hiphop 19 facts");
 
-    # Fact count for Greek: 1 + 3 + 3 + 2 + 2 + 0 + 3 = 14
+    # Fact count for Greek: 1 + 3 values + 3 practices + 3 arts + 2 figs + 2 texts + 0 artifacts + 3 rels = 17
     var gr_facts = hadara_fact_count(3);
-    assert_eq(gr_facts, 14, "greek 14 facts");
+    assert_eq(gr_facts, 17, "greek 17 facts");
 
     # Total facts across all cultures
     var total = hadara_total_facts();

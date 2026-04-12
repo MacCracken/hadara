@@ -1348,6 +1348,259 @@ fn hadara_seed() {
     store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
     hadara_set_art_forms(polynesian, po_arts, 2);
 
+    # --- Tibetan practices — Samuel (1993) ---
+    var ti_practices = alloc(PRACTICE_SIZE * 3);
+    p = ti_practices;
+    store64(p + PRACTICE_NAME_PTR, "Prostration");
+    store64(p + PRACTICE_NAME_LEN, 11);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ti_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Mandala Offering");
+    store64(p + PRACTICE_NAME_LEN, 16);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ti_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Butter Sculpture");
+    store64(p + PRACTICE_NAME_LEN, 16);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(tibetan, ti_practices, 3);
+
+    # --- Tibetan art forms ---
+    var ti_arts = alloc(ART_FORM_SIZE * 2);
+    a = ti_arts;
+    store64(a + ART_FORM_NAME_PTR, "Thangka Painting");
+    store64(a + ART_FORM_NAME_LEN, 16);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = ti_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Overtone Chanting");
+    store64(a + ART_FORM_NAME_LEN, 17);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    hadara_set_art_forms(tibetan, ti_arts, 2);
+
+    # --- Tibetan texts ---
+    var ti_texts = alloc(TEXT_SIZE * 1);
+    t = ti_texts;
+    store64(t + TEXT_TITLE_PTR, "Bardo Thodol");
+    store64(t + TEXT_TITLE_LEN, 12);
+    store64(t + TEXT_AUTHOR_PTR, "Padmasambhava");
+    store64(t + TEXT_AUTHOR_LEN, 13);
+    store64(t + TEXT_YEAR, 800);
+    store64(t + TEXT_SACRED, 1);
+    hadara_set_texts(tibetan, ti_texts, 1);
+
+    # --- Mongol practices — Weatherford (2004) ---
+    var mo_practices = alloc(PRACTICE_SIZE * 2);
+    p = mo_practices;
+    store64(p + PRACTICE_NAME_PTR, "Naadam");
+    store64(p + PRACTICE_NAME_LEN, 6);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 0);
+    p = mo_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Nomadic Herding");
+    store64(p + PRACTICE_NAME_LEN, 15);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_DAILY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(mongol, mo_practices, 2);
+
+    # --- Mongol art forms ---
+    var mo_arts = alloc(ART_FORM_SIZE * 2);
+    a = mo_arts;
+    store64(a + ART_FORM_NAME_PTR, "Khoomei");
+    store64(a + ART_FORM_NAME_LEN, 7);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = mo_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Epic of Jangar");
+    store64(a + ART_FORM_NAME_LEN, 14);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    hadara_set_art_forms(mongol, mo_arts, 2);
+
+    # --- Byzantine practices — Mango (1980) ---
+    var by_practices = alloc(PRACTICE_SIZE * 2);
+    p = by_practices;
+    store64(p + PRACTICE_NAME_PTR, "Divine Liturgy");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = by_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Icon Veneration");
+    store64(p + PRACTICE_NAME_LEN, 15);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(byzantine, by_practices, 2);
+
+    # --- Byzantine art forms ---
+    var by_arts = alloc(ART_FORM_SIZE * 2);
+    a = by_arts;
+    store64(a + ART_FORM_NAME_PTR, "Icon Painting");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = by_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Hagia Sophia Style");
+    store64(a + ART_FORM_NAME_LEN, 18);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    hadara_set_art_forms(byzantine, by_arts, 2);
+
+    # ================================================================
+    # Values/Worldview — Kottak (2019), Ember & Ember (2015)
+    # Each culture gets 3-4 core values as string pointers (8 bytes each)
+    # ================================================================
+
+    # Egyptian: Ma'at (cosmic order), afterlife, divine kingship
+    var eg_vals = alloc(3 * 8);
+    store64(eg_vals, "Ma'at");
+    store64(eg_vals + 8, "Afterlife preparation");
+    store64(eg_vals + 16, "Divine kingship");
+    hadara_set_values(egyptian, eg_vals, 3);
+
+    # Persian: Asha (truth/righteousness), hospitality, dualism
+    var pe_vals = alloc(3 * 8);
+    store64(pe_vals, "Asha");
+    store64(pe_vals + 8, "Hospitality");
+    store64(pe_vals + 16, "Cosmic dualism");
+    hadara_set_values(persian, pe_vals, 3);
+
+    # Vedic: Dharma, ahimsa, cyclical time
+    var ve_vals = alloc(3 * 8);
+    store64(ve_vals, "Dharma");
+    store64(ve_vals + 8, "Ahimsa");
+    store64(ve_vals + 16, "Cyclical time");
+    hadara_set_values(vedic, ve_vals, 3);
+
+    # Greek: Arete (excellence), logos, democratic participation
+    var gr_vals = alloc(3 * 8);
+    store64(gr_vals, "Arete");
+    store64(gr_vals + 8, "Logos");
+    store64(gr_vals + 16, "Democratic participation");
+    hadara_set_values(greek, gr_vals, 3);
+
+    # Japanese: Wa (harmony), on (obligation), mono no aware
+    var jp_vals = alloc(3 * 8);
+    store64(jp_vals, "Wa");
+    store64(jp_vals + 8, "On");
+    store64(jp_vals + 16, "Mono no aware");
+    hadara_set_values(japanese, jp_vals, 3);
+
+    # West African: Ubuntu, communalism, ancestral continuity
+    var wa_vals = alloc(3 * 8);
+    store64(wa_vals, "Ubuntu");
+    store64(wa_vals + 8, "Communalism");
+    store64(wa_vals + 16, "Ancestral continuity");
+    hadara_set_values(westafrican, wa_vals, 3);
+
+    # Norse: Honor, fate (wyrd), heroic death
+    var no_vals = alloc(3 * 8);
+    store64(no_vals, "Honor");
+    store64(no_vals + 8, "Wyrd");
+    store64(no_vals + 16, "Heroic death");
+    hadara_set_values(norse, no_vals, 3);
+
+    # Hip-Hop: Authenticity, self-expression, community uplift
+    var hp_vals = alloc(3 * 8);
+    store64(hp_vals, "Authenticity");
+    store64(hp_vals + 8, "Self-expression");
+    store64(hp_vals + 16, "Community uplift");
+    hadara_set_values(hiphop, hp_vals, 3);
+
+    # Roman: Virtus, pietas, civic duty
+    var ro_vals = alloc(3 * 8);
+    store64(ro_vals, "Virtus");
+    store64(ro_vals + 8, "Pietas");
+    store64(ro_vals + 16, "Civic duty");
+    hadara_set_values(roman, ro_vals, 3);
+
+    # Chinese: Ren (benevolence), li (ritual propriety), filial piety
+    var ch_vals = alloc(3 * 8);
+    store64(ch_vals, "Ren");
+    store64(ch_vals + 8, "Li");
+    store64(ch_vals + 16, "Filial piety");
+    hadara_set_values(chinese, ch_vals, 3);
+
+    # Aboriginal: Dreamtime, country (land-spirit bond), kinship
+    var ab_vals = alloc(3 * 8);
+    store64(ab_vals, "Dreamtime");
+    store64(ab_vals + 8, "Country");
+    store64(ab_vals + 16, "Kinship law");
+    hadara_set_values(aboriginal, ab_vals, 3);
+
+    # Maya: K'uhul (sacredness), cyclical calendar, reciprocity with gods
+    var ma_vals = alloc(3 * 8);
+    store64(ma_vals, "K'uhul");
+    store64(ma_vals + 8, "Cyclical calendar");
+    store64(ma_vals + 16, "Divine reciprocity");
+    hadara_set_values(maya, ma_vals, 3);
+
+    # Scottish: Clan loyalty, independence, oral tradition
+    var sc_vals = alloc(3 * 8);
+    store64(sc_vals, "Clan loyalty");
+    store64(sc_vals + 8, "Independence");
+    store64(sc_vals + 16, "Oral tradition");
+    hadara_set_values(scottish, sc_vals, 3);
+
+    # Arab: Ummah (community), hospitality, divine submission
+    var ar_vals = alloc(3 * 8);
+    store64(ar_vals, "Ummah");
+    store64(ar_vals + 8, "Hospitality");
+    store64(ar_vals + 16, "Tawhid");
+    hadara_set_values(arab, ar_vals, 3);
+
+    # Jewish: Tikkun olam, covenant, learning/study
+    var je_vals = alloc(3 * 8);
+    store64(je_vals, "Tikkun olam");
+    store64(je_vals + 8, "Covenant");
+    store64(je_vals + 16, "Torah study");
+    hadara_set_values(jewish, je_vals, 3);
+
+    # Korean: Jeong (deep affection), han (collective grief), filial piety
+    var ko_vals = alloc(3 * 8);
+    store64(ko_vals, "Jeong");
+    store64(ko_vals + 8, "Han");
+    store64(ko_vals + 16, "Filial piety");
+    hadara_set_values(korean, ko_vals, 3);
+
+    # Tibetan: Compassion, impermanence, liberation
+    var ti_vals = alloc(3 * 8);
+    store64(ti_vals, "Compassion");
+    store64(ti_vals + 8, "Impermanence");
+    store64(ti_vals + 16, "Liberation");
+    hadara_set_values(tibetan, ti_vals, 3);
+
+    # Mongol: Eternal Blue Sky, freedom, strength
+    var mo_vals = alloc(3 * 8);
+    store64(mo_vals, "Eternal Blue Sky");
+    store64(mo_vals + 8, "Freedom");
+    store64(mo_vals + 16, "Strength");
+    hadara_set_values(mongol, mo_vals, 3);
+
+    # Byzantine: Orthodoxy, imperial continuity, divine mandate
+    var by_vals = alloc(3 * 8);
+    store64(by_vals, "Orthodoxy");
+    store64(by_vals + 8, "Imperial continuity");
+    store64(by_vals + 16, "Theosis");
+    hadara_set_values(byzantine, by_vals, 3);
+
+    # Mesopotamian: Divine order, civilization, written law
+    var ms_vals = alloc(3 * 8);
+    store64(ms_vals, "Divine order");
+    store64(ms_vals + 8, "Civilization");
+    store64(ms_vals + 16, "Written law");
+    hadara_set_values(mesopotamian, ms_vals, 3);
+
+    # Polynesian: Mana, tapu, navigation mastery
+    var po_vals = alloc(3 * 8);
+    store64(po_vals, "Mana");
+    store64(po_vals + 8, "Tapu");
+    store64(po_vals + 16, "Navigation mastery");
+    hadara_set_values(polynesian, po_vals, 3);
+
     # ================================================================
     # Phase 4c: Additional relations
     # ================================================================

@@ -205,8 +205,9 @@ fn hadara_narratives(culture_id, out_buf, max) {
 fn hadara_fact_count(culture_id) {
     var c = hadara_get(culture_id);
     if (c == 0) { return 0; }
-    # Facts = 1 (the culture itself) + practices + art forms + figures + texts + artifacts + relations
+    # Facts = 1 (the culture itself) + values + practices + art forms + figures + texts + artifacts + relations
     var facts = 1;
+    facts = facts + culture_values_count(c);
     facts = facts + culture_practices_count(c);
     facts = facts + culture_art_forms_count(c);
     facts = facts + culture_figures_count(c);
