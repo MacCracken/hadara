@@ -241,15 +241,15 @@ fn main() {
     assert_eq(culture_art_forms_count(ro), 3, "seed roman 3 art forms");
     assert_eq(culture_figures_count(ro), 2, "seed roman 2 figures");
 
-    # Verify relations (updated with syncretism/exchange/absorbed)
-    assert_eq(culture_relations_count(pe), 1, "seed persian 1 relation");
+    # Verify relations (updated with syncretism/exchange/absorbed + Phase 4c)
+    assert_eq(culture_relations_count(pe), 2, "seed persian 2 relations");
     assert_eq(culture_relations_count(eg), 2, "seed egyptian 2 relations");
     assert_eq(culture_relations_count(hp), 1, "seed hiphop 1 relation");
     assert_eq(culture_relations_count(gr), 3, "seed greek 3 relations");
     assert_eq(culture_relations_count(ro), 2, "seed roman 2 relations");
     assert_eq(culture_relations_count(ch), 2, "seed chinese 2 relations");
     assert_eq(culture_relations_count(jp), 1, "seed japanese 1 relation");
-    assert_eq(culture_relations_count(hadara_get(2)), 1, "seed vedic 1 relation");
+    assert_eq(culture_relations_count(hadara_get(2)), 2, "seed vedic 2 relations");
 
     # Verify temporal queries on full corpus
     var qbuf = alloc(32 * 8);
@@ -441,9 +441,9 @@ fn main() {
     assert_eq(load64(gbuf), 3, "egyptian syncretized with greek");
 
     # Exchange queries
-    # Persian↔Egyptian (525-404 BCE), Vedic↔Chinese (100 BCE - 800 CE)
+    # Persian now has: ↔Egyptian (525-404 BCE) + ↔Arab (651-1258 CE)
     var n26 = hadara_exchanged_with(1, gbuf, 32);
-    assert_eq(n26, 1, "persian exchanged with 1");
+    assert_eq(n26, 2, "persian exchanged with 2");
 
     var n27 = hadara_exchanged_with(2, gbuf, 32);
     assert_eq(n27, 1, "vedic exchanged with 1");

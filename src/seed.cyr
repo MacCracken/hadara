@@ -1124,5 +1124,304 @@ fn hadara_seed() {
     hadara_set_language(polynesian, "Proto-Polynesian", 16);
     # Oral tradition culture — no indigenous script
 
+    # ================================================================
+    # Sub-entities for new cultures (Phase 4a)
+    # ================================================================
+
+    # --- Arab/Islamic practices — Hourani (1991) ---
+    var ar_practices = alloc(PRACTICE_SIZE * 3);
+    p = ar_practices;
+    store64(p + PRACTICE_NAME_PTR, "Salat");
+    store64(p + PRACTICE_NAME_LEN, 5);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ar_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Hajj");
+    store64(p + PRACTICE_NAME_LEN, 4);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ar_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Ramadan Fast");
+    store64(p + PRACTICE_NAME_LEN, 12);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_DIETARY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(arab, ar_practices, 3);
+
+    # --- Arab art forms ---
+    var ar_arts = alloc(ART_FORM_SIZE * 3);
+    a = ar_arts;
+    store64(a + ART_FORM_NAME_PTR, "Arabic Calligraphy");
+    store64(a + ART_FORM_NAME_LEN, 18);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = ar_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Geometric Tilework");
+    store64(a + ART_FORM_NAME_LEN, 18);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    a = ar_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Qasida Poetry");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_LITERATURE);
+    hadara_set_art_forms(arab, ar_arts, 3);
+
+    # --- Arab figures ---
+    var ar_figs = alloc(FIGURE_SIZE * 2);
+    f = ar_figs;
+    store64(f + FIGURE_NAME_PTR, "Ibn Khaldun");
+    store64(f + FIGURE_NAME_LEN, 11);
+    store64(f + FIGURE_ROLE_PTR, "Founded historiography and sociology, wrote Muqaddimah");
+    store64(f + FIGURE_ROLE_LEN, 55);
+    store64(f + FIGURE_ERA_START, 1332);
+    store64(f + FIGURE_ERA_END, 1406);
+    f = ar_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Rumi");
+    store64(f + FIGURE_NAME_LEN, 4);
+    store64(f + FIGURE_ROLE_PTR, "Sufi mystic poet, Masnavi is foundational spiritual literature");
+    store64(f + FIGURE_ROLE_LEN, 62);
+    store64(f + FIGURE_ERA_START, 1207);
+    store64(f + FIGURE_ERA_END, 1273);
+    hadara_set_figures(arab, ar_figs, 2);
+
+    # --- Arab texts ---
+    var ar_texts = alloc(TEXT_SIZE * 2);
+    t = ar_texts;
+    store64(t + TEXT_TITLE_PTR, "Quran");
+    store64(t + TEXT_TITLE_LEN, 5);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 632);
+    store64(t + TEXT_SACRED, 1);
+    t = ar_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Muqaddimah");
+    store64(t + TEXT_TITLE_LEN, 10);
+    store64(t + TEXT_AUTHOR_PTR, "Ibn Khaldun");
+    store64(t + TEXT_AUTHOR_LEN, 11);
+    store64(t + TEXT_YEAR, 1377);
+    store64(t + TEXT_SACRED, 0);
+    hadara_set_texts(arab, ar_texts, 2);
+
+    # --- Korean practices — Eckert et al. (1990) ---
+    var ko_practices = alloc(PRACTICE_SIZE * 2);
+    p = ko_practices;
+    store64(p + PRACTICE_NAME_PTR, "Jesa");
+    store64(p + PRACTICE_NAME_LEN, 4);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ko_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Kimjang");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_DIETARY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(korean, ko_practices, 2);
+
+    # --- Korean art forms ---
+    var ko_arts = alloc(ART_FORM_SIZE * 3);
+    a = ko_arts;
+    store64(a + ART_FORM_NAME_PTR, "Pansori");
+    store64(a + ART_FORM_NAME_LEN, 7);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    a = ko_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Celadon Ceramics");
+    store64(a + ART_FORM_NAME_LEN, 16);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = ko_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Hanok Architecture");
+    store64(a + ART_FORM_NAME_LEN, 18);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    hadara_set_art_forms(korean, ko_arts, 3);
+
+    # --- Jewish practices — Seltzer (1980) ---
+    var je_practices = alloc(PRACTICE_SIZE * 3);
+    p = je_practices;
+    store64(p + PRACTICE_NAME_PTR, "Shabbat");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = je_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Passover Seder");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = je_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Kashrut");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_DIETARY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(jewish, je_practices, 3);
+
+    # --- Jewish texts ---
+    var je_texts = alloc(TEXT_SIZE * 2);
+    t = je_texts;
+    store64(t + TEXT_TITLE_PTR, "Torah");
+    store64(t + TEXT_TITLE_LEN, 5);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 0 - 600);
+    store64(t + TEXT_SACRED, 1);
+    t = je_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Talmud");
+    store64(t + TEXT_TITLE_LEN, 6);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 500);
+    store64(t + TEXT_SACRED, 1);
+    hadara_set_texts(jewish, je_texts, 2);
+
+    # --- Mesopotamian practices — Kramer (1963) ---
+    var ms_practices = alloc(PRACTICE_SIZE * 2);
+    p = ms_practices;
+    store64(p + PRACTICE_NAME_PTR, "Akitu Festival");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ms_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Temple Priesthood");
+    store64(p + PRACTICE_NAME_LEN, 17);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(mesopotamian, ms_practices, 2);
+
+    # --- Mesopotamian art forms ---
+    var ms_arts = alloc(ART_FORM_SIZE * 2);
+    a = ms_arts;
+    store64(a + ART_FORM_NAME_PTR, "Cuneiform Writing");
+    store64(a + ART_FORM_NAME_LEN, 17);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = ms_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Ziggurat Architecture");
+    store64(a + ART_FORM_NAME_LEN, 21);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    hadara_set_art_forms(mesopotamian, ms_arts, 2);
+
+    # --- Mesopotamian texts ---
+    var ms_texts = alloc(TEXT_SIZE * 2);
+    t = ms_texts;
+    store64(t + TEXT_TITLE_PTR, "Epic of Gilgamesh");
+    store64(t + TEXT_TITLE_LEN, 17);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 0 - 2100);
+    store64(t + TEXT_SACRED, 0);
+    t = ms_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Code of Hammurabi");
+    store64(t + TEXT_TITLE_LEN, 17);
+    store64(t + TEXT_AUTHOR_PTR, "Hammurabi");
+    store64(t + TEXT_AUTHOR_LEN, 9);
+    store64(t + TEXT_YEAR, 0 - 1754);
+    store64(t + TEXT_SACRED, 0);
+    hadara_set_texts(mesopotamian, ms_texts, 2);
+
+    # --- Polynesian practices — Howe (2006) ---
+    var po_practices = alloc(PRACTICE_SIZE * 2);
+    p = po_practices;
+    store64(p + PRACTICE_NAME_PTR, "Wayfinding");
+    store64(p + PRACTICE_NAME_LEN, 10);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_DAILY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = po_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Haka");
+    store64(p + PRACTICE_NAME_LEN, 4);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(polynesian, po_practices, 2);
+
+    # --- Polynesian art forms ---
+    var po_arts = alloc(ART_FORM_SIZE * 2);
+    a = po_arts;
+    store64(a + ART_FORM_NAME_PTR, "Tatau");
+    store64(a + ART_FORM_NAME_LEN, 5);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = po_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Oral Navigation Chants");
+    store64(a + ART_FORM_NAME_LEN, 22);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    hadara_set_art_forms(polynesian, po_arts, 2);
+
+    # ================================================================
+    # Phase 4c: Additional relations
+    # ================================================================
+
+    var rels4 = alloc(RELATION_SIZE * 6);
+
+    # Arab↔Persian exchange — Hourani (1991): post-conquest cultural synthesis
+    r = rels4;
+    store64(r + RELATION_SOURCE, arab);
+    store64(r + RELATION_TARGET, persian);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 651);
+    store64(r + RELATION_PERIOD_END, 1258);
+
+    # Vedic→Tibetan influence — Samuel (1993): Buddhist transmission
+    r = rels4 + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, vedic);
+    store64(r + RELATION_TARGET, tibetan);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 700);
+    store64(r + RELATION_PERIOD_END, 1200);
+
+    # Mesopotamian→Egyptian exchange — Bronze Age trade networks
+    r = rels4 + RELATION_SIZE * 2;
+    store64(r + RELATION_SOURCE, mesopotamian);
+    store64(r + RELATION_TARGET, egyptian);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 0 - 3000);
+    store64(r + RELATION_PERIOD_END, 0 - 1200);
+
+    # Byzantine branched from Roman — Mango (1980)
+    r = rels4 + RELATION_SIZE * 3;
+    store64(r + RELATION_SOURCE, roman);
+    store64(r + RELATION_TARGET, byzantine);
+    store64(r + RELATION_TYPE, REL_BRANCHED_FROM);
+    store64(r + RELATION_PERIOD_START, 330);
+    store64(r + RELATION_PERIOD_END, 476);
+
+    # Chinese→Korean influence — Eckert et al. (1990): Confucianism, writing
+    r = rels4 + RELATION_SIZE * 4;
+    store64(r + RELATION_SOURCE, chinese);
+    store64(r + RELATION_TARGET, korean);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 0 - 100);
+    store64(r + RELATION_PERIOD_END, 900);
+
+    # Jewish↔Arab syncretism — Judeo-Arabic philosophical tradition
+    r = rels4 + RELATION_SIZE * 5;
+    store64(r + RELATION_SOURCE, jewish);
+    store64(r + RELATION_TARGET, arab);
+    store64(r + RELATION_TYPE, REL_SYNCRETIZED);
+    store64(r + RELATION_PERIOD_START, 800);
+    store64(r + RELATION_PERIOD_END, 1200);
+
+    hadara_set_relations(arab, rels4, 1);
+    hadara_set_relations(tibetan, rels4 + RELATION_SIZE, 1);
+    hadara_set_relations(mesopotamian, rels4 + RELATION_SIZE * 2, 1);
+    hadara_set_relations(byzantine, rels4 + RELATION_SIZE * 3, 1);
+    hadara_set_relations(korean, rels4 + RELATION_SIZE * 4, 1);
+
+    # Jewish: syncretism with Arab
+    hadara_set_relations(jewish, rels4 + RELATION_SIZE * 5, 1);
+
+    # Update Persian: now has original exchange + Arab exchange
+    var pe_rels2 = alloc(RELATION_SIZE * 2);
+    memcpy(pe_rels2, rels, RELATION_SIZE);          # original Persian↔Egyptian exchange
+    memcpy(pe_rels2 + RELATION_SIZE, rels4, RELATION_SIZE);  # Arab↔Persian exchange
+    hadara_set_relations(persian, pe_rels2, 2);
+
+    # Update Vedic: exchange with Chinese + influence on Tibetan
+    var ve_rels2 = alloc(RELATION_SIZE * 2);
+    memcpy(ve_rels2, rels3 + RELATION_SIZE, RELATION_SIZE);           # Vedic↔Chinese exchange
+    memcpy(ve_rels2 + RELATION_SIZE, rels4 + RELATION_SIZE, RELATION_SIZE);  # Vedic→Tibetan influence
+    hadara_set_relations(vedic, ve_rels2, 2);
+
     return hadara_count;
 }
