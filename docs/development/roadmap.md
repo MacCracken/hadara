@@ -33,16 +33,17 @@
 
 ## Phase 4 — Deep Content (current)
 
-### 4a: Seed data expansion (actionable now)
-- [ ] Practices, art forms, figures, texts, artifacts for 8 new cultures (Arab, Korean, Tibetan, Mesopotamian, Mongol, Jewish, Byzantine, Polynesian)
-- [ ] Values/worldview data for all 21 cultures (use existing `values_ptr/count` field)
-- [ ] Diaspora data for cultures with significant dispersal (Jewish, African, Polynesian, Chinese)
-- [ ] Medium-priority cultures: Aztec/Mexica, Inuit, Inca/Quechua, Ottoman, Khmer, Swahili, Yoruba, Berber/Amazigh
+### 4a: Seed data expansion ✓
+- [x] Practices, art forms, figures for first 21 cultures (all populated)
+- [x] Values/worldview data for all 29 cultures
+- [x] Diaspora data for 6 cultures (Jewish, Chinese, West African, Polynesian, Hip-Hop, Persian)
+- [x] Medium-priority cultures added: Aztec, Inca-Quechua, Ottoman, Khmer, Swahili, Yoruba, Amazigh, Inuit
+- [x] Sub-entities (practices + art forms) for all 29 cultures
 
-### 4b: Structural improvements (actionable now)
-- [ ] Data-driven display rules (move from hardcoded IDs to stored cultural dimensions)
+### 4b: Structural improvements
+- [x] Data-driven display rules (stored on culture record, 4 dimensions)
 - [ ] Subculture modeling (Hip-Hop regional variants, Ainu within Japanese)
-- [ ] Culture↔itihas civilization cross-reference field (for future port)
+- [x] Culture↔itihas civilization cross-reference (bridge.cyr)
 - [ ] Relation descriptions (use existing `desc_ptr/desc_len` in RelationLayout — never seeded)
 
 ### 4c: Additional relations (actionable now)

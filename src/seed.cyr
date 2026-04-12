@@ -1,6 +1,6 @@
 # seed.cyr -- Pre-built culture data
 #
-# 13 cultures with verified dates, endonyms, and descriptions.
+# 29 cultures with verified dates, endonyms, and descriptions.
 # All data sourced from academic references — see docs/sources/.
 #
 # Sources: Shaw (2000), Brosius (2006), Basham (1967), Boardman (1970--2005),
@@ -1593,6 +1593,226 @@ fn hadara_seed() {
     store64(f + FIGURE_ERA_END, 1204);
     hadara_set_figures(jewish, je_figs, 2);
 
+    # ================================================================
+    # Sub-entities for medium-priority cultures
+    # ================================================================
+
+    # --- Aztec — Townsend (2009) ---
+    var az_practices = alloc(PRACTICE_SIZE * 2);
+    p = az_practices;
+    store64(p + PRACTICE_NAME_PTR, "Tonalpohualli Calendar");
+    store64(p + PRACTICE_NAME_LEN, 22);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = az_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Flower Wars");
+    store64(p + PRACTICE_NAME_LEN, 11);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_MARTIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(aztec, az_practices, 2);
+
+    var az_arts = alloc(ART_FORM_SIZE * 2);
+    a = az_arts;
+    store64(a + ART_FORM_NAME_PTR, "Featherwork");
+    store64(a + ART_FORM_NAME_LEN, 11);
+    store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
+    a = az_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Nahuatl Poetry");
+    store64(a + ART_FORM_NAME_LEN, 14);
+    store64(a + ART_FORM_MEDIUM, ART_LITERATURE);
+    hadara_set_art_forms(aztec, az_arts, 2);
+
+    # --- Inca/Quechua — D'Altroy (2014) ---
+    var ic_practices = alloc(PRACTICE_SIZE * 2);
+    p = ic_practices;
+    store64(p + PRACTICE_NAME_PTR, "Inti Raymi");
+    store64(p + PRACTICE_NAME_LEN, 10);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ic_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Ayni Reciprocity");
+    store64(p + PRACTICE_NAME_LEN, 16);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(inca, ic_practices, 2);
+
+    var ic_arts = alloc(ART_FORM_SIZE * 2);
+    a = ic_arts;
+    store64(a + ART_FORM_NAME_PTR, "Quipu");
+    store64(a + ART_FORM_NAME_LEN, 5);
+    store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
+    a = ic_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Andean Weaving");
+    store64(a + ART_FORM_NAME_LEN, 14);
+    store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
+    hadara_set_art_forms(inca, ic_arts, 2);
+
+    # --- Yoruba — Bascom (1969) ---
+    var yo_practices = alloc(PRACTICE_SIZE * 2);
+    p = yo_practices;
+    store64(p + PRACTICE_NAME_PTR, "Ifa Divination");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = yo_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Egungun Festival");
+    store64(p + PRACTICE_NAME_LEN, 17);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(yoruba, yo_practices, 2);
+
+    var yo_arts = alloc(ART_FORM_SIZE * 2);
+    a = yo_arts;
+    store64(a + ART_FORM_NAME_PTR, "Bronze Casting");
+    store64(a + ART_FORM_NAME_LEN, 14);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = yo_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Talking Drums");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    hadara_set_art_forms(yoruba, yo_arts, 2);
+
+    # --- Swahili — Nurse & Spear (1985) ---
+    var sw_practices = alloc(PRACTICE_SIZE * 2);
+    p = sw_practices;
+    store64(p + PRACTICE_NAME_PTR, "Dhow Trading");
+    store64(p + PRACTICE_NAME_LEN, 12);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 0);
+    p = sw_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Maulidi Festival");
+    store64(p + PRACTICE_NAME_LEN, 16);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(swahili, sw_practices, 2);
+
+    var sw_arts = alloc(ART_FORM_SIZE * 2);
+    a = sw_arts;
+    store64(a + ART_FORM_NAME_PTR, "Taarab Music");
+    store64(a + ART_FORM_NAME_LEN, 12);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = sw_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Coral Stone Architecture");
+    store64(a + ART_FORM_NAME_LEN, 24);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    hadara_set_art_forms(swahili, sw_arts, 2);
+
+    # --- Amazigh — Brett & Fentress (1996) ---
+    var am_practices = alloc(PRACTICE_SIZE * 2);
+    p = am_practices;
+    store64(p + PRACTICE_NAME_PTR, "Ahwash Dance");
+    store64(p + PRACTICE_NAME_LEN, 12);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 0);
+    p = am_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Yennayer New Year");
+    store64(p + PRACTICE_NAME_LEN, 17);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(amazigh, am_practices, 2);
+
+    var am_arts = alloc(ART_FORM_SIZE * 2);
+    a = am_arts;
+    store64(a + ART_FORM_NAME_PTR, "Tifinagh Script");
+    store64(a + ART_FORM_NAME_LEN, 15);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = am_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Berber Carpet Weaving");
+    store64(a + ART_FORM_NAME_LEN, 21);
+    store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
+    hadara_set_art_forms(amazigh, am_arts, 2);
+
+    # --- Inuit — Stern (2004) ---
+    var in_practices = alloc(PRACTICE_SIZE * 2);
+    p = in_practices;
+    store64(p + PRACTICE_NAME_PTR, "Drum Dance");
+    store64(p + PRACTICE_NAME_LEN, 10);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = in_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Throat Singing");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(inuit, in_practices, 2);
+
+    var in_arts = alloc(ART_FORM_SIZE * 2);
+    a = in_arts;
+    store64(a + ART_FORM_NAME_PTR, "Soapstone Carving");
+    store64(a + ART_FORM_NAME_LEN, 17);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = in_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Oral Storytelling");
+    store64(a + ART_FORM_NAME_LEN, 17);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    hadara_set_art_forms(inuit, in_arts, 2);
+
+    # --- Khmer — Higham (2001) ---
+    var km_practices = alloc(PRACTICE_SIZE * 2);
+    p = km_practices;
+    store64(p + PRACTICE_NAME_PTR, "Water Festival");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = km_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Theravada Meditation");
+    store64(p + PRACTICE_NAME_LEN, 20);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(khmer, km_practices, 2);
+
+    var km_arts = alloc(ART_FORM_SIZE * 2);
+    a = km_arts;
+    store64(a + ART_FORM_NAME_PTR, "Apsara Dance");
+    store64(a + ART_FORM_NAME_LEN, 12);
+    store64(a + ART_FORM_MEDIUM, ART_DANCE);
+    a = km_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Temple Relief Sculpture");
+    store64(a + ART_FORM_NAME_LEN, 23);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    hadara_set_art_forms(khmer, km_arts, 2);
+
+    # --- Ottoman/Turkish — Finkel (2007) ---
+    var ot_practices = alloc(PRACTICE_SIZE * 2);
+    p = ot_practices;
+    store64(p + PRACTICE_NAME_PTR, "Hammam Bathing");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 0);
+    p = ot_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Whirling Dervish");
+    store64(p + PRACTICE_NAME_LEN, 16);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(ottoman, ot_practices, 2);
+
+    var ot_arts = alloc(ART_FORM_SIZE * 2);
+    a = ot_arts;
+    store64(a + ART_FORM_NAME_PTR, "Iznik Ceramics");
+    store64(a + ART_FORM_NAME_LEN, 14);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = ot_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Ottoman Architecture");
+    store64(a + ART_FORM_NAME_LEN, 20);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    hadara_set_art_forms(ottoman, ot_arts, 2);
+
     # --- Display dimensions (formality, expressiveness, individualism, directness) ---
     # Sources: Kottak (2019), Ember & Ember (2015), culture-specific refs
     hadara_set_display(egyptian, 9, 6, 2, 4);     # highly formal, collective, hieratic society
@@ -1813,6 +2033,62 @@ fn hadara_seed() {
     store64(po_vals + 8, "Tapu");
     store64(po_vals + 16, "Navigation mastery");
     hadara_set_values(polynesian, po_vals, 3);
+
+    # Aztec: cosmic debt, warrior honor, cyclical destruction/renewal
+    var az_vals = alloc(3 * 8);
+    store64(az_vals, "Cosmic debt");
+    store64(az_vals + 8, "Warrior honor");
+    store64(az_vals + 16, "Cyclical renewal");
+    hadara_set_values(aztec, az_vals, 3);
+
+    # Inca: reciprocity, sun worship, collective labor
+    var ic_vals = alloc(3 * 8);
+    store64(ic_vals, "Ayni");
+    store64(ic_vals + 8, "Inti worship");
+    store64(ic_vals + 16, "Collective labor");
+    hadara_set_values(inca, ic_vals, 3);
+
+    # Ottoman: state order, hospitality, cosmopolitanism
+    var ot_vals = alloc(3 * 8);
+    store64(ot_vals, "Nizam");
+    store64(ot_vals + 8, "Hospitality");
+    store64(ot_vals + 16, "Cosmopolitanism");
+    hadara_set_values(ottoman, ot_vals, 3);
+
+    # Khmer: merit-making, divine kingship, harmony
+    var km_vals = alloc(3 * 8);
+    store64(km_vals, "Merit-making");
+    store64(km_vals + 8, "Devaraja");
+    store64(km_vals + 16, "Harmony");
+    hadara_set_values(khmer, km_vals, 3);
+
+    # Swahili: trade, ustaarabu (civilized refinement), synthesis
+    var sw_vals = alloc(3 * 8);
+    store64(sw_vals, "Trade");
+    store64(sw_vals + 8, "Ustaarabu");
+    store64(sw_vals + 16, "Cultural synthesis");
+    hadara_set_values(swahili, sw_vals, 3);
+
+    # Yoruba: Ase (life force), ancestral duty, community balance
+    var yo_vals = alloc(3 * 8);
+    store64(yo_vals, "Ase");
+    store64(yo_vals + 8, "Ancestral duty");
+    store64(yo_vals + 16, "Iwa pele");
+    hadara_set_values(yoruba, yo_vals, 3);
+
+    # Amazigh: freedom, land, oral memory
+    var amz_vals = alloc(3 * 8);
+    store64(amz_vals, "Tilelli");
+    store64(amz_vals + 8, "Tamazirt");
+    store64(amz_vals + 16, "Oral memory");
+    hadara_set_values(amazigh, amz_vals, 3);
+
+    # Inuit: sharing, respect for animals, resilience
+    var in_vals = alloc(3 * 8);
+    store64(in_vals, "Sharing");
+    store64(in_vals + 8, "Animal respect");
+    store64(in_vals + 16, "Resilience");
+    hadara_set_values(inuit, in_vals, 3);
 
     # ================================================================
     # Phase 4c: Additional relations
