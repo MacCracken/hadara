@@ -1671,6 +1671,251 @@ fn hadara_seed() {
     hadara_set_language(eastcoast, "English", 7);
     hadara_set_display(eastcoast, 2, 9, 8, 9);
 
+    # --- Sub-entities for cultures 29-38 ---
+
+    # Maori practices — Howe (2006)
+    var mr_practices = alloc(PRACTICE_SIZE * 2);
+    p = mr_practices;
+    store64(p + PRACTICE_NAME_PTR, "Haka");
+    store64(p + PRACTICE_NAME_LEN, 4);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 1);
+    p = mr_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Powhiri");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(maori, mr_practices, 2);
+
+    var mr_arts = alloc(ART_FORM_SIZE * 2);
+    a = mr_arts;
+    store64(a + ART_FORM_NAME_PTR, "Ta Moko");
+    store64(a + ART_FORM_NAME_LEN, 7);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = mr_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Waiata");
+    store64(a + ART_FORM_NAME_LEN, 6);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    hadara_set_art_forms(maori, mr_arts, 2);
+
+    # Sikh practices — McLeod (1997)
+    var si_practices = alloc(PRACTICE_SIZE * 2);
+    p = si_practices;
+    store64(p + PRACTICE_NAME_PTR, "Langar");
+    store64(p + PRACTICE_NAME_LEN, 6);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = si_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Kirtan");
+    store64(p + PRACTICE_NAME_LEN, 6);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(sikh, si_practices, 2);
+
+    var si_arts = alloc(ART_FORM_SIZE * 2);
+    a = si_arts;
+    store64(a + ART_FORM_NAME_PTR, "Gurmat Sangeet");
+    store64(a + ART_FORM_NAME_LEN, 14);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = si_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Gurdwara Architecture");
+    store64(a + ART_FORM_NAME_LEN, 21);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    hadara_set_art_forms(sikh, si_arts, 2);
+
+    # Ethiopian practices — Henze (2000)
+    var et_practices = alloc(PRACTICE_SIZE * 2);
+    p = et_practices;
+    store64(p + PRACTICE_NAME_PTR, "Coffee Ceremony");
+    store64(p + PRACTICE_NAME_LEN, 15);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 0);
+    p = et_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Timkat");
+    store64(p + PRACTICE_NAME_LEN, 6);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(ethiopian, et_practices, 2);
+
+    var et_arts = alloc(ART_FORM_SIZE * 2);
+    a = et_arts;
+    store64(a + ART_FORM_NAME_PTR, "Ge'ez Manuscript");
+    store64(a + ART_FORM_NAME_LEN, 16);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = et_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Rock-Hewn Church");
+    store64(a + ART_FORM_NAME_LEN, 16);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    hadara_set_art_forms(ethiopian, et_arts, 2);
+
+    # Tamil practices — Zvelebil (1973)
+    var ta_practices = alloc(PRACTICE_SIZE * 2);
+    p = ta_practices;
+    store64(p + PRACTICE_NAME_PTR, "Pongal");
+    store64(p + PRACTICE_NAME_LEN, 6);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ta_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Bharatanatyam");
+    store64(p + PRACTICE_NAME_LEN, 13);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(tamil, ta_practices, 2);
+
+    var ta_arts = alloc(ART_FORM_SIZE * 2);
+    a = ta_arts;
+    store64(a + ART_FORM_NAME_PTR, "Bharatanatyam Dance");
+    store64(a + ART_FORM_NAME_LEN, 19);
+    store64(a + ART_FORM_MEDIUM, ART_DANCE);
+    a = ta_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Sangam Poetry");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_LITERATURE);
+    hadara_set_art_forms(tamil, ta_arts, 2);
+
+    # Javanese practices — Ricklefs (2001)
+    var jv_practices = alloc(PRACTICE_SIZE * 2);
+    p = jv_practices;
+    store64(p + PRACTICE_NAME_PTR, "Slametan");
+    store64(p + PRACTICE_NAME_LEN, 8);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
+    store64(p + PRACTICE_SACRED, 1);
+    p = jv_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Sekaten");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(javanese, jv_practices, 2);
+
+    var jv_arts = alloc(ART_FORM_SIZE * 2);
+    a = jv_arts;
+    store64(a + ART_FORM_NAME_PTR, "Gamelan");
+    store64(a + ART_FORM_NAME_LEN, 7);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = jv_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Wayang Kulit");
+    store64(a + ART_FORM_NAME_LEN, 12);
+    store64(a + ART_FORM_MEDIUM, ART_THEATER);
+    hadara_set_art_forms(javanese, jv_arts, 2);
+
+    # Armenian practices — Hovannisian (1997)
+    var arm_practices = alloc(PRACTICE_SIZE * 2);
+    p = arm_practices;
+    store64(p + PRACTICE_NAME_PTR, "Vardavar");
+    store64(p + PRACTICE_NAME_LEN, 8);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = arm_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Liturgy of St. James");
+    store64(p + PRACTICE_NAME_LEN, 20);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(armenian, arm_practices, 2);
+
+    var arm_arts = alloc(ART_FORM_SIZE * 2);
+    a = arm_arts;
+    store64(a + ART_FORM_NAME_PTR, "Khachkar Carving");
+    store64(a + ART_FORM_NAME_LEN, 16);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = arm_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Duduk Music");
+    store64(a + ART_FORM_NAME_LEN, 11);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    hadara_set_art_forms(armenian, arm_arts, 2);
+
+    # Romani practices — Hancock (2002)
+    var rom_practices = alloc(PRACTICE_SIZE * 2);
+    p = rom_practices;
+    store64(p + PRACTICE_NAME_PTR, "Kris Court");
+    store64(p + PRACTICE_NAME_LEN, 10);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 0);
+    p = rom_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Pomana Feast");
+    store64(p + PRACTICE_NAME_LEN, 12);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(romani, rom_practices, 2);
+
+    var rom_arts = alloc(ART_FORM_SIZE * 2);
+    a = rom_arts;
+    store64(a + ART_FORM_NAME_PTR, "Flamenco");
+    store64(a + ART_FORM_NAME_LEN, 8);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = rom_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Oral Storytelling");
+    store64(a + ART_FORM_NAME_LEN, 17);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    hadara_set_art_forms(romani, rom_arts, 2);
+
+    # Basque practices — Collins (1990)
+    var bq_practices = alloc(PRACTICE_SIZE * 2);
+    p = bq_practices;
+    store64(p + PRACTICE_NAME_PTR, "Bertsolaritza");
+    store64(p + PRACTICE_NAME_LEN, 13);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 0);
+    p = bq_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Jai Alai");
+    store64(p + PRACTICE_NAME_LEN, 8);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_MARTIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(basque, bq_practices, 2);
+
+    var bq_arts = alloc(ART_FORM_SIZE * 2);
+    a = bq_arts;
+    store64(a + ART_FORM_NAME_PTR, "Txalaparta");
+    store64(a + ART_FORM_NAME_LEN, 10);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = bq_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Stone Lifting");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_MARTIAL);
+    hadara_set_art_forms(basque, bq_arts, 2);
+
+    # Haudenosaunee practices — Fenton (1998)
+    var hd_practices = alloc(PRACTICE_SIZE * 2);
+    p = hd_practices;
+    store64(p + PRACTICE_NAME_PTR, "Longhouse Council");
+    store64(p + PRACTICE_NAME_LEN, 17);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = hd_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Midwinter Ceremony");
+    store64(p + PRACTICE_NAME_LEN, 18);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(haudenosaunee, hd_practices, 2);
+
+    var hd_arts = alloc(ART_FORM_SIZE * 2);
+    a = hd_arts;
+    store64(a + ART_FORM_NAME_PTR, "Wampum Belt");
+    store64(a + ART_FORM_NAME_LEN, 11);
+    store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
+    a = hd_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "False Face Carving");
+    store64(a + ART_FORM_NAME_LEN, 18);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    hadara_set_art_forms(haudenosaunee, hd_arts, 2);
+
     # --- Subculture wiring ---
     # Maori is a subculture of Polynesian
     var po_subs = alloc(1 * 8);
@@ -1693,6 +1938,114 @@ fn hadara_seed() {
     var sikh_parents = alloc(1 * 8);
     store64(sikh_parents, vedic);
     hadara_set_parents(sikh, sikh_parents, 1);
+
+    # ================================================================
+    # Cultures 39-49: hitting 50 target
+    # ================================================================
+
+    # 39: Somali — Lewis (2002): pastoralist tradition, continuous
+    var somali = hadara_add("Somali", 6, CULTURE_ACTIVE, 0 - 100, 0);
+    hadara_set_endonym(somali, "Soomaali", 8);
+    hadara_set_region(somali, "East Africa", 11);
+    hadara_set_language(somali, "Somali", 6);
+    hadara_set_display(somali, 5, 8, 6, 8);
+
+    # 40: Tuareg — Keenan (1977): Saharan nomads, continuous
+    var tuareg = hadara_add("Tuareg", 6, CULTURE_ACTIVE, 0 - 500, 0);
+    hadara_set_endonym(tuareg, "Kel Tamasheq", 12);
+    hadara_set_region(tuareg, "Sahara", 6);
+    hadara_set_language(tuareg, "Tamashek", 8);
+    hadara_set_script(tuareg, "Tifinagh", 8);
+    hadara_set_display(tuareg, 6, 7, 7, 6);
+
+    # 41: Zulu — Morris (1965): Shaka's kingdom 1816, Zulu culture continuous
+    var zulu = hadara_add("Zulu", 4, CULTURE_ACTIVE, 1816, 0);
+    hadara_set_endonym(zulu, "AmaZulu", 7);
+    hadara_set_region(zulu, "Southern Africa", 15);
+    hadara_set_language(zulu, "isiZulu", 7);
+    hadara_set_script(zulu, "Latin alphabet", 14);
+    hadara_set_display(zulu, 7, 8, 4, 7);
+
+    # 42: Georgian — Suny (1994): ancient Colchis roots, Christian from 337 CE
+    var georgian = hadara_add("Georgian", 8, CULTURE_ACTIVE, 0 - 300, 0);
+    hadara_set_endonym(georgian, "Kartveli", 8);
+    hadara_set_region(georgian, "Caucasus", 8);
+    hadara_set_language(georgian, "Georgian", 8);
+    hadara_set_script(georgian, "Mkhedruli", 9);
+    hadara_set_display(georgian, 6, 8, 6, 7);
+
+    # 43: Balinese — Geertz (1980): Hindu-Buddhist island culture
+    var balinese = hadara_add("Balinese", 8, CULTURE_ACTIVE, 800, 0);
+    hadara_set_region(balinese, "Southeast Asia", 14);
+    hadara_set_language(balinese, "Balinese", 8);
+    hadara_set_script(balinese, "Balinese script", 15);
+    hadara_set_display(balinese, 8, 7, 3, 3);
+
+    # 44: Igbo — Uchendu (1965): pre-colonial, continuous
+    var igbo = hadara_add("Igbo", 4, CULTURE_ACTIVE, 0 - 900, 0);
+    hadara_set_endonym(igbo, "Ndi Igbo", 8);
+    hadara_set_region(igbo, "West Africa", 11);
+    hadara_set_language(igbo, "Igbo", 4);
+    hadara_set_display(igbo, 5, 8, 7, 8);
+
+    # 45: Lakota — DeMallie (2001): Plains culture, continuous
+    var lakota = hadara_add("Lakota", 6, CULTURE_ACTIVE, 1700, 0);
+    hadara_set_endonym(lakota, "Lakota", 6);
+    hadara_set_region(lakota, "North America", 13);
+    hadara_set_language(lakota, "Lakota", 6);
+    hadara_set_display(lakota, 6, 7, 5, 6);
+
+    # 46: Ainu — Kayano (1994): indigenous Hokkaido, reviving
+    var ainu = hadara_add("Ainu", 4, CULTURE_REVIVED, 0 - 1000, 0);
+    hadara_set_endonym(ainu, "Aynu", 4);
+    hadara_set_region(ainu, "East Asia", 9);
+    hadara_set_language(ainu, "Ainu", 4);
+    hadara_set_display(ainu, 6, 6, 4, 5);
+
+    # 47: West Coast Hip-Hop — subculture of Hip-Hop
+    var westcoast = hadara_add("West Coast Hip-Hop", 18, CULTURE_ACTIVE, 1983, 0);
+    hadara_set_region(westcoast, "North America", 13);
+    hadara_set_language(westcoast, "English", 7);
+    hadara_set_display(westcoast, 2, 9, 8, 8);
+
+    # 48: Southern Hip-Hop — subculture of Hip-Hop
+    var southern = hadara_add("Southern Hip-Hop", 16, CULTURE_ACTIVE, 1990, 0);
+    hadara_set_region(southern, "North America", 13);
+    hadara_set_language(southern, "English", 7);
+    hadara_set_display(southern, 2, 9, 7, 7);
+
+    # 49: Catalan — Balcells (1996): distinct from Spanish, continuous
+    var catalan = hadara_add("Catalan", 7, CULTURE_ACTIVE, 988, 0);
+    hadara_set_endonym(catalan, "Catala", 6);
+    hadara_set_region(catalan, "Western Europe", 14);
+    hadara_set_language(catalan, "Catalan", 7);
+    hadara_set_script(catalan, "Latin alphabet", 14);
+    hadara_set_display(catalan, 5, 7, 7, 7);
+
+    # --- Additional subculture wiring ---
+    # West Coast + Southern are subcultures of Hip-Hop
+    # Update Hip-Hop subcultures: East Coast + West Coast + Southern
+    var hp_subs3 = alloc(3 * 8);
+    store64(hp_subs3, eastcoast);
+    store64(hp_subs3 + 8, westcoast);
+    store64(hp_subs3 + 16, southern);
+    hadara_set_subcultures(hiphop, hp_subs3, 3);
+
+    var wc_parents = alloc(1 * 8);
+    store64(wc_parents, hiphop);
+    hadara_set_parents(westcoast, wc_parents, 1);
+
+    var so_parents = alloc(1 * 8);
+    store64(so_parents, hiphop);
+    hadara_set_parents(southern, so_parents, 1);
+
+    # Ainu as subculture of Japanese
+    var jp_subs = alloc(1 * 8);
+    store64(jp_subs, ainu);
+    hadara_set_subcultures(japanese, jp_subs, 1);
+    var ainu_parents = alloc(1 * 8);
+    store64(ainu_parents, japanese);
+    hadara_set_parents(ainu, ainu_parents, 1);
 
     # ================================================================
     # Sub-entities for medium-priority cultures
@@ -2204,6 +2557,83 @@ fn hadara_seed() {
     store64(ec_vals + 8, "Battle");
     store64(ec_vals + 16, "Street knowledge");
     hadara_set_values(eastcoast, ec_vals, 3);
+
+    # Somali: xeer (customary law), clan honor, poetry
+    var so2_vals = alloc(3 * 8);
+    store64(so2_vals, "Xeer");
+    store64(so2_vals + 8, "Clan honor");
+    store64(so2_vals + 16, "Poetry");
+    hadara_set_values(somali, so2_vals, 3);
+
+    # Tuareg: freedom, hospitality, desert mastery
+    var tu_vals = alloc(3 * 8);
+    store64(tu_vals, "Aman");
+    store64(tu_vals + 8, "Hospitality");
+    store64(tu_vals + 16, "Desert mastery");
+    hadara_set_values(tuareg, tu_vals, 3);
+
+    # Zulu: ubuntu, warrior courage, respect for elders
+    var zu_vals = alloc(3 * 8);
+    store64(zu_vals, "Ubuntu");
+    store64(zu_vals + 8, "Isibindi");
+    store64(zu_vals + 16, "Hlonipha");
+    hadara_set_values(zulu, zu_vals, 3);
+
+    # Georgian: hospitality, wine culture, faith
+    var ge_vals = alloc(3 * 8);
+    store64(ge_vals, "Stumar-maspin");
+    store64(ge_vals + 8, "Wine culture");
+    store64(ge_vals + 16, "Orthodox faith");
+    hadara_set_values(georgian, ge_vals, 3);
+
+    # Balinese: tri hita karana (three harmonies), ceremony, artistic devotion
+    var ba_vals = alloc(3 * 8);
+    store64(ba_vals, "Tri Hita Karana");
+    store64(ba_vals + 8, "Ceremony");
+    store64(ba_vals + 16, "Artistic devotion");
+    hadara_set_values(balinese, ba_vals, 3);
+
+    # Igbo: personal achievement, community, oratory
+    var ig_vals = alloc(3 * 8);
+    store64(ig_vals, "Ogu na Ofo");
+    store64(ig_vals + 8, "Personal achievement");
+    store64(ig_vals + 16, "Community");
+    hadara_set_values(igbo, ig_vals, 3);
+
+    # Lakota: mitakuye oyasin, sacred hoop, generosity
+    var la_vals = alloc(3 * 8);
+    store64(la_vals, "Mitakuye Oyasin");
+    store64(la_vals + 8, "Sacred Hoop");
+    store64(la_vals + 16, "Generosity");
+    hadara_set_values(lakota, la_vals, 3);
+
+    # Ainu: kamuy (spirit reverence), reciprocity, nature
+    var ai_vals = alloc(3 * 8);
+    store64(ai_vals, "Kamuy");
+    store64(ai_vals + 8, "Reciprocity");
+    store64(ai_vals + 16, "Nature");
+    hadara_set_values(ainu, ai_vals, 3);
+
+    # West Coast Hip-Hop: G-funk, laid-back, storytelling
+    var wc_vals = alloc(3 * 8);
+    store64(wc_vals, "G-funk");
+    store64(wc_vals + 8, "Storytelling");
+    store64(wc_vals + 16, "West side pride");
+    hadara_set_values(westcoast, wc_vals, 3);
+
+    # Southern Hip-Hop: bounce, trunk music, hospitality
+    var sth_vals = alloc(3 * 8);
+    store64(sth_vals, "Bounce");
+    store64(sth_vals + 8, "Trunk music");
+    store64(sth_vals + 16, "Southern hospitality");
+    hadara_set_values(southern, sth_vals, 3);
+
+    # Catalan: seny (common sense), independence, Mediterranean
+    var ca_vals = alloc(3 * 8);
+    store64(ca_vals, "Seny");
+    store64(ca_vals + 8, "Rauxa");
+    store64(ca_vals + 16, "Independence");
+    hadara_set_values(catalan, ca_vals, 3);
 
     # Aztec: cosmic debt, warrior honor, cyclical destruction/renewal
     var az_vals = alloc(3 * 8);

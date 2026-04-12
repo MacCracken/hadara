@@ -138,8 +138,8 @@ fn main() {
 
     hadara_init();
     var seeded = hadara_seed();
-    assert_eq(seeded, 39, "seed loaded 39 cultures");
-    assert_eq(hadara_len(), 39, "registry has 39 cultures");
+    assert_eq(seeded, 50, "seed loaded 50 cultures");
+    assert_eq(hadara_len(), 50, "registry has 50 cultures");
 
     # Verify Egyptian — Shaw (2000): 3100 BCE to 641 CE
     var eg = hadara_get(0);
@@ -254,29 +254,27 @@ fn main() {
     # Verify temporal queries on full corpus
     var qbuf = alloc(32 * 8);
 
-    # 2026: 22 + Maori, Sikh, Ethiopian, Tamil, Javanese, Armenian, Romani, Basque, Haudenosaunee, EastCoast = 32
-    var n4 = hadara_coexisting_at(2026, qbuf, 32);
-    assert_eq(n4, 32, "32 cultures in 2026");
+    # 2026: 32 + Somali, Tuareg, Zulu, Georgian, Balinese, Igbo, Lakota, Ainu, WestCoast, Southern, Catalan = 43
+    var qbuf2 = alloc(64 * 8);
+    var n4 = hadara_coexisting_at(2026, qbuf2, 64);
+    assert_eq(n4, 43, "43 cultures in 2026");
 
-    # 1000 BCE: Egyptian, Vedic, Chinese, Maya, Aboriginal, Mesopotamian, Jewish, Polynesian,
-    #           Inca(-2000), Amazigh(-3000), Armenian(-600), Basque(-3000) = 12
-    #           (Yoruba -500=no, Tamil -300=no)
-    var n5 = hadara_coexisting_at(0 - 1000, qbuf, 32);
-    assert_eq(n5, 12, "12 cultures in 1000 BCE");
+    # 1000 BCE: prev 12 + Ainu(-1000), Igbo(-900) = 14
+    var n5 = hadara_coexisting_at(0 - 1000, qbuf2, 64);
+    assert_eq(n5, 14, "14 cultures in 1000 BCE");
 
-    # 200 CE: prev 15 + Tamil(-300), Ethiopian(100), Armenian(-600), Basque(-3000) = 19
-    var n6 = hadara_coexisting_at(200, qbuf, 32);
-    assert_eq(n6, 19, "19 cultures in 200 CE");
+    # 200 CE: prev 19 + Somali(-100), Tuareg(-500), Georgian(-300), Igbo(-900), Ainu(-1000) = 24
+    var n6 = hadara_coexisting_at(200, qbuf2, 64);
+    assert_eq(n6, 24, "24 cultures in 200 CE");
 
-    # 900 CE: many cultures active. prev 21 + Tamil, Javanese, Ethiopian, Armenian, Basque = 26
-    # (Maori 1300=no, Sikh 1469=no, Romani 1000=no, Haudenosaunee 1142=no, EastCoast 1973=no)
-    var n7 = hadara_coexisting_at(900, qbuf, 32);
-    assert_eq(n7, 26, "26 cultures in 900 CE");
+    # 900 CE: prev 26 + Balinese(800), Somali(-100), Tuareg(-500), Georgian(-300), Igbo(-900), Ainu(-1000) = 32
+    var n7 = hadara_coexisting_at(900, qbuf2, 64);
+    assert_eq(n7, 32, "32 cultures in 900 CE");
 
-    # Status: 21 + 10 new active = 31 active, 7 historical, 1 revived
-    assert_eq(hadara_count_by_status(CULTURE_ACTIVE), 31, "31 active cultures");
+    # Status: 31 + 10 new active = 41 active, 7 historical, 1+1(Ainu) = 2 revived
+    assert_eq(hadara_count_by_status(CULTURE_ACTIVE), 41, "41 active cultures");
     assert_eq(hadara_count_by_status(CULTURE_HISTORICAL), 7, "7 historical cultures");
-    assert_eq(hadara_count_by_status(CULTURE_REVIVED), 1, "1 revived culture");
+    assert_eq(hadara_count_by_status(CULTURE_REVIVED), 2, "2 revived cultures");
     assert_eq(hadara_count_by_status(CULTURE_DORMANT), 0, "0 dormant cultures");
     assert_eq(hadara_count_by_status(CULTURE_EXTINCT), 0, "0 extinct cultures");
 
@@ -837,10 +835,10 @@ fn main() {
     var po_sc = hadara_subculture_ids(20);
     assert_eq(load64(po_sc), 29, "polynesian subculture is maori (29)");
 
-    # Hip-Hop has East Coast as subculture
-    assert_eq(hadara_subculture_count(9), 1, "hiphop has 1 subculture");
+    # Hip-Hop has East Coast, West Coast, Southern as subcultures
+    assert_eq(hadara_subculture_count(9), 3, "hiphop has 3 subcultures");
     var hp_sc = hadara_subculture_ids(9);
-    assert_eq(load64(hp_sc), 38, "hiphop subculture is east coast (38)");
+    assert_eq(load64(hp_sc), 38, "hiphop subculture[0] is east coast (38)");
 
     # Maori's parent is Polynesian
     var maori_c = hadara_get(29);
@@ -858,6 +856,11 @@ fn main() {
     var ec_c = hadara_get(38);
     var ecp = load64(ec_c + CULTURE_PARENT_PTR);
     assert_eq(load64(ecp), 9, "east coast parent is hiphop (9)");
+
+    # Japanese has Ainu as subculture
+    assert_eq(hadara_subculture_count(4), 1, "japanese has 1 subculture");
+    var jp_sc = hadara_subculture_ids(4);
+    assert_eq(load64(jp_sc), 46, "japanese subculture is ainu (46)");
 
     # Cultures without subcultures return 0
     assert_eq(hadara_subculture_count(0), 0, "egyptian has no subcultures");

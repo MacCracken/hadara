@@ -71,14 +71,15 @@
 - [ ] Shared temporal queries: "what cultures existed during this itihas event?" (needs itihas event API)
 - [ ] Validation: hadara dates align with itihas civilization dates
 
-## Phase 6 — Future
+## Phase 6 — 1.0 Release
 
+- [x] 50 cultures target reached
+- [x] Subculture modeling: Hip-Hop (3 regional variants), Polynesian→Maori, Japanese→Ainu, Sikh→Vedic
 - [ ] Living culture evolution tracking (status transitions over time)
-- [ ] Consumer: kshetra (spatiotemporal cultural layer)
-- [ ] Consumer: varna (language↔culture associations — uses language/script fields)
-- [ ] Consumer: avatara (archetype → culture context — post avatara port)
-- [ ] 50+ cultures target
-- [ ] Medium-priority cultures: Aztec/Mexica, Inuit, Inca/Quechua, Ottoman, Khmer, Swahili, Yoruba, Berber/Amazigh
+- [ ] Relation descriptions (seed `desc_ptr/desc_len`)
+- [ ] hoosh integration (LLM-grounded cultural queries)
+- [ ] Version bump to 1.0.0
+- [ ] Consumer: kshetra, varna (future)
 
 ---
 
