@@ -1,11 +1,11 @@
 # seed.cyr -- Pre-built culture data
 #
-# 12 cultures with verified dates, endonyms, and descriptions.
+# 13 cultures with verified dates, endonyms, and descriptions.
 # All data sourced from academic references — see docs/sources/.
 #
 # Sources: Shaw (2000), Brosius (2006), Basham (1967), Boardman (1970--2005),
 # Varley (2000), Iliffe (2007), Cunliffe (2018), Price (2019),
-# Flood (2006), Chang (2005), Coe (2015), Stearns (2001).
+# Flood (2006), Chang (2005), Coe (2015), Stearns (2001), Boatwright (2012).
 # Full bibliography: docs/sources/cultures.md
 
 # --- Seed cultures ---
@@ -57,6 +57,10 @@ fn hadara_seed() {
     # 11: Chinese — Stearns (2001): Shang Dynasty c. 1600 BCE, continuous
     var chinese = hadara_add("Chinese", 7, CULTURE_ACTIVE, 0 - 1600, 0);
     hadara_set_endonym(chinese, "Zhonghua", 8);
+
+    # 12: Roman — Boatwright (2012): 753 BCE founding to 476 CE (Western fall)
+    var roman = hadara_add("Roman", 5, CULTURE_HISTORICAL, 0 - 753, 476);
+    hadara_set_endonym(roman, "Roma", 4);
 
     # --- Seed practices ---
 
@@ -314,6 +318,444 @@ fn hadara_seed() {
     hadara_set_relations(persian, rels, 1);
     hadara_set_relations(egyptian, rels + RELATION_SIZE, 1);
     hadara_set_relations(hiphop, rels + RELATION_SIZE * 2, 1);
+
+    # --- Egyptian practices — Shaw (2000), Eliade (1959) ---
+    var eg_practices = alloc(PRACTICE_SIZE * 3);
+    p = eg_practices;
+    store64(p + PRACTICE_NAME_PTR, "Mummification");
+    store64(p + PRACTICE_NAME_LEN, 13);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
+    store64(p + PRACTICE_SACRED, 1);
+    p = eg_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Temple Offering");
+    store64(p + PRACTICE_NAME_LEN, 15);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = eg_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Wepet Renpet");
+    store64(p + PRACTICE_NAME_LEN, 12);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(egyptian, eg_practices, 3);
+
+    # --- Egyptian art forms — Shaw (2000) ---
+    var eg_arts = alloc(ART_FORM_SIZE * 3);
+    a = eg_arts;
+    store64(a + ART_FORM_NAME_PTR, "Hieroglyphic Writing");
+    store64(a + ART_FORM_NAME_LEN, 20);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = eg_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Pyramid Architecture");
+    store64(a + ART_FORM_NAME_LEN, 20);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    a = eg_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Tomb Painting");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    hadara_set_art_forms(egyptian, eg_arts, 3);
+
+    # --- Egyptian figures — Shaw (2000), Hornblower & Spawforth (2012) ---
+    var eg_figs = alloc(FIGURE_SIZE * 2);
+    f = eg_figs;
+    store64(f + FIGURE_NAME_PTR, "Imhotep");
+    store64(f + FIGURE_NAME_LEN, 7);
+    store64(f + FIGURE_ROLE_PTR, "Architect of Step Pyramid, polymath deified as god of medicine");
+    store64(f + FIGURE_ROLE_LEN, 62);
+    store64(f + FIGURE_ERA_START, 0 - 2650);
+    store64(f + FIGURE_ERA_END, 0 - 2600);
+    f = eg_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Hatshepsut");
+    store64(f + FIGURE_NAME_LEN, 10);
+    store64(f + FIGURE_ROLE_PTR, "Female pharaoh who expanded trade and commissioned great temples");
+    store64(f + FIGURE_ROLE_LEN, 64);
+    store64(f + FIGURE_ERA_START, 0 - 1507);
+    store64(f + FIGURE_ERA_END, 0 - 1458);
+    hadara_set_figures(egyptian, eg_figs, 2);
+
+    # --- Egyptian texts — Faulkner (1969) ---
+    var eg_texts = alloc(TEXT_SIZE * 2);
+    t = eg_texts;
+    store64(t + TEXT_TITLE_PTR, "Book of the Dead");
+    store64(t + TEXT_TITLE_LEN, 16);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 0 - 1550);
+    store64(t + TEXT_SACRED, 1);
+    t = eg_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Pyramid Texts");
+    store64(t + TEXT_TITLE_LEN, 13);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 0 - 2400);
+    store64(t + TEXT_SACRED, 1);
+    hadara_set_texts(egyptian, eg_texts, 2);
+
+    # --- Greek practices — Boardman (1970--2005) ---
+    var gr_practices = alloc(PRACTICE_SIZE * 3);
+    p = gr_practices;
+    store64(p + PRACTICE_NAME_PTR, "Olympic Games");
+    store64(p + PRACTICE_NAME_LEN, 13);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = gr_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Symposion");
+    store64(p + PRACTICE_NAME_LEN, 9);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 0);
+    p = gr_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Mystery Rites");
+    store64(p + PRACTICE_NAME_LEN, 13);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(greek, gr_practices, 3);
+
+    # --- Greek art forms ---
+    var gr_arts = alloc(ART_FORM_SIZE * 3);
+    a = gr_arts;
+    store64(a + ART_FORM_NAME_PTR, "Tragedy");
+    store64(a + ART_FORM_NAME_LEN, 7);
+    store64(a + ART_FORM_MEDIUM, ART_THEATER);
+    a = gr_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Sculpture");
+    store64(a + ART_FORM_NAME_LEN, 9);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = gr_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Epic Poetry");
+    store64(a + ART_FORM_NAME_LEN, 11);
+    store64(a + ART_FORM_MEDIUM, ART_LITERATURE);
+    hadara_set_art_forms(greek, gr_arts, 3);
+
+    # --- Greek figures ---
+    var gr_figs = alloc(FIGURE_SIZE * 2);
+    f = gr_figs;
+    store64(f + FIGURE_NAME_PTR, "Socrates");
+    store64(f + FIGURE_NAME_LEN, 8);
+    store64(f + FIGURE_ROLE_PTR, "Founder of Western philosophy, dialectic method");
+    store64(f + FIGURE_ROLE_LEN, 48);
+    store64(f + FIGURE_ERA_START, 0 - 470);
+    store64(f + FIGURE_ERA_END, 0 - 399);
+    f = gr_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Homer");
+    store64(f + FIGURE_NAME_LEN, 5);
+    store64(f + FIGURE_ROLE_PTR, "Composed Iliad and Odyssey, foundational epic tradition");
+    store64(f + FIGURE_ROLE_LEN, 55);
+    store64(f + FIGURE_ERA_START, 0 - 800);
+    store64(f + FIGURE_ERA_END, 0 - 700);
+    hadara_set_figures(greek, gr_figs, 2);
+
+    # --- Norse practices — Price (2019) ---
+    var no_practices = alloc(PRACTICE_SIZE * 3);
+    p = no_practices;
+    store64(p + PRACTICE_NAME_PTR, "Blot");
+    store64(p + PRACTICE_NAME_LEN, 4);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = no_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Thing Assembly");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 0);
+    p = no_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Ship Burial");
+    store64(p + PRACTICE_NAME_LEN, 11);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(norse, no_practices, 3);
+
+    # --- Norse art forms ---
+    var no_arts = alloc(ART_FORM_SIZE * 3);
+    a = no_arts;
+    store64(a + ART_FORM_NAME_PTR, "Skaldic Poetry");
+    store64(a + ART_FORM_NAME_LEN, 14);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    a = no_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Runecraft");
+    store64(a + ART_FORM_NAME_LEN, 9);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = no_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Wood Carving");
+    store64(a + ART_FORM_NAME_LEN, 12);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    hadara_set_art_forms(norse, no_arts, 3);
+
+    # --- Chinese practices — Stearns (2001) ---
+    var ch_practices = alloc(PRACTICE_SIZE * 3);
+    p = ch_practices;
+    store64(p + PRACTICE_NAME_PTR, "Ancestor Veneration");
+    store64(p + PRACTICE_NAME_LEN, 19);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ch_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Lunar New Year");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ch_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Tai Chi");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_MARTIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(chinese, ch_practices, 3);
+
+    # --- Chinese art forms ---
+    var ch_arts = alloc(ART_FORM_SIZE * 3);
+    a = ch_arts;
+    store64(a + ART_FORM_NAME_PTR, "Chinese Calligraphy");
+    store64(a + ART_FORM_NAME_LEN, 19);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = ch_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Beijing Opera");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_THEATER);
+    a = ch_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Silk Weaving");
+    store64(a + ART_FORM_NAME_LEN, 12);
+    store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
+    hadara_set_art_forms(chinese, ch_arts, 3);
+
+    # --- Chinese figures ---
+    var ch_figs = alloc(FIGURE_SIZE * 2);
+    f = ch_figs;
+    store64(f + FIGURE_NAME_PTR, "Confucius");
+    store64(f + FIGURE_NAME_LEN, 9);
+    store64(f + FIGURE_ROLE_PTR, "Founded Confucianism, shaped East Asian ethics and governance");
+    store64(f + FIGURE_ROLE_LEN, 60);
+    store64(f + FIGURE_ERA_START, 0 - 551);
+    store64(f + FIGURE_ERA_END, 0 - 479);
+    f = ch_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Laozi");
+    store64(f + FIGURE_NAME_LEN, 5);
+    store64(f + FIGURE_ROLE_PTR, "Traditional author of Tao Te Ching, founded Daoism");
+    store64(f + FIGURE_ROLE_LEN, 51);
+    store64(f + FIGURE_ERA_START, 0 - 600);
+    store64(f + FIGURE_ERA_END, 0 - 500);
+    hadara_set_figures(chinese, ch_figs, 2);
+
+    # --- Chinese texts ---
+    var ch_texts = alloc(TEXT_SIZE * 2);
+    t = ch_texts;
+    store64(t + TEXT_TITLE_PTR, "Tao Te Ching");
+    store64(t + TEXT_TITLE_LEN, 12);
+    store64(t + TEXT_AUTHOR_PTR, "Laozi");
+    store64(t + TEXT_AUTHOR_LEN, 5);
+    store64(t + TEXT_YEAR, 0 - 400);
+    store64(t + TEXT_SACRED, 1);
+    t = ch_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Analerta");
+    store64(t + TEXT_TITLE_LEN, 8);
+    store64(t + TEXT_AUTHOR_PTR, "Confucius");
+    store64(t + TEXT_AUTHOR_LEN, 9);
+    store64(t + TEXT_YEAR, 0 - 475);
+    store64(t + TEXT_SACRED, 0);
+    hadara_set_texts(chinese, ch_texts, 2);
+
+    # --- Maya practices — Coe (2015) ---
+    var ma_practices = alloc(PRACTICE_SIZE * 2);
+    p = ma_practices;
+    store64(p + PRACTICE_NAME_PTR, "Ballgame");
+    store64(p + PRACTICE_NAME_LEN, 8);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ma_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Bloodletting Rite");
+    store64(p + PRACTICE_NAME_LEN, 17);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(maya, ma_practices, 2);
+
+    # --- Maya art forms ---
+    var ma_arts = alloc(ART_FORM_SIZE * 3);
+    a = ma_arts;
+    store64(a + ART_FORM_NAME_PTR, "Glyph Writing");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = ma_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Stela Sculpture");
+    store64(a + ART_FORM_NAME_LEN, 15);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = ma_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Pyramid Architecture");
+    store64(a + ART_FORM_NAME_LEN, 20);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    hadara_set_art_forms(maya, ma_arts, 3);
+
+    # --- Aboriginal Australian practices — Flood (2006) ---
+    var ab_practices = alloc(PRACTICE_SIZE * 3);
+    p = ab_practices;
+    store64(p + PRACTICE_NAME_PTR, "Corroboree");
+    store64(p + PRACTICE_NAME_LEN, 10);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ab_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Walkabout");
+    store64(p + PRACTICE_NAME_LEN, 9);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ab_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Smoking Ceremony");
+    store64(p + PRACTICE_NAME_LEN, 16);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(aboriginal, ab_practices, 3);
+
+    # --- Aboriginal art forms ---
+    var ab_arts = alloc(ART_FORM_SIZE * 3);
+    a = ab_arts;
+    store64(a + ART_FORM_NAME_PTR, "Dot Painting");
+    store64(a + ART_FORM_NAME_LEN, 12);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = ab_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Didgeridoo");
+    store64(a + ART_FORM_NAME_LEN, 10);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = ab_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Dreamtime Stories");
+    store64(a + ART_FORM_NAME_LEN, 17);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    hadara_set_art_forms(aboriginal, ab_arts, 3);
+
+    # --- Scottish practices — Cunliffe (2018) ---
+    var sc_practices = alloc(PRACTICE_SIZE * 2);
+    p = sc_practices;
+    store64(p + PRACTICE_NAME_PTR, "Ceilidh");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
+    store64(p + PRACTICE_SACRED, 0);
+    p = sc_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Highland Games");
+    store64(p + PRACTICE_NAME_LEN, 14);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(scottish, sc_practices, 2);
+
+    # --- Scottish art forms ---
+    var sc_arts = alloc(ART_FORM_SIZE * 2);
+    a = sc_arts;
+    store64(a + ART_FORM_NAME_PTR, "Pibroch");
+    store64(a + ART_FORM_NAME_LEN, 7);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = sc_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Gaelic Song");
+    store64(a + ART_FORM_NAME_LEN, 11);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    hadara_set_art_forms(scottish, sc_arts, 2);
+
+    # --- Roman practices — Boatwright (2012) ---
+    var ro_practices = alloc(PRACTICE_SIZE * 3);
+    p = ro_practices;
+    store64(p + PRACTICE_NAME_PTR, "Gladiatorial Games");
+    store64(p + PRACTICE_NAME_LEN, 18);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 0);
+    p = ro_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Triumph");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 1);
+    p = ro_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Saturnalia");
+    store64(p + PRACTICE_NAME_LEN, 10);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(roman, ro_practices, 3);
+
+    # --- Roman art forms ---
+    var ro_arts = alloc(ART_FORM_SIZE * 3);
+    a = ro_arts;
+    store64(a + ART_FORM_NAME_PTR, "Mosaic");
+    store64(a + ART_FORM_NAME_LEN, 6);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = ro_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Aqueduct Engineering");
+    store64(a + ART_FORM_NAME_LEN, 20);
+    store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
+    a = ro_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Latin Oratory");
+    store64(a + ART_FORM_NAME_LEN, 13);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    hadara_set_art_forms(roman, ro_arts, 3);
+
+    # --- Roman figures ---
+    var ro_figs = alloc(FIGURE_SIZE * 2);
+    f = ro_figs;
+    store64(f + FIGURE_NAME_PTR, "Julius Caesar");
+    store64(f + FIGURE_NAME_LEN, 13);
+    store64(f + FIGURE_ROLE_PTR, "General and statesman who transformed Republic into Empire");
+    store64(f + FIGURE_ROLE_LEN, 58);
+    store64(f + FIGURE_ERA_START, 0 - 100);
+    store64(f + FIGURE_ERA_END, 0 - 44);
+    f = ro_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Virgil");
+    store64(f + FIGURE_NAME_LEN, 6);
+    store64(f + FIGURE_ROLE_PTR, "Poet of the Aeneid, foundational Latin literary tradition");
+    store64(f + FIGURE_ROLE_LEN, 57);
+    store64(f + FIGURE_ERA_START, 0 - 70);
+    store64(f + FIGURE_ERA_END, 0 - 19);
+    hadara_set_figures(roman, ro_figs, 2);
+
+    # --- Additional relations ---
+
+    # Greek influenced Roman — Boardman (1970--2005)
+    var rels2 = alloc(RELATION_SIZE * 2);
+    r = rels2;
+    store64(r + RELATION_SOURCE, greek);
+    store64(r + RELATION_TARGET, roman);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 0 - 300);
+    store64(r + RELATION_PERIOD_END, 0 - 100);
+
+    # Chinese influenced Japanese — Varley (2000)
+    r = rels2 + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, chinese);
+    store64(r + RELATION_TARGET, japanese);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 500);
+    store64(r + RELATION_PERIOD_END, 900);
+
+    hadara_set_relations(greek, rels2, 1);
+    hadara_set_relations(roman, rels2, 1);
+    hadara_set_relations(chinese, rels2 + RELATION_SIZE, 1);
+    hadara_set_relations(japanese, rels2 + RELATION_SIZE, 1);
+
+    # --- West African figure — Levtzion & Pouwels (2000), Niane (1965) ---
+    var wa_figs = alloc(FIGURE_SIZE * 2);
+    f = wa_figs;
+    store64(f + FIGURE_NAME_PTR, "Sundiata Keita");
+    store64(f + FIGURE_NAME_LEN, 14);
+    store64(f + FIGURE_ROLE_PTR, "Founded Mali Empire, codified Manden Charter");
+    store64(f + FIGURE_ROLE_LEN, 45);
+    store64(f + FIGURE_ERA_START, 1217);
+    store64(f + FIGURE_ERA_END, 1255);
+    f = wa_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Mansa Musa");
+    store64(f + FIGURE_NAME_LEN, 10);
+    store64(f + FIGURE_ROLE_PTR, "Richest person in history, patronized Timbuktu scholarship");
+    store64(f + FIGURE_ROLE_LEN, 58);
+    store64(f + FIGURE_ERA_START, 1280);
+    store64(f + FIGURE_ERA_END, 1337);
+    hadara_set_figures(westafrican, wa_figs, 2);
 
     return hadara_count;
 }

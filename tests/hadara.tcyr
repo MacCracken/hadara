@@ -7,6 +7,12 @@ include "lib/alloc.cyr"
 include "lib/fmt.cyr"
 include "lib/assert.cyr"
 
+# prints — write string without newline
+fn prints(s) {
+    syscall(1, 1, s, strlen(s));
+    return 0;
+}
+
 include "src/lib.cyr"
 include "src/seed.cyr"
 
@@ -132,79 +138,161 @@ fn main() {
 
     hadara_init();
     var seeded = hadara_seed();
-    assert_eq(seeded, 12, "seed loaded 12 cultures");
-    assert_eq(hadara_len(), 12, "registry has 12 cultures");
+    assert_eq(seeded, 13, "seed loaded 13 cultures");
+    assert_eq(hadara_len(), 13, "registry has 13 cultures");
 
     # Verify Egyptian — Shaw (2000): 3100 BCE to 641 CE
     var eg = hadara_get(0);
     assert_eq(culture_time_start(eg), 0 - 3100, "seed egyptian start");
     assert_eq(culture_time_end(eg), 641, "seed egyptian end");
     assert_eq(culture_status(eg), CULTURE_HISTORICAL, "seed egyptian historical");
+    assert_eq(culture_practices_count(eg), 3, "seed egyptian 3 practices");
+    assert_eq(culture_art_forms_count(eg), 3, "seed egyptian 3 art forms");
+    assert_eq(culture_figures_count(eg), 2, "seed egyptian 2 figures");
+    var eg_tc = load64(eg + CULTURE_TEXTS_COUNT);
+    assert_eq(eg_tc, 2, "seed egyptian 2 texts");
 
     # Verify Persian — Brosius (2006): 550 BCE, active
     var pe = hadara_get(1);
     assert_eq(culture_time_start(pe), 0 - 550, "seed persian start");
     assert_eq(culture_status(pe), CULTURE_ACTIVE, "seed persian active");
+    assert_eq(culture_figures_count(pe), 2, "seed persian 2 figures");
+    var pe_tc = load64(pe + CULTURE_TEXTS_COUNT);
+    assert_eq(pe_tc, 1, "seed persian 1 text");
 
     # Verify Vedic — Basham (1967): 1500 BCE, active
     var ve = hadara_get(2);
     assert_eq(culture_time_start(ve), 0 - 1500, "seed vedic start");
     assert_eq(culture_status(ve), CULTURE_ACTIVE, "seed vedic active");
+    assert_eq(culture_practices_count(ve), 3, "seed vedic 3 practices");
+    var ve_tc = load64(ve + CULTURE_TEXTS_COUNT);
+    assert_eq(ve_tc, 2, "seed vedic 2 texts");
+
+    # Verify Greek — Boardman (1970--2005)
+    var gr = hadara_get(3);
+    assert_eq(culture_time_start(gr), 0 - 800, "seed greek start");
+    assert_eq(culture_time_end(gr), 0 - 146, "seed greek end");
+    assert_eq(culture_status(gr), CULTURE_HISTORICAL, "seed greek historical");
+    assert_eq(culture_practices_count(gr), 3, "seed greek 3 practices");
+    assert_eq(culture_art_forms_count(gr), 3, "seed greek 3 art forms");
+    assert_eq(culture_figures_count(gr), 2, "seed greek 2 figures");
+
+    # Verify Japanese — Varley (2000)
+    var jp = hadara_get(4);
+    assert_eq(culture_time_start(jp), 0 - 300, "seed japanese start");
+    assert_eq(culture_art_forms_count(jp), 4, "seed japanese 4 art forms");
+    assert_eq(culture_practices_count(jp), 3, "seed japanese 3 practices");
+
+    # Verify West African — Iliffe (2007)
+    var wa = hadara_get(5);
+    assert_eq(culture_art_forms_count(wa), 3, "seed westafrican 3 art forms");
+    assert_eq(culture_figures_count(wa), 2, "seed westafrican 2 figures");
+
+    # Verify Scottish Gaelic — revived status
+    var sc = hadara_get(6);
+    assert_eq(culture_status(sc), CULTURE_REVIVED, "seed scottish revived");
+    assert_eq(culture_practices_count(sc), 2, "seed scottish 2 practices");
+    assert_eq(culture_art_forms_count(sc), 2, "seed scottish 2 art forms");
+
+    # Verify Norse — Price (2019)
+    var no = hadara_get(7);
+    assert_eq(culture_time_start(no), 793, "seed norse start");
+    assert_eq(culture_time_end(no), 1066, "seed norse end");
+    assert_eq(culture_practices_count(no), 3, "seed norse 3 practices");
+    assert_eq(culture_art_forms_count(no), 3, "seed norse 3 art forms");
+    var no_tc = load64(no + CULTURE_TEXTS_COUNT);
+    assert_eq(no_tc, 2, "seed norse 2 texts");
+
+    # Verify Aboriginal — Flood (2006)
+    var ab = hadara_get(8);
+    assert_eq(culture_time_start(ab), 0 - 65000, "seed aboriginal start");
+    assert_eq(culture_practices_count(ab), 3, "seed aboriginal 3 practices");
+    assert_eq(culture_art_forms_count(ab), 3, "seed aboriginal 3 art forms");
 
     # Verify Hip-Hop — Chang (2005): 1973
     var hp = hadara_get(9);
     assert_eq(culture_time_start(hp), 1973, "seed hiphop start");
     assert_eq(culture_status(hp), CULTURE_ACTIVE, "seed hiphop active");
-
-    # Verify Hip-Hop practices (4 practices)
     assert_eq(culture_practices_count(hp), 4, "seed hiphop 4 practices");
-    var hpp = culture_practices_ptr(hp);
-    assert_eq(practice_category(hpp), PRACTICE_ART, "seed hiphop first practice is art");
-
-    # Verify Hip-Hop figures (3 figures)
+    assert_eq(culture_art_forms_count(hp), 4, "seed hiphop 4 art forms");
     assert_eq(culture_figures_count(hp), 3, "seed hiphop 3 figures");
 
-    # Verify Japanese art forms (4 art forms) — Varley (2000)
-    var jp = hadara_get(4);
-    assert_eq(culture_art_forms_count(jp), 4, "seed japanese 4 art forms");
+    # Verify Maya — Coe (2015)
+    var ma = hadara_get(10);
+    assert_eq(culture_time_start(ma), 0 - 2000, "seed maya start");
+    assert_eq(culture_practices_count(ma), 2, "seed maya 2 practices");
+    assert_eq(culture_art_forms_count(ma), 3, "seed maya 3 art forms");
 
-    # Verify West African art forms — Nettl et al., Vansina (1985)
-    var wa = hadara_get(5);
-    assert_eq(culture_art_forms_count(wa), 3, "seed westafrican 3 art forms");
+    # Verify Chinese — Stearns (2001)
+    var ch = hadara_get(11);
+    assert_eq(culture_time_start(ch), 0 - 1600, "seed chinese start");
+    assert_eq(culture_practices_count(ch), 3, "seed chinese 3 practices");
+    assert_eq(culture_art_forms_count(ch), 3, "seed chinese 3 art forms");
+    assert_eq(culture_figures_count(ch), 2, "seed chinese 2 figures");
+    var ch_tc = load64(ch + CULTURE_TEXTS_COUNT);
+    assert_eq(ch_tc, 2, "seed chinese 2 texts");
 
-    # Verify Persian figures — Brosius (2006), Boyce (2001)
-    assert_eq(culture_figures_count(pe), 2, "seed persian 2 figures");
+    # Verify Roman — Boatwright (2012)
+    var ro = hadara_get(12);
+    assert_eq(culture_time_start(ro), 0 - 753, "seed roman start");
+    assert_eq(culture_time_end(ro), 476, "seed roman end");
+    assert_eq(culture_status(ro), CULTURE_HISTORICAL, "seed roman historical");
+    assert_eq(culture_practices_count(ro), 3, "seed roman 3 practices");
+    assert_eq(culture_art_forms_count(ro), 3, "seed roman 3 art forms");
+    assert_eq(culture_figures_count(ro), 2, "seed roman 2 figures");
 
-    # Verify Vedic texts — Witzel (2003), Flood (1996)
-    var vt = hadara_get(2);
-    # texts stored via hadara_set_texts
-    var tc = load64(vt + CULTURE_TEXTS_COUNT);
-    assert_eq(tc, 2, "seed vedic 2 texts");
-
-    # Verify Norse texts — Larrington (2014)
-    var no = hadara_get(7);
-    var ntc = load64(no + CULTURE_TEXTS_COUNT);
-    assert_eq(ntc, 2, "seed norse 2 texts");
-
-    # Verify relations exist
+    # Verify relations
     assert_eq(culture_relations_count(pe), 1, "seed persian 1 relation");
-    assert_eq(culture_relations_count(hadara_get(0)), 1, "seed egyptian 1 relation");
+    assert_eq(culture_relations_count(eg), 1, "seed egyptian 1 relation");
     assert_eq(culture_relations_count(hp), 1, "seed hiphop 1 relation");
+    assert_eq(culture_relations_count(gr), 1, "seed greek 1 relation");
+    assert_eq(culture_relations_count(ro), 1, "seed roman 1 relation");
+    assert_eq(culture_relations_count(ch), 1, "seed chinese 1 relation");
+    assert_eq(culture_relations_count(jp), 1, "seed japanese 1 relation");
 
-    # Verify temporal query on seeded data
+    # Verify temporal queries on full corpus
     var qbuf = alloc(32 * 8);
+
+    # 2026: Persian, Vedic, Japanese, WestAfrican, Scottish, Aboriginal, HipHop, Maya, Chinese = 9
     var n4 = hadara_coexisting_at(2026, qbuf, 32);
-    # Active in 2026: Persian, Vedic, Japanese, West African, Scottish, Aboriginal, Hip-Hop, Maya, Chinese = 9
     assert_eq(n4, 9, "9 cultures in 2026");
 
+    # 1000 BCE: Egyptian(-3100..641), Vedic(-1500), Chinese(-1600), Maya(-2000), Aboriginal(-65000) = 5
     var n5 = hadara_coexisting_at(0 - 1000, qbuf, 32);
-    # In 1000 BCE: Egyptian(-3100..641), Persian(-550..present)=no, Vedic(-1500..present), Chinese(-1600..present), Maya(-2000..present), Aboriginal(-65000..present) = 5
     assert_eq(n5, 5, "5 cultures in 1000 BCE");
+
+    # 200 CE: Egyptian, Persian, Vedic, Japanese, WestAfrican(300=no), Aboriginal, Maya, Chinese, Roman = 8
+    var n6 = hadara_coexisting_at(200, qbuf, 32);
+    assert_eq(n6, 8, "8 cultures in 200 CE");
+
+    # 900 CE: Persian, Vedic, Japanese, WestAfrican, Scottish, Norse, Aboriginal, Maya, Chinese = 9
+    var n7 = hadara_coexisting_at(900, qbuf, 32);
+    assert_eq(n7, 9, "9 cultures in 900 CE");
 
     # Status counts
     assert_eq(hadara_count_by_status(CULTURE_ACTIVE), 8, "8 active cultures");
-    assert_eq(hadara_count_by_status(CULTURE_HISTORICAL), 3, "3 historical cultures");
+    assert_eq(hadara_count_by_status(CULTURE_HISTORICAL), 4, "4 historical cultures");
     assert_eq(hadara_count_by_status(CULTURE_REVIVED), 1, "1 revived culture");
+    assert_eq(hadara_count_by_status(CULTURE_DORMANT), 0, "0 dormant cultures");
+    assert_eq(hadara_count_by_status(CULTURE_EXTINCT), 0, "0 extinct cultures");
+
+    # Verify practice sacred flags
+    var hp_pp = culture_practices_ptr(hp);
+    assert_eq(practice_is_sacred(hp_pp), 0, "hiphop cypher is secular");
+    var ve_pp = culture_practices_ptr(ve);
+    assert_eq(practice_is_sacred(ve_pp), 1, "vedic puja is sacred");
+
+    # Verify figure eras
+    var pe_fp = culture_figures_ptr(pe);
+    assert_eq(figure_era_start(pe_fp), 0 - 600, "cyrus born 600 BCE");
+
+    # Verify text sacred flags
+    var ve_tp = load64(ve + CULTURE_TEXTS_PTR);
+    assert_eq(text_is_sacred(ve_tp), 1, "rigveda is sacred");
+
+    # Verify art form mediums
+    var jp_ap = culture_art_forms_ptr(jp);
+    assert_eq(art_form_medium(jp_ap), ART_CALLIGRAPHY, "shodo is calligraphy");
 
     prints("part 2: seed data — PASS\n");
     prints("hadara: all tests passed\n");

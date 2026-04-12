@@ -59,6 +59,14 @@ References for culture emergence/end dates, geographic roots, status classificat
 - Rose, Tricia. *Black Noise: Rap Music and Black Culture in Contemporary America*. Middletown: Wesleyan University Press, 1994.
   Hip-hop as African American cultural expression, practice categorization.
 
+## Roman
+
+- Boatwright, Mary T., et al. *The Romans: From Village to Empire*. 2nd ed. Oxford: Oxford University Press, 2012.
+  Roman culture from founding (753 BCE) through fall of the West (476 CE). Practices, institutions, art.
+
+- Beard, Mary. *SPQR: A History of Ancient Rome*. London: Profile Books, 2015.
+  Cultural practices, festivals (Saturnalia, Triumph), social institutions.
+
 ## Mesoamerican
 
 - Coe, Michael D. *The Maya*. 9th ed. London: Thames and Hudson, 2015.
