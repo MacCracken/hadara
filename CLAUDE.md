@@ -31,6 +31,8 @@
 ```
 src/
   lib.cyr         — public API (includes all modules)
+  main.cyr        — CLI + HTTP server program
+  seed.cyr        — pre-built culture data (12 cultures, cited)
   culture.cyr     — Culture entity, CultureStatus, layout, accessors
   practice.cyr    — Practice, PracticeCategory, Frequency
   art.cyr         — ArtForm, ArtMedium
@@ -40,6 +42,8 @@ src/
   relation.cyr    — CultureRelation, RelationType
   registry.cyr    — in-memory culture registry, add/get/set
   query.cyr       — query helpers (by status, year, coexistence)
+docs/
+  sources/        — per-module academic citations (itihas pattern)
 ```
 
 ## Key Design Constraints
@@ -59,8 +63,16 @@ src/
 ## Quick Start
 
 ```bash
-# Build
-cat src/lib.cyr | cc3 > build/hadara
+# Build program
+cat src/main.cyr | cc3 > build/hadara && chmod +x build/hadara
+
+# Run
+./build/hadara list              # list all cultures
+./build/hadara info 9            # show hip-hop details
+./build/hadara at -1000          # cultures in 1000 BCE
+./build/hadara search Maya       # search by name
+./build/hadara stats             # corpus statistics
+./build/hadara serve 8391        # HTTP JSON API
 
 # Run tests
 cyrius test tests/hadara.tcyr

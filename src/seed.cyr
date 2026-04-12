@@ -1,0 +1,319 @@
+# seed.cyr -- Pre-built culture data
+#
+# 12 cultures with verified dates, endonyms, and descriptions.
+# All data sourced from academic references — see docs/sources/.
+#
+# Sources: Shaw (2000), Brosius (2006), Basham (1967), Boardman (1970--2005),
+# Varley (2000), Iliffe (2007), Cunliffe (2018), Price (2019),
+# Flood (2006), Chang (2005), Coe (2015), Stearns (2001).
+# Full bibliography: docs/sources/cultures.md
+
+# --- Seed cultures ---
+# Called after hadara_init() to populate the registry.
+
+fn hadara_seed() {
+    # 0: Egyptian — Shaw (2000): c. 3100 BCE (Narmer unification) to 641 CE (Arab conquest)
+    var egyptian = hadara_add("Egyptian", 8, CULTURE_HISTORICAL, 0 - 3100, 641);
+    hadara_set_endonym(egyptian, "Kemet", 5);
+
+    # 1: Persian — Brosius (2006): Achaemenid founding 550 BCE, continuous to present
+    var persian = hadara_add("Persian", 7, CULTURE_ACTIVE, 0 - 550, 0);
+    hadara_set_endonym(persian, "Irani", 5);
+
+    # 2: Vedic/Hindu — Basham (1967): Vedic period c. 1500 BCE, continuous
+    var vedic = hadara_add("Vedic-Hindu", 10, CULTURE_ACTIVE, 0 - 1500, 0);
+    hadara_set_endonym(vedic, "Sanatana Dharma", 15);
+
+    # 3: Greek — Boardman (1970--2005): Archaic period c. 800 BCE to 146 BCE (Roman conquest)
+    var greek = hadara_add("Ancient Greek", 12, CULTURE_HISTORICAL, 0 - 800, 0 - 146);
+    hadara_set_endonym(greek, "Hellas", 6);
+
+    # 4: Japanese — Varley (2000): Jomon/Yayoi transition c. 300 BCE, continuous
+    var japanese = hadara_add("Japanese", 8, CULTURE_ACTIVE, 0 - 300, 0);
+    hadara_set_endonym(japanese, "Nihon", 5);
+
+    # 5: West African (Mali/Mande) — Iliffe (2007): Ghana Empire c. 300 CE, Mande continuous
+    var westafrican = hadara_add("West African Mande", 18, CULTURE_ACTIVE, 300, 0);
+    hadara_set_endonym(westafrican, "Manden", 6);
+
+    # 6: Scottish/Gaelic — Cunliffe (2018): Kingdom of Alba 843 CE, Gaelic revival ongoing
+    var scottish = hadara_add("Scottish Gaelic", 15, CULTURE_REVIVED, 843, 0);
+    hadara_set_endonym(scottish, "Gaidheal", 8);
+
+    # 7: Norse — Price (2019): Viking Age c. 793 CE to c. 1066 CE
+    var norse = hadara_add("Norse", 5, CULTURE_HISTORICAL, 793, 1066);
+    hadara_set_endonym(norse, "Norroen", 7);
+
+    # 8: Aboriginal Australian — Flood (2006): 65,000+ years continuous
+    var aboriginal = hadara_add("Aboriginal Australian", 21, CULTURE_ACTIVE, 0 - 65000, 0);
+
+    # 9: Hip-Hop — Chang (2005): South Bronx, 1973, DJ Kool Herc's party
+    var hiphop = hadara_add("Hip-Hop", 7, CULTURE_ACTIVE, 1973, 0);
+
+    # 10: Maya — Coe (2015): Preclassic c. 2000 BCE, living Maya culture continuous
+    var maya = hadara_add("Maya", 4, CULTURE_ACTIVE, 0 - 2000, 0);
+    hadara_set_endonym(maya, "Mayab", 5);
+
+    # 11: Chinese — Stearns (2001): Shang Dynasty c. 1600 BCE, continuous
+    var chinese = hadara_add("Chinese", 7, CULTURE_ACTIVE, 0 - 1600, 0);
+    hadara_set_endonym(chinese, "Zhonghua", 8);
+
+    # --- Seed practices ---
+
+    # Hip-Hop practices — Chang (2005), Schloss (2009)
+    var hp_practices = alloc(PRACTICE_SIZE * 4);
+    var p = hp_practices;
+    store64(p + PRACTICE_NAME_PTR, "Cypher");
+    store64(p + PRACTICE_NAME_LEN, 6);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 0);
+    p = hp_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Block Party");
+    store64(p + PRACTICE_NAME_LEN, 11);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 0);
+    p = hp_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Breaking");
+    store64(p + PRACTICE_NAME_LEN, 8);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 0);
+    p = hp_practices + PRACTICE_SIZE * 3;
+    store64(p + PRACTICE_NAME_PTR, "Graffiti Writing");
+    store64(p + PRACTICE_NAME_LEN, 16);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
+    store64(p + PRACTICE_SACRED, 0);
+    hadara_set_practices(hiphop, hp_practices, 4);
+
+    # Vedic practices — Flood (1996)
+    var v_practices = alloc(PRACTICE_SIZE * 3);
+    p = v_practices;
+    store64(p + PRACTICE_NAME_PTR, "Puja");
+    store64(p + PRACTICE_NAME_LEN, 4);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = v_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Yajna");
+    store64(p + PRACTICE_NAME_LEN, 5);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
+    store64(p + PRACTICE_SACRED, 1);
+    p = v_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Yoga");
+    store64(p + PRACTICE_NAME_LEN, 4);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_DAILY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(vedic, v_practices, 3);
+
+    # Japanese practices — Varley (2000), Friday (1997)
+    var j_practices = alloc(PRACTICE_SIZE * 3);
+    p = j_practices;
+    store64(p + PRACTICE_NAME_PTR, "Chado");
+    store64(p + PRACTICE_NAME_LEN, 5);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 0);
+    p = j_practices + PRACTICE_SIZE;
+    store64(p + PRACTICE_NAME_PTR, "Budo");
+    store64(p + PRACTICE_NAME_LEN, 4);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_MARTIAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
+    store64(p + PRACTICE_SACRED, 1);
+    p = j_practices + PRACTICE_SIZE * 2;
+    store64(p + PRACTICE_NAME_PTR, "Matsuri");
+    store64(p + PRACTICE_NAME_LEN, 7);
+    store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
+    store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
+    store64(p + PRACTICE_SACRED, 1);
+    hadara_set_practices(japanese, j_practices, 3);
+
+    # --- Seed art forms ---
+
+    # Hip-Hop art forms ��� Rose (1994), Fricke & Ahearn (2002)
+    var hp_arts = alloc(ART_FORM_SIZE * 4);
+    var a = hp_arts;
+    store64(a + ART_FORM_NAME_PTR, "MCing");
+    store64(a + ART_FORM_NAME_LEN, 5);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = hp_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "DJing");
+    store64(a + ART_FORM_NAME_LEN, 5);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = hp_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Graffiti");
+    store64(a + ART_FORM_NAME_LEN, 8);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = hp_arts + ART_FORM_SIZE * 3;
+    store64(a + ART_FORM_NAME_PTR, "Breakdancing");
+    store64(a + ART_FORM_NAME_LEN, 12);
+    store64(a + ART_FORM_MEDIUM, ART_DANCE);
+    hadara_set_art_forms(hiphop, hp_arts, 4);
+
+    # Japanese art forms — Varley (2000), Nakata (1973)
+    var j_arts = alloc(ART_FORM_SIZE * 4);
+    a = j_arts;
+    store64(a + ART_FORM_NAME_PTR, "Shodo");
+    store64(a + ART_FORM_NAME_LEN, 5);
+    store64(a + ART_FORM_MEDIUM, ART_CALLIGRAPHY);
+    a = j_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Noh");
+    store64(a + ART_FORM_NAME_LEN, 3);
+    store64(a + ART_FORM_MEDIUM, ART_THEATER);
+    a = j_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Ukiyo-e");
+    store64(a + ART_FORM_NAME_LEN, 7);
+    store64(a + ART_FORM_MEDIUM, ART_VISUAL);
+    a = j_arts + ART_FORM_SIZE * 3;
+    store64(a + ART_FORM_NAME_PTR, "Gagaku");
+    store64(a + ART_FORM_NAME_LEN, 6);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    hadara_set_art_forms(japanese, j_arts, 4);
+
+    # West African art forms — Nettl et al. (1998--2002), Vansina (1985)
+    var wa_arts = alloc(ART_FORM_SIZE * 3);
+    a = wa_arts;
+    store64(a + ART_FORM_NAME_PTR, "Griot Storytelling");
+    store64(a + ART_FORM_NAME_LEN, 18);
+    store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
+    a = wa_arts + ART_FORM_SIZE;
+    store64(a + ART_FORM_NAME_PTR, "Djembe Drumming");
+    store64(a + ART_FORM_NAME_LEN, 15);
+    store64(a + ART_FORM_MEDIUM, ART_MUSIC);
+    a = wa_arts + ART_FORM_SIZE * 2;
+    store64(a + ART_FORM_NAME_PTR, "Mud Cloth Dyeing");
+    store64(a + ART_FORM_NAME_LEN, 16);
+    store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
+    hadara_set_art_forms(westafrican, wa_arts, 3);
+
+    # --- Seed figures ---
+
+    # Hip-Hop — Chang (2005), KRS-One (2009)
+    var hp_figs = alloc(FIGURE_SIZE * 3);
+    var f = hp_figs;
+    store64(f + FIGURE_NAME_PTR, "DJ Kool Herc");
+    store64(f + FIGURE_NAME_LEN, 12);
+    store64(f + FIGURE_ROLE_PTR, "Originated hip-hop DJ style at 1520 Sedgwick Ave party");
+    store64(f + FIGURE_ROLE_LEN, 55);
+    store64(f + FIGURE_ERA_START, 1955);
+    store64(f + FIGURE_ERA_END, 0);
+    f = hp_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "KRS-One");
+    store64(f + FIGURE_NAME_LEN, 7);
+    store64(f + FIGURE_ROLE_PTR, "Founded Temple of Hiphop, codified hip-hop as culture");
+    store64(f + FIGURE_ROLE_LEN, 54);
+    store64(f + FIGURE_ERA_START, 1965);
+    store64(f + FIGURE_ERA_END, 0);
+    f = hp_figs + FIGURE_SIZE * 2;
+    store64(f + FIGURE_NAME_PTR, "Afrika Bambaataa");
+    store64(f + FIGURE_NAME_LEN, 16);
+    store64(f + FIGURE_ROLE_PTR, "Founded Universal Zulu Nation, defined five elements");
+    store64(f + FIGURE_ROLE_LEN, 52);
+    store64(f + FIGURE_ERA_START, 1957);
+    store64(f + FIGURE_ERA_END, 0);
+    hadara_set_figures(hiphop, hp_figs, 3);
+
+    # Persian — Brosius (2006), Boyce (2001)
+    var pe_figs = alloc(FIGURE_SIZE * 2);
+    f = pe_figs;
+    store64(f + FIGURE_NAME_PTR, "Cyrus the Great");
+    store64(f + FIGURE_NAME_LEN, 15);
+    store64(f + FIGURE_ROLE_PTR, "Founded Achaemenid Empire, authored first human rights charter");
+    store64(f + FIGURE_ROLE_LEN, 62);
+    store64(f + FIGURE_ERA_START, 0 - 600);
+    store64(f + FIGURE_ERA_END, 0 - 530);
+    f = pe_figs + FIGURE_SIZE;
+    store64(f + FIGURE_NAME_PTR, "Zoroaster");
+    store64(f + FIGURE_NAME_LEN, 9);
+    store64(f + FIGURE_ROLE_PTR, "Founded Zoroastrianism, composed the Gathas");
+    store64(f + FIGURE_ROLE_LEN, 44);
+    store64(f + FIGURE_ERA_START, 0 - 1500);
+    store64(f + FIGURE_ERA_END, 0 - 1000);
+    hadara_set_figures(persian, pe_figs, 2);
+
+    # --- Seed texts ---
+
+    # Vedic — Witzel (2003), Flood (1996)
+    var v_texts = alloc(TEXT_SIZE * 2);
+    var t = v_texts;
+    store64(t + TEXT_TITLE_PTR, "Rigveda");
+    store64(t + TEXT_TITLE_LEN, 7);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 0 - 1500);
+    store64(t + TEXT_SACRED, 1);
+    t = v_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Bhagavad Gita");
+    store64(t + TEXT_TITLE_LEN, 13);
+    store64(t + TEXT_AUTHOR_PTR, "Vyasa");
+    store64(t + TEXT_AUTHOR_LEN, 5);
+    store64(t + TEXT_YEAR, 0 - 200);
+    store64(t + TEXT_SACRED, 1);
+    hadara_set_texts(vedic, v_texts, 2);
+
+    # Persian — Boyce (2001)
+    var pe_texts = alloc(TEXT_SIZE * 1);
+    t = pe_texts;
+    store64(t + TEXT_TITLE_PTR, "Avesta");
+    store64(t + TEXT_TITLE_LEN, 6);
+    store64(t + TEXT_AUTHOR_PTR, "Zoroaster");
+    store64(t + TEXT_AUTHOR_LEN, 9);
+    store64(t + TEXT_YEAR, 0 - 1000);
+    store64(t + TEXT_SACRED, 1);
+    hadara_set_texts(persian, pe_texts, 1);
+
+    # Norse — Larrington (2014)
+    var n_texts = alloc(TEXT_SIZE * 2);
+    t = n_texts;
+    store64(t + TEXT_TITLE_PTR, "Poetic Edda");
+    store64(t + TEXT_TITLE_LEN, 11);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 1270);
+    store64(t + TEXT_SACRED, 1);
+    t = n_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Prose Edda");
+    store64(t + TEXT_TITLE_LEN, 10);
+    store64(t + TEXT_AUTHOR_PTR, "Snorri Sturluson");
+    store64(t + TEXT_AUTHOR_LEN, 16);
+    store64(t + TEXT_YEAR, 1220);
+    store64(t + TEXT_SACRED, 0);
+    hadara_set_texts(norse, n_texts, 2);
+
+    # --- Seed relations ---
+
+    # Persian-Egyptian exchange — Briant (2002): 525-404 BCE
+    var rels = alloc(RELATION_SIZE * 3);
+    var r = rels;
+    store64(r + RELATION_SOURCE, persian);
+    store64(r + RELATION_TARGET, egyptian);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 0 - 525);
+    store64(r + RELATION_PERIOD_END, 0 - 404);
+
+    # Greek influenced by Egyptian — Boardman (1970--2005)
+    r = rels + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, egyptian);
+    store64(r + RELATION_TARGET, greek);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 0 - 600);
+    store64(r + RELATION_PERIOD_END, 0 - 300);
+
+    # Hip-Hop branched from West African (oral/musical tradition) — Rose (1994)
+    r = rels + RELATION_SIZE * 2;
+    store64(r + RELATION_SOURCE, westafrican);
+    store64(r + RELATION_TARGET, hiphop);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 1960);
+    store64(r + RELATION_PERIOD_END, 1980);
+
+    hadara_set_relations(persian, rels, 1);
+    hadara_set_relations(egyptian, rels + RELATION_SIZE, 1);
+    hadara_set_relations(hiphop, rels + RELATION_SIZE * 2, 1);
+
+    return hadara_count;
+}

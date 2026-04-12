@@ -3,6 +3,11 @@
 # Rituals, ceremonies, daily practices, festivals, art practices.
 # Each practice belongs to a Culture and has a category, frequency,
 # and sacred/secular distinction.
+#
+# Sources: Bell (1997) — practice categorization. Turner (1969) — lifecycle
+# rituals. Eliade (1959) — sacred/secular distinction. Flood (1996) — Hindu
+# practices. Varley (2000) — Japanese practices. Chang (2005) — hip-hop.
+# Full bibliography: docs/sources/practices.md
 
 # --- PracticeCategory ---
 enum PracticeCategory {

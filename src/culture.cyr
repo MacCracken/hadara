@@ -6,6 +6,11 @@
 #
 # Layout: Culture is heap-allocated via registry. Individual
 # cultures are accessed by CultureId (integer index).
+#
+# Sources: Kottak (2019), Ember & Ember (2015) — cultural classification.
+# Stearns (2001) — emergence/end dates. Shaw (2000), Brosius (2006),
+# Basham (1967), Cunliffe (2018), Chang (2005) — per-culture data.
+# Full bibliography: docs/sources/cultures.md
 
 # --- CultureStatus ---
 # Where a culture sits on the lifecycle spectrum.

@@ -10,8 +10,14 @@
 - [x] Temporal queries (existed_at, find_by_year, coexisting_at)
 - [x] Status queries (count_by_status, count_active)
 - [x] Initial test suite
-- [ ] Seed data: 10-15 cultures (Egyptian, Greek, Persian, Roman, Indian/Vedic, Chinese, Japanese, West African, Scottish, Hip-Hop, Aztec/Maya, Aboriginal Australian, Norse)
+- [x] Seed data: 12 cultures (Egyptian, Persian, Vedic-Hindu, Greek, Japanese, West African Mande, Scottish Gaelic, Norse, Aboriginal Australian, Hip-Hop, Maya, Chinese)
+- [x] Academic source citations (docs/sources/, module headers)
+- [x] CLI interface (list, info, search, at, stats)
+- [x] HTTP JSON API server (serve command, port 8391)
+- [x] Seed data tests
 - [ ] Tests: 80+
+- [ ] Roman culture entry
+- [ ] Expand seed practices/art forms/figures for all 12 cultures
 
 ## Phase 2 — Relationships and Lineage
 

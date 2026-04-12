@@ -3,6 +3,10 @@
 # Cultures don't exist in isolation. They influence, syncretize,
 # branch from, conflict with, and exchange with each other.
 # Each relation is directional and optionally time-bounded.
+#
+# Sources: Bentley (1993) — interaction classification. Curtin (1984) —
+# trade exchange. Stewart & Shaw (1994) — syncretism. Said (1993) — cultural
+# conflict. Full bibliography: docs/sources/relations.md
 
 # --- RelationType ---
 enum RelationType {

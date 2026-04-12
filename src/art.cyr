@@ -3,6 +3,10 @@
 # Music, dance, visual art, literature, oral tradition, theater,
 # architecture, textile, culinary. Each art form belongs to a
 # culture and has a medium, description, and key works/figures.
+#
+# Sources: Nettl et al. (1998--2002) — music traditions. Ong (1982) — oral
+# tradition. Rose (1994) — hip-hop art forms. Safadi (1978) — calligraphy.
+# Full bibliography: docs/sources/art-forms.md
 
 # --- ArtMedium ---
 enum ArtMedium {

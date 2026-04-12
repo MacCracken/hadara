@@ -2,6 +2,10 @@
 #
 # Foundational works within a culture — sacred texts, philosophical
 # treatises, canonical literature, oral tradition transcriptions.
+#
+# Sources: Smith (1991) — sacred texts overview. Faulkner (1969) — Egyptian.
+# Boyce (2001) — Zoroastrian. Witzel (2003) — Vedic. Keene (1976--1999) —
+# Japanese. Larrington (2014) — Norse. Full bibliography: docs/sources/texts.md
 
 # --- Text record layout (heap) ---
 # Offset  Field           Size  Description

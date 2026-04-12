@@ -3,6 +3,10 @@
 # Founders, teachers, transformative figures within a culture.
 # Linked to a culture via the registry. Figures can appear in
 # multiple cultures (e.g., Cyrus the Great in Persian + Jewish tradition).
+#
+# Sources: Hornblower & Spawforth (2012), Encyclopaedia Britannica (2010).
+# Shaw (2000), Brosius (2006), Basham (1967), Keene (1976--1999),
+# Chang (2005), KRS-One (2009). Full bibliography: docs/sources/figures.md
 
 # --- Figure record layout (heap) ---
 # Offset  Field           Size  Description

@@ -1,0 +1,822 @@
+# hadara — culture as a first-class entity
+#
+# Usage:
+#   hadara list                    — list all cultures
+#   hadara info <id>               — show culture details
+#   hadara search <query>          — search by name
+#   hadara status <status>         — filter by status (active/historical/...)
+#   hadara at <year>               — cultures that existed at a given year
+#   hadara stats                   — corpus statistics
+#   hadara serve [port]            — HTTP JSON API on localhost
+
+include "lib/string.cyr"
+include "lib/fmt.cyr"
+include "lib/alloc.cyr"
+include "lib/str.cyr"
+include "lib/args.cyr"
+include "lib/net.cyr"
+include "lib/json.cyr"
+
+# Sakshi — tracing (stderr-only profile)
+include "lib/sakshi.cyr"
+fn sakshi_span_enter(name, name_len) { return 0; }
+fn sakshi_span_exit() { return 0; }
+
+include "src/lib.cyr"
+include "src/seed.cyr"
+
+# ================================================================
+# CLI Commands
+# ================================================================
+
+fn cmd_list() {
+    var i = 0;
+    while (i < hadara_count) {
+        var c = hadara_get(i);
+        # Print: [id] name (status, start--end)
+        prints("[");
+        print_num(i);
+        prints("] ");
+        var nptr = culture_name_ptr(c);
+        var nlen = culture_name_len(c);
+        syscall(1, 1, nptr, nlen);
+        prints(" (");
+        var s = culture_status(c);
+        if (s == CULTURE_ACTIVE) { prints("active"); }
+        elif (s == CULTURE_DORMANT) { prints("dormant"); }
+        elif (s == CULTURE_REVIVED) { prints("revived"); }
+        elif (s == CULTURE_HISTORICAL) { prints("historical"); }
+        elif (s == CULTURE_EXTINCT) { prints("extinct"); }
+        prints(", ");
+        var start = culture_time_start(c);
+        if (start < 0) {
+            print_num(0 - start);
+            prints(" BCE");
+        } else {
+            print_num(start);
+            prints(" CE");
+        }
+        prints("--");
+        var end = culture_time_end(c);
+        if (end == 0) { prints("present"); }
+        elif (end < 0) {
+            print_num(0 - end);
+            prints(" BCE");
+        } else {
+            print_num(end);
+            prints(" CE");
+        }
+        prints(")\n");
+        i = i + 1;
+    }
+    return 0;
+}
+
+fn cmd_info(id) {
+    var c = hadara_get(id);
+    if (c == 0) {
+        prints("error: culture not found\n");
+        return 1;
+    }
+    var nptr = culture_name_ptr(c);
+    var nlen = culture_name_len(c);
+    prints("Name: ");
+    syscall(1, 1, nptr, nlen);
+    prints("\n");
+
+    var eptr = load64(c + CULTURE_ENDONYM_PTR);
+    var elen = load64(c + CULTURE_ENDONYM_LEN);
+    if (eptr != 0) {
+        prints("Endonym: ");
+        syscall(1, 1, eptr, elen);
+        prints("\n");
+    }
+
+    prints("Status: ");
+    var s = culture_status(c);
+    if (s == CULTURE_ACTIVE) { prints("Active"); }
+    elif (s == CULTURE_DORMANT) { prints("Dormant"); }
+    elif (s == CULTURE_REVIVED) { prints("Revived"); }
+    elif (s == CULTURE_HISTORICAL) { prints("Historical"); }
+    elif (s == CULTURE_EXTINCT) { prints("Extinct"); }
+    prints("\n");
+
+    prints("Period: ");
+    var start = culture_time_start(c);
+    if (start < 0) { print_num(0 - start); prints(" BCE"); }
+    else { print_num(start); prints(" CE"); }
+    prints(" -- ");
+    var end = culture_time_end(c);
+    if (end == 0) { prints("present"); }
+    elif (end < 0) { print_num(0 - end); prints(" BCE"); }
+    else { print_num(end); prints(" CE"); }
+    prints("\n");
+
+    var pc = culture_practices_count(c);
+    if (pc > 0) {
+        prints("Practices (");
+        print_num(pc);
+        prints("):\n");
+        var pptr = culture_practices_ptr(c);
+        var pi = 0;
+        while (pi < pc) {
+            var p = pptr + pi * PRACTICE_SIZE;
+            prints("  - ");
+            syscall(1, 1, practice_name_ptr(p), practice_name_len(p));
+            if (practice_is_sacred(p) != 0) { prints(" [sacred]"); }
+            prints("\n");
+            pi = pi + 1;
+        }
+    }
+
+    var ac = culture_art_forms_count(c);
+    if (ac > 0) {
+        prints("Art Forms (");
+        print_num(ac);
+        prints("):\n");
+        var aptr = culture_art_forms_ptr(c);
+        var ai = 0;
+        while (ai < ac) {
+            var af = aptr + ai * ART_FORM_SIZE;
+            prints("  - ");
+            syscall(1, 1, art_form_name_ptr(af), art_form_name_len(af));
+            prints("\n");
+            ai = ai + 1;
+        }
+    }
+
+    var fc = culture_figures_count(c);
+    if (fc > 0) {
+        prints("Figures (");
+        print_num(fc);
+        prints("):\n");
+        var fptr = culture_figures_ptr(c);
+        var fi = 0;
+        while (fi < fc) {
+            var fig = fptr + fi * FIGURE_SIZE;
+            prints("  - ");
+            syscall(1, 1, figure_name_ptr(fig), figure_name_len(fig));
+            prints(": ");
+            syscall(1, 1, figure_role_ptr(fig), load64(fig + FIGURE_ROLE_LEN));
+            prints("\n");
+            fi = fi + 1;
+        }
+    }
+
+    var rc = culture_relations_count(c);
+    if (rc > 0) {
+        prints("Relations (");
+        print_num(rc);
+        prints("):\n");
+        var rptr = culture_relations_ptr(c);
+        var ri = 0;
+        while (ri < rc) {
+            var rel = rptr + ri * RELATION_SIZE;
+            prints("  - ");
+            var rt = relation_type(rel);
+            if (rt == REL_INFLUENCED) { prints("influenced by"); }
+            elif (rt == REL_SYNCRETIZED) { prints("syncretized with"); }
+            elif (rt == REL_BRANCHED_FROM) { prints("branched from"); }
+            elif (rt == REL_CONFLICTED) { prints("conflicted with"); }
+            elif (rt == REL_EXCHANGED) { prints("exchanged with"); }
+            elif (rt == REL_ABSORBED) { prints("absorbed into"); }
+            elif (rt == REL_REVIVED_FROM) { prints("revived from"); }
+            prints(" culture #");
+            var src = relation_source(rel);
+            if (src == id) { print_num(relation_target(rel)); }
+            else { print_num(src); }
+            prints("\n");
+            ri = ri + 1;
+        }
+    }
+
+    return 0;
+}
+
+fn cmd_search(query, qlen) {
+    var found = 0;
+    var i = 0;
+    while (i < hadara_count) {
+        var c = hadara_get(i);
+        var nptr = culture_name_ptr(c);
+        var nlen = culture_name_len(c);
+        # Simple substring search (case-sensitive)
+        var match = 0;
+        if (qlen <= nlen) {
+            var j = 0;
+            while (j <= nlen - qlen) {
+                if (memeq(nptr + j, query, qlen) == 1) { match = 1; j = nlen; }
+                j = j + 1;
+            }
+        }
+        if (match == 1) {
+            prints("[");
+            print_num(i);
+            prints("] ");
+            syscall(1, 1, nptr, nlen);
+            prints("\n");
+            found = found + 1;
+        }
+        i = i + 1;
+    }
+    if (found == 0) { prints("no cultures found\n"); }
+    return 0;
+}
+
+fn cmd_at(year) {
+    var buf = alloc(REGISTRY_MAX * 8);
+    var n = hadara_coexisting_at(year, buf, REGISTRY_MAX);
+    if (n == 0) {
+        prints("no cultures at year ");
+        print_num(year);
+        prints("\n");
+        return 0;
+    }
+    print_num(n);
+    prints(" culture(s) at year ");
+    if (year < 0) { print_num(0 - year); prints(" BCE"); }
+    else { print_num(year); prints(" CE"); }
+    prints(":\n");
+    var i = 0;
+    while (i < n) {
+        var cid = load64(buf + i * 8);
+        var c = hadara_get(cid);
+        prints("  [");
+        print_num(cid);
+        prints("] ");
+        syscall(1, 1, culture_name_ptr(c), culture_name_len(c));
+        prints("\n");
+        i = i + 1;
+    }
+    return 0;
+}
+
+fn cmd_stats() {
+    prints("hadara corpus statistics\n");
+    prints("========================\n");
+    prints("Cultures: ");
+    print_num(hadara_count);
+    prints("\n");
+    prints("  Active: ");
+    print_num(hadara_count_by_status(CULTURE_ACTIVE));
+    prints("\n");
+    prints("  Historical: ");
+    print_num(hadara_count_by_status(CULTURE_HISTORICAL));
+    prints("\n");
+    prints("  Revived: ");
+    print_num(hadara_count_by_status(CULTURE_REVIVED));
+    prints("\n");
+    prints("  Dormant: ");
+    print_num(hadara_count_by_status(CULTURE_DORMANT));
+    prints("\n");
+    prints("  Extinct: ");
+    print_num(hadara_count_by_status(CULTURE_EXTINCT));
+    prints("\n");
+
+    # Count total practices, art forms, figures across all cultures
+    var total_practices = 0;
+    var total_arts = 0;
+    var total_figures = 0;
+    var total_texts = 0;
+    var total_relations = 0;
+    var i = 0;
+    while (i < hadara_count) {
+        var c = hadara_get(i);
+        total_practices = total_practices + culture_practices_count(c);
+        total_arts = total_arts + culture_art_forms_count(c);
+        total_figures = total_figures + culture_figures_count(c);
+        total_relations = total_relations + culture_relations_count(c);
+        i = i + 1;
+    }
+    prints("Practices: ");
+    print_num(total_practices);
+    prints("\nArt Forms: ");
+    print_num(total_arts);
+    prints("\nFigures: ");
+    print_num(total_figures);
+    prints("\nRelations: ");
+    print_num(total_relations);
+    prints("\n");
+    return 0;
+}
+
+# ================================================================
+# HTTP Server — localhost JSON API
+# ================================================================
+
+var _http_port = 8391;
+
+fn make_crlf() {
+    var buf = alloc(3);
+    store8(buf, 13);
+    store8(buf + 1, 10);
+    store8(buf + 2, 0);
+    return buf;
+}
+
+fn http_respond(cfd, status, status_text, body, body_len) {
+    var cr = make_crlf();
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "HTTP/1.1 ");
+    str_builder_add_cstr(sb, status);
+    str_builder_add_cstr(sb, " ");
+    str_builder_add_cstr(sb, status_text);
+    str_builder_add_cstr(sb, cr);
+    str_builder_add_cstr(sb, "Content-Type: application/json");
+    str_builder_add_cstr(sb, cr);
+    str_builder_add_cstr(sb, "Connection: close");
+    str_builder_add_cstr(sb, cr);
+    str_builder_add_cstr(sb, "Content-Length: ");
+    str_builder_add_int(sb, body_len);
+    str_builder_add_cstr(sb, cr);
+    str_builder_add_cstr(sb, cr);
+    var header = str_builder_build(sb);
+    var hdr_cstr = to_cstr(header);
+    sys_write(cfd, hdr_cstr, str_len(header));
+    sys_write(cfd, body, body_len);
+    return 0;
+}
+
+fn http_ok(cfd, body, body_len) {
+    return http_respond(cfd, "200", "OK", body, body_len);
+}
+
+fn http_not_found(cfd) {
+    var body = "{\"error\":\"not found\"}";
+    return http_respond(cfd, "404", "Not Found", body, strlen(body));
+}
+
+fn http_bad_request(cfd) {
+    var body = "{\"error\":\"bad request\"}";
+    return http_respond(cfd, "400", "Bad Request", body, strlen(body));
+}
+
+fn http_parse_path(buf, len) {
+    var i = 0;
+    while (i < len) {
+        if (load8(buf + i) == 32) { i = i + 1; break; }
+        i = i + 1;
+    }
+    if (i >= len) { return 0; }
+    var path_start = i;
+    while (i < len) {
+        if (load8(buf + i) == 32) { break; }
+        i = i + 1;
+    }
+    var path_len = i - path_start;
+    if (path_len == 0) { return 0; }
+    var path = alloc(path_len + 1);
+    memcpy(path, buf + path_start, path_len);
+    store8(path + path_len, 0);
+    return path;
+}
+
+fn http_path_segment(path, n) {
+    var i = 0;
+    var plen = strlen(path);
+    var seg = 0;
+    while (i < plen) {
+        if (load8(path + i) == 47) { seg = seg + 1; }
+        if (seg == n) { i = i + 1; break; }
+        i = i + 1;
+    }
+    if (i >= plen) { return 0; }
+    var start = i;
+    while (i < plen) {
+        if (load8(path + i) == 47) { break; }
+        if (load8(path + i) == 63) { break; }
+        i = i + 1;
+    }
+    var slen = i - start;
+    if (slen == 0) { return 0; }
+    var result = alloc(slen + 1);
+    memcpy(result, path + start, slen);
+    store8(result + slen, 0);
+    return result;
+}
+
+fn http_get_param(path, name) {
+    var qmark = strchr(path, 63);
+    if (qmark < 0) { return 0; }
+    var params = path + qmark + 1;
+    var nlen = strlen(name);
+    var plen = strlen(params);
+    var i = 0;
+    while (i <= plen - nlen - 1) {
+        if (memeq(params + i, name, nlen) == 1) {
+            if (load8(params + i + nlen) == 61) {
+                var vstart = params + i + nlen + 1;
+                var vend = vstart;
+                while (load8(vend) != 0) {
+                    if (load8(vend) == 38) { break; }
+                    vend = vend + 1;
+                }
+                var vlen = vend - vstart;
+                var val = alloc(vlen + 1);
+                memcpy(val, vstart, vlen);
+                store8(val + vlen, 0);
+                return val;
+            }
+        }
+        i = i + 1;
+    }
+    return 0;
+}
+
+# --- JSON response builders ---
+
+fn json_stats() {
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "{\"cultures\":");
+    str_builder_add_int(sb, hadara_count);
+    str_builder_add_cstr(sb, ",\"active\":");
+    str_builder_add_int(sb, hadara_count_by_status(CULTURE_ACTIVE));
+    str_builder_add_cstr(sb, ",\"historical\":");
+    str_builder_add_int(sb, hadara_count_by_status(CULTURE_HISTORICAL));
+    str_builder_add_cstr(sb, ",\"revived\":");
+    str_builder_add_int(sb, hadara_count_by_status(CULTURE_REVIVED));
+
+    # totals
+    var tp = 0;
+    var ta = 0;
+    var tf = 0;
+    var tr = 0;
+    var i = 0;
+    while (i < hadara_count) {
+        var c = hadara_get(i);
+        tp = tp + culture_practices_count(c);
+        ta = ta + culture_art_forms_count(c);
+        tf = tf + culture_figures_count(c);
+        tr = tr + culture_relations_count(c);
+        i = i + 1;
+    }
+    str_builder_add_cstr(sb, ",\"practices\":");
+    str_builder_add_int(sb, tp);
+    str_builder_add_cstr(sb, ",\"art_forms\":");
+    str_builder_add_int(sb, ta);
+    str_builder_add_cstr(sb, ",\"figures\":");
+    str_builder_add_int(sb, tf);
+    str_builder_add_cstr(sb, ",\"relations\":");
+    str_builder_add_int(sb, tr);
+    str_builder_add_cstr(sb, "}");
+    return str_builder_build(sb);
+}
+
+fn json_culture(c) {
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "{\"id\":");
+    str_builder_add_int(sb, culture_id(c));
+    str_builder_add_cstr(sb, ",\"name\":\"");
+    str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
+    str_builder_add_cstr(sb, "\"");
+
+    var eptr = load64(c + CULTURE_ENDONYM_PTR);
+    var elen = load64(c + CULTURE_ENDONYM_LEN);
+    if (eptr != 0) {
+        str_builder_add_cstr(sb, ",\"endonym\":\"");
+        str_builder_add_buf(sb, eptr, elen);
+        str_builder_add_cstr(sb, "\"");
+    }
+
+    str_builder_add_cstr(sb, ",\"status\":\"");
+    var s = culture_status(c);
+    if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
+    elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
+    elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
+    elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
+    elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
+    str_builder_add_cstr(sb, "\"");
+
+    str_builder_add_cstr(sb, ",\"time_start\":");
+    str_builder_add_int(sb, culture_time_start(c));
+    str_builder_add_cstr(sb, ",\"time_end\":");
+    str_builder_add_int(sb, culture_time_end(c));
+
+    # Practices
+    var pc = culture_practices_count(c);
+    if (pc > 0) {
+        str_builder_add_cstr(sb, ",\"practices\":[");
+        var pptr = culture_practices_ptr(c);
+        var pi = 0;
+        while (pi < pc) {
+            var p = pptr + pi * PRACTICE_SIZE;
+            if (pi > 0) { str_builder_add_cstr(sb, ","); }
+            str_builder_add_cstr(sb, "{\"name\":\"");
+            str_builder_add_buf(sb, practice_name_ptr(p), practice_name_len(p));
+            str_builder_add_cstr(sb, "\",\"sacred\":");
+            str_builder_add_int(sb, practice_is_sacred(p));
+            str_builder_add_cstr(sb, "}");
+            pi = pi + 1;
+        }
+        str_builder_add_cstr(sb, "]");
+    }
+
+    # Art forms
+    var ac = culture_art_forms_count(c);
+    if (ac > 0) {
+        str_builder_add_cstr(sb, ",\"art_forms\":[");
+        var aptr = culture_art_forms_ptr(c);
+        var ai = 0;
+        while (ai < ac) {
+            var af = aptr + ai * ART_FORM_SIZE;
+            if (ai > 0) { str_builder_add_cstr(sb, ","); }
+            str_builder_add_cstr(sb, "{\"name\":\"");
+            str_builder_add_buf(sb, art_form_name_ptr(af), art_form_name_len(af));
+            str_builder_add_cstr(sb, "\"}");
+            ai = ai + 1;
+        }
+        str_builder_add_cstr(sb, "]");
+    }
+
+    # Figures
+    var fc = culture_figures_count(c);
+    if (fc > 0) {
+        str_builder_add_cstr(sb, ",\"figures\":[");
+        var fptr = culture_figures_ptr(c);
+        var fi = 0;
+        while (fi < fc) {
+            var fig = fptr + fi * FIGURE_SIZE;
+            if (fi > 0) { str_builder_add_cstr(sb, ","); }
+            str_builder_add_cstr(sb, "{\"name\":\"");
+            str_builder_add_buf(sb, figure_name_ptr(fig), figure_name_len(fig));
+            str_builder_add_cstr(sb, "\",\"role\":\"");
+            str_builder_add_buf(sb, figure_role_ptr(fig), load64(fig + FIGURE_ROLE_LEN));
+            str_builder_add_cstr(sb, "\"}");
+            fi = fi + 1;
+        }
+        str_builder_add_cstr(sb, "]");
+    }
+
+    str_builder_add_cstr(sb, "}");
+    return str_builder_build(sb);
+}
+
+fn json_list() {
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "[");
+    var i = 0;
+    while (i < hadara_count) {
+        var c = hadara_get(i);
+        if (i > 0) { str_builder_add_cstr(sb, ","); }
+        str_builder_add_cstr(sb, "{\"id\":");
+        str_builder_add_int(sb, i);
+        str_builder_add_cstr(sb, ",\"name\":\"");
+        str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
+        str_builder_add_cstr(sb, "\",\"status\":\"");
+        var s = culture_status(c);
+        if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
+        elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
+        elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
+        elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
+        elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
+        str_builder_add_cstr(sb, "\"}");
+        i = i + 1;
+    }
+    str_builder_add_cstr(sb, "]");
+    return str_builder_build(sb);
+}
+
+fn json_at_year(year) {
+    var buf = alloc(REGISTRY_MAX * 8);
+    var n = hadara_coexisting_at(year, buf, REGISTRY_MAX);
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "{\"year\":");
+    str_builder_add_int(sb, year);
+    str_builder_add_cstr(sb, ",\"count\":");
+    str_builder_add_int(sb, n);
+    str_builder_add_cstr(sb, ",\"cultures\":[");
+    var i = 0;
+    while (i < n) {
+        var cid = load64(buf + i * 8);
+        var c = hadara_get(cid);
+        if (i > 0) { str_builder_add_cstr(sb, ","); }
+        str_builder_add_cstr(sb, "{\"id\":");
+        str_builder_add_int(sb, cid);
+        str_builder_add_cstr(sb, ",\"name\":\"");
+        str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
+        str_builder_add_cstr(sb, "\"}");
+        i = i + 1;
+    }
+    str_builder_add_cstr(sb, "]}");
+    return str_builder_build(sb);
+}
+
+fn json_search(query, qlen) {
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "{\"query\":\"");
+    str_builder_add_buf(sb, query, qlen);
+    str_builder_add_cstr(sb, "\",\"results\":[");
+    var first = 1;
+    var i = 0;
+    while (i < hadara_count) {
+        var c = hadara_get(i);
+        var nptr = culture_name_ptr(c);
+        var nlen = culture_name_len(c);
+        var match = 0;
+        if (qlen <= nlen) {
+            var j = 0;
+            while (j <= nlen - qlen) {
+                if (memeq(nptr + j, query, qlen) == 1) { match = 1; j = nlen; }
+                j = j + 1;
+            }
+        }
+        if (match == 1) {
+            if (first == 0) { str_builder_add_cstr(sb, ","); }
+            str_builder_add_cstr(sb, "{\"id\":");
+            str_builder_add_int(sb, i);
+            str_builder_add_cstr(sb, ",\"name\":\"");
+            str_builder_add_buf(sb, nptr, nlen);
+            str_builder_add_cstr(sb, "\"}");
+            first = 0;
+        }
+        i = i + 1;
+    }
+    str_builder_add_cstr(sb, "]}");
+    return str_builder_build(sb);
+}
+
+# --- HTTP routing ---
+
+fn http_route(cfd, path) {
+    # GET /stats or GET /
+    if (streq(path, "/stats") == 1) {
+        var body = json_stats();
+        return http_ok(cfd, str_data(body), str_len(body));
+    }
+    if (streq(path, "/") == 1) {
+        var body = json_stats();
+        return http_ok(cfd, str_data(body), str_len(body));
+    }
+    # GET /list
+    if (streq(path, "/list") == 1) {
+        var body = json_list();
+        return http_ok(cfd, str_data(body), str_len(body));
+    }
+    # GET /culture/{id}
+    if (memeq(path, "/culture/", 9) == 1) {
+        var seg = http_path_segment(path, 2);
+        if (seg == 0) { return http_bad_request(cfd); }
+        # Parse integer from seg
+        var id = parse_int(seg);
+        if (id < 0) { return http_bad_request(cfd); }
+        var c = hadara_get(id);
+        if (c == 0) { return http_not_found(cfd); }
+        var body = json_culture(c);
+        return http_ok(cfd, str_data(body), str_len(body));
+    }
+    # GET /at?year=N
+    if (memeq(path, "/at", 3) == 1) {
+        var yr = http_get_param(path, "year");
+        if (yr == 0) { return http_bad_request(cfd); }
+        var year = parse_int(yr);
+        var body = json_at_year(year);
+        return http_ok(cfd, str_data(body), str_len(body));
+    }
+    # GET /search?q=...
+    if (memeq(path, "/search", 7) == 1) {
+        var q = http_get_param(path, "q");
+        if (q == 0) { return http_bad_request(cfd); }
+        var body = json_search(q, strlen(q));
+        return http_ok(cfd, str_data(body), str_len(body));
+    }
+    return http_not_found(cfd);
+}
+
+fn cmd_serve(port) {
+    _http_port = port;
+
+    var sfd = tcp_socket();
+    if (is_err(sfd) == 1) {
+        sakshi_error("failed to create socket", 23);
+        return 1;
+    }
+    sfd = payload(sfd);
+    sock_reuse(sfd);
+
+    var br = sock_bind(sfd, INADDR_ANY(), _http_port);
+    if (is_err(br) == 1) {
+        sakshi_error("failed to bind", 14);
+        return 1;
+    }
+
+    var lr = sock_listen(sfd, 16);
+    if (is_err(lr) == 1) {
+        sakshi_error("failed to listen", 16);
+        return 1;
+    }
+
+    prints("hadara serving on http://localhost:");
+    print_num(_http_port);
+    prints("\n");
+    prints("endpoints: /stats /list /culture/{id} /at?year=N /search?q=...\n");
+    sakshi_info("server started", 14);
+
+    # Accept loop
+    while (1 == 1) {
+        var client = sock_accept(sfd);
+        if (is_err(client) == 1) { continue; }
+        var cfd = payload(client);
+
+        var req_buf = alloc(4096);
+        var recv_result = sock_recv(cfd, req_buf, 4095);
+        if (is_err(recv_result) == 1) { sock_close(cfd); continue; }
+        var req_len = payload(recv_result);
+        if (req_len > 0) {
+            store8(req_buf + req_len, 0);
+            var path = http_parse_path(req_buf, req_len);
+            if (path != 0) {
+                http_route(cfd, path);
+            } else {
+                http_bad_request(cfd);
+            }
+        }
+        sock_close(cfd);
+    }
+    return 0;
+}
+
+# ================================================================
+# Integer parser (for CLI args and HTTP params)
+# ================================================================
+
+fn parse_int(s) {
+    var neg = 0;
+    var i = 0;
+    if (load8(s) == 45) { neg = 1; i = 1; }  # '-'
+    var result = 0;
+    while (load8(s + i) != 0) {
+        var ch = load8(s + i);
+        if (ch < 48) { break; }
+        if (ch > 57) { break; }
+        result = result * 10 + ch - 48;
+        i = i + 1;
+    }
+    if (neg == 1) { return 0 - result; }
+    return result;
+}
+
+# ================================================================
+# Usage / Main
+# ================================================================
+
+fn usage() {
+    println("hadara — culture as a first-class entity for AGNOS");
+    println("");
+    println("Usage: hadara <command> [args]");
+    println("");
+    println("Commands:");
+    println("  list              list all cultures");
+    println("  info <id>         show culture details");
+    println("  search <query>    search cultures by name");
+    println("  at <year>         cultures that existed at year (negative = BCE)");
+    println("  stats             corpus statistics");
+    println("  serve [port]      HTTP JSON API (default: 8391)");
+    println("  help              show this help");
+    return 0;
+}
+
+fn main() {
+    alloc_init();
+    args_init();
+    hadara_init();
+    hadara_seed();
+
+    if (argc() < 2) {
+        usage();
+        return 0;
+    }
+
+    var cmd = argv(1);
+
+    if (streq(cmd, "list") == 1) { return cmd_list(); }
+    if (streq(cmd, "stats") == 1) { return cmd_stats(); }
+    if (streq(cmd, "help") == 1) { return usage(); }
+
+    if (streq(cmd, "info") == 1) {
+        if (argc() < 3) { prints("usage: hadara info <id>\n"); return 1; }
+        var id = parse_int(argv(2));
+        return cmd_info(id);
+    }
+
+    if (streq(cmd, "search") == 1) {
+        if (argc() < 3) { prints("usage: hadara search <query>\n"); return 1; }
+        var q = argv(2);
+        return cmd_search(q, strlen(q));
+    }
+
+    if (streq(cmd, "at") == 1) {
+        if (argc() < 3) { prints("usage: hadara at <year>\n"); return 1; }
+        var year = parse_int(argv(2));
+        return cmd_at(year);
+    }
+
+    if (streq(cmd, "serve") == 1) {
+        var port = 8391;
+        if (argc() >= 3) { port = parse_int(argv(2)); }
+        return cmd_serve(port);
+    }
+
+    prints("unknown command: ");
+    println(cmd);
+    return usage();
+}

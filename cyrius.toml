@@ -9,5 +9,11 @@ repository = "https://github.com/MacCracken/hadara"
 src = "src/lib.cyr"
 output = "build/hadara"
 
+[[programs]]
+name = "hadara"
+src = "src/main.cyr"
+output = "build/hadara"
+description = "Culture corpus CLI and HTTP server"
+
 [deps]
 sakshi = { git = "https://github.com/MacCracken/sakshi", version = "0.9.0" }
