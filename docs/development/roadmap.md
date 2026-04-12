@@ -30,16 +30,16 @@
 - [x] Typed relation queries: `hadara_related_by_type`, `hadara_exchanged_with`, `hadara_syncretized_with`
 - [x] CLI: `lineage <id>`, `influence <id>`, `relations <id>`
 - [x] HTTP: `/lineage/{id}`, `/influence/{id}`
-- [ ] Syncretism seed data (Hermes Trismegistus as Greek-Egyptian example)
-- [ ] Temporal relationship queries (filter relations by time period)
+- [x] Syncretism seed data (Greek↔Egyptian Hermes Trismegistus, Vedic↔Chinese Silk Road, Greek absorbed→Roman)
+- [x] Temporal relationship queries: `hadara_relations_at`, `hadara_connected_at`, `hadara_exchanges_at`
 
-## Phase 3 — Consumer Integration
+## Phase 3 — Consumer Integration (current)
 
-- [ ] bhava: cultural display rule export
-- [ ] avatara: archetype → culture mapping
-- [ ] joshua: NPC cultural background queries
-- [ ] natya: narrative tradition → culture mapping
-- [ ] jnana: cultural knowledge in unified corpus
+- [x] bhava: `hadara_display_rule` — formality, expressiveness, individualism, directness per culture
+- [x] joshua: `hadara_dominant_practice`, `hadara_sacred_ratio` — NPC behavior patterns
+- [x] natya: `hadara_narrative_count`, `hadara_narratives` — narrative tradition mapping
+- [x] jnana: `hadara_fact_count`, `hadara_total_facts` — knowledge graph export metrics
+- [ ] avatara: archetype → culture context mapping (needs avatara types)
 
 ## Phase 4 — Deep Content
 

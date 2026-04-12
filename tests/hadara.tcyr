@@ -241,14 +241,15 @@ fn main() {
     assert_eq(culture_art_forms_count(ro), 3, "seed roman 3 art forms");
     assert_eq(culture_figures_count(ro), 2, "seed roman 2 figures");
 
-    # Verify relations
+    # Verify relations (updated with syncretism/exchange/absorbed)
     assert_eq(culture_relations_count(pe), 1, "seed persian 1 relation");
-    assert_eq(culture_relations_count(eg), 1, "seed egyptian 1 relation");
+    assert_eq(culture_relations_count(eg), 2, "seed egyptian 2 relations");
     assert_eq(culture_relations_count(hp), 1, "seed hiphop 1 relation");
-    assert_eq(culture_relations_count(gr), 1, "seed greek 1 relation");
-    assert_eq(culture_relations_count(ro), 1, "seed roman 1 relation");
-    assert_eq(culture_relations_count(ch), 1, "seed chinese 1 relation");
+    assert_eq(culture_relations_count(gr), 3, "seed greek 3 relations");
+    assert_eq(culture_relations_count(ro), 2, "seed roman 2 relations");
+    assert_eq(culture_relations_count(ch), 2, "seed chinese 2 relations");
     assert_eq(culture_relations_count(jp), 1, "seed japanese 1 relation");
+    assert_eq(culture_relations_count(hadara_get(2)), 1, "seed vedic 1 relation");
 
     # Verify temporal queries on full corpus
     var qbuf = alloc(32 * 8);
@@ -343,10 +344,12 @@ fn main() {
     assert_eq(n14, 1, "egyptian exchanged with 1");
     assert_eq(load64(gbuf), 1, "egyptian exchanged with persian");
 
-    # all_relations: Greek has influence-out (→ Roman) stored on itself,
-    # plus influence-in (Egyptian → Greek) stored on Egyptian
+    # all_relations: Greek now has 3 stored + inbound from Egyptian = scan finds all
+    # Greek's own: influence→Roman, syncretism↔Egyptian, absorbed→Roman = 3
+    # Egyptian's: influence→Greek = 1 (but Greek is target here)
+    # Total involving Greek: 4 (3 on Greek + 1 on Egyptian pointing to Greek)
     var n15 = hadara_all_relations(3, gbuf, 32);
-    assert_eq(n15, 2, "greek has 2 total relations");
+    assert_eq(n15, 4, "greek has 4 total relations");
 
     # all_relations: Hip-Hop has 1 inbound influence from West African
     var n16 = hadara_all_relations(9, gbuf, 32);
@@ -390,7 +393,176 @@ fn main() {
     assert_eq(n23, 1, "egyptian has 1 influence relation");
     assert_eq(load64(gbuf), 3, "egyptian influence relation → greek");
 
+    # --- Syncretism queries ---
+    # Greek↔Egyptian syncretism (300 BCE - 200 CE) — Stewart & Shaw (1994)
+    var n24 = hadara_syncretized_with(3, gbuf, 32);
+    assert_eq(n24, 1, "greek syncretized with 1 culture");
+    assert_eq(load64(gbuf), 0, "greek syncretized with egyptian");
+
+    var n25 = hadara_syncretized_with(0, gbuf, 32);
+    assert_eq(n25, 1, "egyptian syncretized with 1 culture");
+    assert_eq(load64(gbuf), 3, "egyptian syncretized with greek");
+
+    # Exchange queries
+    # Persian↔Egyptian (525-404 BCE), Vedic↔Chinese (100 BCE - 800 CE)
+    var n26 = hadara_exchanged_with(1, gbuf, 32);
+    assert_eq(n26, 1, "persian exchanged with 1");
+
+    var n27 = hadara_exchanged_with(2, gbuf, 32);
+    assert_eq(n27, 1, "vedic exchanged with 1");
+    assert_eq(load64(gbuf), 11, "vedic exchanged with chinese");
+
+    var n28 = hadara_exchanged_with(11, gbuf, 32);
+    assert_eq(n28, 1, "chinese exchanged with 1");
+    assert_eq(load64(gbuf), 2, "chinese exchanged with vedic");
+
+    # (relation counts verified in Part 2)
+
     prints("part 3: graph traversal — PASS\n");
+
+    # ================================================================
+    # Part 4: Temporal relation queries
+    # ================================================================
+
+    # Relations active at 400 BCE for Egyptian:
+    #   - Egyptian→Greek influence (600-300 BCE) ✓
+    #   - Greek↔Egyptian syncretism (300 BCE-200 CE) ✗ (starts at -300)
+    #   - Persian↔Egyptian exchange (525-404 BCE) ✓
+    var tbuf = alloc(32 * 8);
+    var n29 = hadara_relations_at(0, 0 - 400, tbuf, 32);
+    assert_eq(n29, 2, "egyptian has 2 active relations in 400 BCE");
+
+    # Relations active at 100 CE for Egyptian:
+    #   - syncretism with Greek (300 BCE - 200 CE) ✓
+    #   - influence on Greek (600-300 BCE) ✗ (ended)
+    #   - Persian exchange (525-404 BCE) ✗ (ended)
+    var n30 = hadara_relations_at(0, 100, tbuf, 32);
+    assert_eq(n30, 1, "egyptian has 1 active relation in 100 CE");
+
+    # Connected cultures for Chinese at 600 CE:
+    #   - Chinese→Japanese influence (500-900) ✓
+    #   - Vedic↔Chinese exchange (100 BCE - 800 CE) ✓
+    var n31 = hadara_connected_at(11, 600, tbuf, 32);
+    assert_eq(n31, 2, "chinese connected to 2 cultures in 600 CE");
+
+    # Connected cultures for Chinese at 1000 CE:
+    #   - Chinese→Japanese influence (500-900) ✗ (ended)
+    #   - Vedic↔Chinese exchange (100 BCE - 800 CE) ✗ (ended)
+    var n32 = hadara_connected_at(11, 1000, tbuf, 32);
+    assert_eq(n32, 0, "chinese connected to 0 cultures in 1000 CE");
+
+    # Exchanges active at 500 BCE:
+    #   - Persian↔Egyptian (525-404 BCE) ✓
+    #   - Vedic↔Chinese (100 BCE - 800 CE) ✗ (not started)
+    var n33 = hadara_exchanges_at(0 - 500, tbuf, 32);
+    assert_eq(n33, 2, "1 exchange pair in 500 BCE (2 ids)");
+    # pair: persian, egyptian
+    assert_eq(load64(tbuf), 1, "exchange pair source = persian");
+    assert_eq(load64(tbuf + 8), 0, "exchange pair target = egyptian");
+
+    # Exchanges active at 400 CE:
+    #   - Vedic↔Chinese (100 BCE - 800 CE) ✓
+    var n34 = hadara_exchanges_at(400, tbuf, 32);
+    assert_eq(n34, 2, "1 exchange pair in 400 CE (2 ids)");
+    assert_eq(load64(tbuf), 2, "exchange pair source = vedic");
+    assert_eq(load64(tbuf + 8), 11, "exchange pair target = chinese");
+
+    # Roman relations at 200 BCE — Greek→Roman influence active (300-100 BCE)
+    var n35 = hadara_relations_at(12, 0 - 200, tbuf, 32);
+    assert_eq(n35, 2, "roman has 2 active relations in 200 BCE");
+
+    # Roman relations at 300 CE — nothing active
+    var n36 = hadara_relations_at(12, 300, tbuf, 32);
+    assert_eq(n36, 0, "roman has 0 active relations in 300 CE");
+
+    prints("part 4: temporal relations — PASS\n");
+
+    # ================================================================
+    # Part 5: Consumer integration (Phase 3)
+    # ================================================================
+
+    # --- bhava: display rules ---
+    var jp_rule = hadara_display_rule(4);
+    assert_eq(display_formality(jp_rule), 9, "japanese formality 9");
+    assert_eq(display_expressiveness(jp_rule), 3, "japanese expressiveness 3");
+    assert_eq(display_individualism(jp_rule), 2, "japanese collectivist");
+
+    var hp_rule = hadara_display_rule(9);
+    assert_eq(display_formality(hp_rule), 2, "hiphop formality 2");
+    assert_eq(display_expressiveness(hp_rule), 9, "hiphop expressiveness 9");
+    assert_eq(display_directness(hp_rule), 9, "hiphop directness 9");
+
+    var no_rule = hadara_display_rule(7);
+    assert_eq(display_expressiveness(no_rule), 8, "norse expressiveness 8");
+
+    # Default (unknown culture)
+    var unk_rule = hadara_display_rule(99);
+    assert_eq(display_formality(unk_rule), 5, "unknown culture default formality 5");
+
+    # --- joshua: NPC behavior ---
+    # Hip-Hop dominant practice category = ART (3 of 4 are PRACTICE_ART)
+    var hp_dom = hadara_dominant_practice(9);
+    assert_eq(hp_dom, PRACTICE_ART, "hiphop dominant practice is art");
+
+    # Vedic dominant = RITUAL (puja=ritual) vs others (ceremony, daily) — tie broken by first
+    var ve_dom = hadara_dominant_practice(2);
+    # Puja=RITUAL, Yajna=CEREMONY, Yoga=DAILY — all different, RITUAL at index 0
+    assert_eq(ve_dom, PRACTICE_RITUAL, "vedic dominant is ritual");
+
+    # Sacred ratio: Vedic = 3/3 = 100%
+    var ve_sacred = hadara_sacred_ratio(2);
+    assert_eq(ve_sacred, 100, "vedic 100% sacred");
+
+    # Sacred ratio: Hip-Hop = 0/4 = 0%
+    var hp_sacred = hadara_sacred_ratio(9);
+    assert_eq(hp_sacred, 0, "hiphop 0% sacred");
+
+    # Sacred ratio: Norse = blot(sacred) + thing(secular) + ship_burial(sacred) = 66%
+    var no_sacred = hadara_sacred_ratio(7);
+    assert_eq(no_sacred, 66, "norse 66% sacred");
+
+    # --- natya: narrative traditions ---
+    # West African: Griot Storytelling (oral_tradition) = 1 narrative
+    var wa_narr = hadara_narrative_count(5);
+    assert_eq(wa_narr, 1, "westafrican 1 narrative art form");
+
+    # Greek: Epic Poetry (literature) = 1 narrative
+    var gr_narr = hadara_narrative_count(3);
+    assert_eq(gr_narr, 1, "greek 1 narrative art form");
+
+    # Norse: Skaldic Poetry (oral_tradition) = 1 narrative
+    var no_narr = hadara_narrative_count(7);
+    assert_eq(no_narr, 1, "norse 1 narrative art form");
+
+    # Hip-Hop: MCing/DJing=music, Graffiti=visual, Breaking=dance → 0 narrative
+    var hp_narr = hadara_narrative_count(9);
+    assert_eq(hp_narr, 0, "hiphop 0 narrative art forms");
+
+    # Scottish: Gaelic Song (oral_tradition) = 1 narrative
+    var sc_narr = hadara_narrative_count(6);
+    assert_eq(sc_narr, 1, "scottish 1 narrative art form");
+
+    # Roman: Latin Oratory (oral_tradition) = 1 narrative
+    var ro_narr = hadara_narrative_count(12);
+    assert_eq(ro_narr, 1, "roman 1 narrative art form");
+
+    # --- jnana: knowledge export ---
+    # Fact count for Hip-Hop: 1 (culture) + 4 practices + 4 arts + 3 figs + 0 texts + 3 artifacts + 1 rel = 16
+    var hp_facts = hadara_fact_count(9);
+    assert_eq(hp_facts, 16, "hiphop 16 facts");
+
+    # Fact count for Greek: 1 + 3 + 3 + 2 + 2 + 0 + 3 = 14
+    var gr_facts = hadara_fact_count(3);
+    assert_eq(gr_facts, 14, "greek 14 facts");
+
+    # Total facts across all cultures
+    var total = hadara_total_facts();
+    # Should be > 100 given 13 cultures with all their data
+    var enough = 0;
+    if (total > 100) { enough = 1; }
+    assert_eq(enough, 1, "total facts > 100");
+
+    prints("part 5: consumer integration — PASS\n");
     prints("hadara: all tests passed\n");
     return 0;
 }

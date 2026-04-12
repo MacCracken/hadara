@@ -267,3 +267,98 @@ fn hadara_syncretized_with(culture_id, out_buf, max) {
 fn hadara_exchanged_with(culture_id, out_buf, max) {
     return hadara_related_by_type(culture_id, REL_EXCHANGED, out_buf, max);
 }
+
+# ================================================================
+# Temporal Relation Queries
+# ================================================================
+
+# Find relations active at a given year for a given culture.
+# A relation is active if: period_start <= year AND (period_end == 0 OR year <= period_end)
+# Writes relation pointers to out_buf, returns count.
+fn hadara_relations_at(culture_id, year, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        var c = hadara_get(i);
+        var rc = culture_relations_count(c);
+        var rp = culture_relations_ptr(c);
+        for (var j = 0; j < rc; j = j + 1) {
+            if (count >= max) { return count; }
+            var rel = rp + j * RELATION_SIZE;
+            # Check if this relation involves our culture
+            var src = relation_source(rel);
+            var tgt = relation_target(rel);
+            if (src != culture_id) {
+                if (tgt != culture_id) { continue; }
+            }
+            # Check temporal bounds
+            var rs = relation_period_start(rel);
+            var re = relation_period_end(rel);
+            if (rs != 0) {
+                if (year < rs) { continue; }
+            }
+            if (re != 0) {
+                if (year > re) { continue; }
+            }
+            store64(out_buf + count * 8, rel);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# Find all cultures related to a given culture during a specific time period.
+# Returns CultureIds of the "other" party in active relations at that year.
+fn hadara_connected_at(culture_id, year, out_buf, max) {
+    var rels = alloc(64 * 8);
+    var rc = hadara_relations_at(culture_id, year, rels, 64);
+    var count = 0;
+    for (var i = 0; i < rc; i = i + 1) {
+        if (count >= max) { return count; }
+        var rel = load64(rels + i * 8);
+        var src = relation_source(rel);
+        var tgt = relation_target(rel);
+        var other = tgt;
+        if (tgt == culture_id) { other = src; }
+        # Avoid duplicates (simple linear scan)
+        var dup = 0;
+        for (var k = 0; k < count; k = k + 1) {
+            if (load64(out_buf + k * 8) == other) { dup = 1; k = count; }
+        }
+        if (dup == 0) {
+            store64(out_buf + count * 8, other);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# Find cultures that were exchanging with each other at a specific year.
+# Returns pairs as consecutive CultureIds in out_buf.
+fn hadara_exchanges_at(year, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        var c = hadara_get(i);
+        var rc = culture_relations_count(c);
+        var rp = culture_relations_ptr(c);
+        for (var j = 0; j < rc; j = j + 1) {
+            if (count >= max) { return count; }
+            var rel = rp + j * RELATION_SIZE;
+            if (relation_type(rel) != REL_EXCHANGED) { continue; }
+            var rs = relation_period_start(rel);
+            var re = relation_period_end(rel);
+            if (rs != 0) {
+                if (year < rs) { continue; }
+            }
+            if (re != 0) {
+                if (year > re) { continue; }
+            }
+            # Store pair
+            store64(out_buf + count * 8, relation_source(rel));
+            count = count + 1;
+            if (count >= max) { return count; }
+            store64(out_buf + count * 8, relation_target(rel));
+            count = count + 1;
+        }
+    }
+    return count;
+}

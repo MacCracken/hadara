@@ -1,0 +1,226 @@
+# consumer.cyr -- Consumer integration layer
+#
+# Provides query patterns optimized for each AGNOS consumer:
+#   bhava   — cultural display rules (emotional expression modifiers)
+#   avatara — archetype → culture context
+#   joshua  — NPC cultural behavior lookups
+#   natya   — narrative tradition → culture mapping
+#   jnana   — structured cultural knowledge export
+#
+# Each consumer gets a namespace of functions that return data in the
+# format they need. Consumers include this file and call the functions
+# directly — no serialization overhead for in-process use.
+
+# ================================================================
+# bhava — Cultural Display Rules
+# ================================================================
+# bhava needs: given a culture ID, what emotional expression modifiers
+# apply? E.g., Japanese culture constrains public grief display;
+# hip-hop culture amplifies assertiveness in verbal expression.
+#
+# Returns a modifier struct: formality (0-10), expressiveness (0-10),
+# collectivism vs individualism (0=collective, 10=individual)
+
+enum DisplayRuleLayout {
+    DISPLAY_RULE_SIZE = 32;
+    DISPLAY_FORMALITY = 0;
+    DISPLAY_EXPRESSIVENESS = 8;
+    DISPLAY_INDIVIDUALISM = 16;
+    DISPLAY_DIRECTNESS = 24;
+}
+
+fn hadara_display_rule(culture_id) {
+    var rule = alloc(DISPLAY_RULE_SIZE);
+    # Defaults: moderate (5/10 on all axes)
+    store64(rule + DISPLAY_FORMALITY, 5);
+    store64(rule + DISPLAY_EXPRESSIVENESS, 5);
+    store64(rule + DISPLAY_INDIVIDUALISM, 5);
+    store64(rule + DISPLAY_DIRECTNESS, 5);
+
+    # Culture-specific overrides based on anthropological data
+    # Japanese — Varley (2000): high formality, restrained expression, collective
+    if (culture_id == 4) {
+        store64(rule + DISPLAY_FORMALITY, 9);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 3);
+        store64(rule + DISPLAY_INDIVIDUALISM, 2);
+        store64(rule + DISPLAY_DIRECTNESS, 3);
+    }
+    # Hip-Hop — Chang (2005): low formality, high expression, individual
+    elif (culture_id == 9) {
+        store64(rule + DISPLAY_FORMALITY, 2);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 9);
+        store64(rule + DISPLAY_INDIVIDUALISM, 8);
+        store64(rule + DISPLAY_DIRECTNESS, 9);
+    }
+    # Roman — Boatwright (2012): high formality, moderate expression, civic
+    elif (culture_id == 12) {
+        store64(rule + DISPLAY_FORMALITY, 8);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 6);
+        store64(rule + DISPLAY_INDIVIDUALISM, 4);
+        store64(rule + DISPLAY_DIRECTNESS, 7);
+    }
+    # Norse — Price (2019): moderate formality, high expression, individual
+    elif (culture_id == 7) {
+        store64(rule + DISPLAY_FORMALITY, 4);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 8);
+        store64(rule + DISPLAY_INDIVIDUALISM, 7);
+        store64(rule + DISPLAY_DIRECTNESS, 8);
+    }
+    # West African Mande — Iliffe (2007): moderate formality, high expression, collective
+    elif (culture_id == 5) {
+        store64(rule + DISPLAY_FORMALITY, 6);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 8);
+        store64(rule + DISPLAY_INDIVIDUALISM, 3);
+        store64(rule + DISPLAY_DIRECTNESS, 6);
+    }
+    # Vedic-Hindu — Flood (1996): high formality, moderate expression, collective
+    elif (culture_id == 2) {
+        store64(rule + DISPLAY_FORMALITY, 8);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 6);
+        store64(rule + DISPLAY_INDIVIDUALISM, 3);
+        store64(rule + DISPLAY_DIRECTNESS, 4);
+    }
+    # Persian — Brosius (2006): high formality, poetic expression, collective
+    elif (culture_id == 1) {
+        store64(rule + DISPLAY_FORMALITY, 8);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 7);
+        store64(rule + DISPLAY_INDIVIDUALISM, 4);
+        store64(rule + DISPLAY_DIRECTNESS, 4);
+    }
+    # Ancient Greek — Boardman (1970--2005): moderate formality, high expression, individual
+    elif (culture_id == 3) {
+        store64(rule + DISPLAY_FORMALITY, 5);
+        store64(rule + DISPLAY_EXPRESSIVENESS, 8);
+        store64(rule + DISPLAY_INDIVIDUALISM, 7);
+        store64(rule + DISPLAY_DIRECTNESS, 8);
+    }
+    return rule;
+}
+
+fn display_formality(rule) { return load64(rule + DISPLAY_FORMALITY); }
+fn display_expressiveness(rule) { return load64(rule + DISPLAY_EXPRESSIVENESS); }
+fn display_individualism(rule) { return load64(rule + DISPLAY_INDIVIDUALISM); }
+fn display_directness(rule) { return load64(rule + DISPLAY_DIRECTNESS); }
+
+# ================================================================
+# joshua — NPC Cultural Behavior
+# ================================================================
+# joshua needs: given a culture, what behavior patterns should an NPC
+# exhibit? Returns indexes into practice arrays, art form preferences,
+# and social interaction modifiers.
+
+# Get the dominant practice category for a culture (most frequent category)
+fn hadara_dominant_practice(culture_id) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0 - 1; }
+    var pc = culture_practices_count(c);
+    if (pc == 0) { return 0 - 1; }
+    # Count by category
+    var counts = alloc(8 * 8);
+    memset(counts, 0, 64);
+    var pp = culture_practices_ptr(c);
+    for (var i = 0; i < pc; i = i + 1) {
+        var p = pp + i * PRACTICE_SIZE;
+        var cat = practice_category(p);
+        var cur = load64(counts + cat * 8);
+        store64(counts + cat * 8, cur + 1);
+    }
+    # Find max
+    var best_cat = 0;
+    var best_count = 0;
+    for (var j = 0; j < 8; j = j + 1) {
+        var v = load64(counts + j * 8);
+        if (v > best_count) { best_count = v; best_cat = j; }
+    }
+    return best_cat;
+}
+
+# How many sacred vs secular practices does this culture have?
+# Returns ratio: (sacred_count * 100) / total_count (percentage)
+fn hadara_sacred_ratio(culture_id) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+    var pc = culture_practices_count(c);
+    if (pc == 0) { return 0; }
+    var sacred = 0;
+    var pp = culture_practices_ptr(c);
+    for (var i = 0; i < pc; i = i + 1) {
+        var p = pp + i * PRACTICE_SIZE;
+        if (practice_is_sacred(p) != 0) { sacred = sacred + 1; }
+    }
+    return (sacred * 100) / pc;
+}
+
+# ================================================================
+# natya — Narrative Tradition Mapping
+# ================================================================
+# natya needs: given a culture, what narrative traditions exist?
+# Maps to art forms with ART_ORAL_TRADITION or ART_LITERATURE medium.
+
+# Count narrative art forms (oral tradition + literature) for a culture
+fn hadara_narrative_count(culture_id) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+    var ac = culture_art_forms_count(c);
+    var ap = culture_art_forms_ptr(c);
+    var count = 0;
+    for (var i = 0; i < ac; i = i + 1) {
+        var af = ap + i * ART_FORM_SIZE;
+        var m = art_form_medium(af);
+        if (m == ART_ORAL_TRADITION) { count = count + 1; }
+        elif (m == ART_LITERATURE) { count = count + 1; }
+    }
+    return count;
+}
+
+# Get narrative art forms for a culture. Writes art form pointers to out_buf.
+fn hadara_narratives(culture_id, out_buf, max) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+    var ac = culture_art_forms_count(c);
+    var ap = culture_art_forms_ptr(c);
+    var count = 0;
+    for (var i = 0; i < ac; i = i + 1) {
+        if (count >= max) { return count; }
+        var af = ap + i * ART_FORM_SIZE;
+        var m = art_form_medium(af);
+        if (m == ART_ORAL_TRADITION) {
+            store64(out_buf + count * 8, af);
+            count = count + 1;
+        }
+        elif (m == ART_LITERATURE) {
+            store64(out_buf + count * 8, af);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# ================================================================
+# jnana — Knowledge Export
+# ================================================================
+# jnana needs: structured facts about a culture in a format suitable
+# for knowledge graph insertion. Returns fact count for a culture.
+
+fn hadara_fact_count(culture_id) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+    # Facts = 1 (the culture itself) + practices + art forms + figures + texts + artifacts + relations
+    var facts = 1;
+    facts = facts + culture_practices_count(c);
+    facts = facts + culture_art_forms_count(c);
+    facts = facts + culture_figures_count(c);
+    facts = facts + culture_texts_count(c);
+    facts = facts + culture_artifacts_count(c);
+    facts = facts + culture_relations_count(c);
+    return facts;
+}
+
+# Total facts across all cultures
+fn hadara_total_facts() {
+    var total = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        total = total + hadara_fact_count(i);
+    }
+    return total;
+}

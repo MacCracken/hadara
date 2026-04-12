@@ -935,6 +935,63 @@ fn hadara_seed() {
     hadara_set_relations(chinese, rels2 + RELATION_SIZE, 1);
     hadara_set_relations(japanese, rels2 + RELATION_SIZE, 1);
 
+    # --- Syncretism and additional relations ---
+
+    # Greek-Egyptian syncretism — Stewart & Shaw (1994): Hermes Trismegistus tradition
+    # Mutual blending of Hellenic philosophy + Egyptian mystery tradition (c. 300 BCE - 200 CE)
+    var rels3 = alloc(RELATION_SIZE * 3);
+    r = rels3;
+    store64(r + RELATION_SOURCE, greek);
+    store64(r + RELATION_TARGET, egyptian);
+    store64(r + RELATION_TYPE, REL_SYNCRETIZED);
+    store64(r + RELATION_PERIOD_START, 0 - 300);
+    store64(r + RELATION_PERIOD_END, 200);
+
+    # Vedic-Chinese exchange via Silk Road Buddhism — Curtin (1984), Hansen (2012)
+    r = rels3 + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, vedic);
+    store64(r + RELATION_TARGET, chinese);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 0 - 100);
+    store64(r + RELATION_PERIOD_END, 800);
+
+    # Roman absorbed Greek — Boardman (1970--2005): cultural absorption post-146 BCE
+    r = rels3 + RELATION_SIZE * 2;
+    store64(r + RELATION_SOURCE, greek);
+    store64(r + RELATION_TARGET, roman);
+    store64(r + RELATION_TYPE, REL_ABSORBED);
+    store64(r + RELATION_PERIOD_START, 0 - 146);
+    store64(r + RELATION_PERIOD_END, 0 - 30);
+
+    # Append syncretism to Egyptian (now has 2 relations: exchange + syncretism)
+    # We need to re-assign with both relations
+    var eg_rels = alloc(RELATION_SIZE * 2);
+    memcpy(eg_rels, rels + RELATION_SIZE, RELATION_SIZE);  # Egyptian→Greek influence
+    memcpy(eg_rels + RELATION_SIZE, rels3, RELATION_SIZE);  # Greek↔Egyptian syncretism
+    hadara_set_relations(egyptian, eg_rels, 2);
+
+    # Greek: now has influence→Roman + syncretism↔Egyptian + absorbed→Roman
+    var gr_rels = alloc(RELATION_SIZE * 3);
+    memcpy(gr_rels, rels2, RELATION_SIZE);                  # Greek→Roman influence
+    memcpy(gr_rels + RELATION_SIZE, rels3, RELATION_SIZE);  # Greek↔Egyptian syncretism
+    memcpy(gr_rels + RELATION_SIZE * 2, rels3 + RELATION_SIZE * 2, RELATION_SIZE);  # Greek absorbed→Roman
+    hadara_set_relations(greek, gr_rels, 3);
+
+    # Roman: influence from Greek + absorbed from Greek
+    var ro_rels = alloc(RELATION_SIZE * 2);
+    memcpy(ro_rels, rels2, RELATION_SIZE);                  # Greek→Roman influence
+    memcpy(ro_rels + RELATION_SIZE, rels3 + RELATION_SIZE * 2, RELATION_SIZE);  # Greek absorbed→Roman
+    hadara_set_relations(roman, ro_rels, 2);
+
+    # Vedic: exchange with Chinese
+    hadara_set_relations(vedic, rels3 + RELATION_SIZE, 1);
+
+    # Chinese: influence→Japanese + exchange with Vedic
+    var ch_rels = alloc(RELATION_SIZE * 2);
+    memcpy(ch_rels, rels2 + RELATION_SIZE, RELATION_SIZE);      # Chinese→Japanese influence
+    memcpy(ch_rels + RELATION_SIZE, rels3 + RELATION_SIZE, RELATION_SIZE);  # Vedic↔Chinese exchange
+    hadara_set_relations(chinese, ch_rels, 2);
+
     # --- West African figure — Levtzion & Pouwels (2000), Niane (1965) ---
     var wa_figs = alloc(FIGURE_SIZE * 2);
     f = wa_figs;

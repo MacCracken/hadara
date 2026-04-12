@@ -41,7 +41,8 @@ src/
   artifact.cyr    — Artifact (material culture)
   relation.cyr    — CultureRelation, RelationType
   registry.cyr    — in-memory culture registry, add/get/set
-  query.cyr       — query helpers (by status, year, coexistence)
+  query.cyr       — query helpers (status, temporal, graph traversal, lineage)
+  consumer.cyr    — consumer integration (bhava, joshua, natya, jnana)
 docs/
   sources/        — per-module academic citations (itihas pattern)
 ```
