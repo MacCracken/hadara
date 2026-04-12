@@ -288,6 +288,202 @@ fn hadara_seed() {
     store64(t + TEXT_SACRED, 0);
     hadara_set_texts(norse, n_texts, 2);
 
+    # Greek texts — Boardman (1970--2005)
+    var gr_texts = alloc(TEXT_SIZE * 2);
+    t = gr_texts;
+    store64(t + TEXT_TITLE_PTR, "Iliad");
+    store64(t + TEXT_TITLE_LEN, 5);
+    store64(t + TEXT_AUTHOR_PTR, "Homer");
+    store64(t + TEXT_AUTHOR_LEN, 5);
+    store64(t + TEXT_YEAR, 0 - 750);
+    store64(t + TEXT_SACRED, 0);
+    t = gr_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Republic");
+    store64(t + TEXT_TITLE_LEN, 8);
+    store64(t + TEXT_AUTHOR_PTR, "Plato");
+    store64(t + TEXT_AUTHOR_LEN, 5);
+    store64(t + TEXT_YEAR, 0 - 375);
+    store64(t + TEXT_SACRED, 0);
+    hadara_set_texts(greek, gr_texts, 2);
+
+    # Japanese texts — Keene (1976--1999), Philippi (1968)
+    var jp_texts = alloc(TEXT_SIZE * 2);
+    t = jp_texts;
+    store64(t + TEXT_TITLE_PTR, "Kojiki");
+    store64(t + TEXT_TITLE_LEN, 6);
+    store64(t + TEXT_AUTHOR_PTR, "O no Yasumaro");
+    store64(t + TEXT_AUTHOR_LEN, 13);
+    store64(t + TEXT_YEAR, 712);
+    store64(t + TEXT_SACRED, 1);
+    t = jp_texts + TEXT_SIZE;
+    store64(t + TEXT_TITLE_PTR, "Tale of Genji");
+    store64(t + TEXT_TITLE_LEN, 13);
+    store64(t + TEXT_AUTHOR_PTR, "Murasaki Shikibu");
+    store64(t + TEXT_AUTHOR_LEN, 16);
+    store64(t + TEXT_YEAR, 1000);
+    store64(t + TEXT_SACRED, 0);
+    hadara_set_texts(japanese, jp_texts, 2);
+
+    # West African texts — Vansina (1985), Niane (1965)
+    var wa_texts = alloc(TEXT_SIZE * 1);
+    t = wa_texts;
+    store64(t + TEXT_TITLE_PTR, "Sundiata Epic");
+    store64(t + TEXT_TITLE_LEN, 13);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 1235);
+    store64(t + TEXT_SACRED, 0);
+    hadara_set_texts(westafrican, wa_texts, 1);
+
+    # Maya texts — Coe (2015)
+    var ma_texts = alloc(TEXT_SIZE * 1);
+    t = ma_texts;
+    store64(t + TEXT_TITLE_PTR, "Popol Vuh");
+    store64(t + TEXT_TITLE_LEN, 9);
+    store64(t + TEXT_AUTHOR_PTR, 0);
+    store64(t + TEXT_AUTHOR_LEN, 0);
+    store64(t + TEXT_YEAR, 1550);
+    store64(t + TEXT_SACRED, 1);
+    hadara_set_texts(maya, ma_texts, 1);
+
+    # --- Seed artifacts ---
+
+    # Egyptian artifacts — Shaw (2000), Prown (1982)
+    var eg_artifacts = alloc(ARTIFACT_SIZE * 3);
+    var art = eg_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Sarcophagus");
+    store64(art + ARTIFACT_NAME_LEN, 11);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_CONTAINER);
+    art = eg_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Ankh Amulet");
+    store64(art + ARTIFACT_NAME_LEN, 11);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_JEWELRY);
+    art = eg_artifacts + ARTIFACT_SIZE * 2;
+    store64(art + ARTIFACT_NAME_PTR, "Papyrus Scroll");
+    store64(art + ARTIFACT_NAME_LEN, 14);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_TOOL);
+    hadara_set_artifacts(egyptian, eg_artifacts, 3);
+
+    # Japanese artifacts — Varley (2000)
+    var jp_artifacts = alloc(ARTIFACT_SIZE * 3);
+    art = jp_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Katana");
+    store64(art + ARTIFACT_NAME_LEN, 6);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_WEAPON);
+    art = jp_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Kimono");
+    store64(art + ARTIFACT_NAME_LEN, 6);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_CLOTHING);
+    art = jp_artifacts + ARTIFACT_SIZE * 2;
+    store64(art + ARTIFACT_NAME_PTR, "Torii Gate");
+    store64(art + ARTIFACT_NAME_LEN, 10);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_ARCHITECTURE);
+    hadara_set_artifacts(japanese, jp_artifacts, 3);
+
+    # Norse artifacts — Price (2019)
+    var no_artifacts = alloc(ARTIFACT_SIZE * 3);
+    art = no_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Longship");
+    store64(art + ARTIFACT_NAME_LEN, 8);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_TOOL);
+    art = no_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Mjolnir Pendant");
+    store64(art + ARTIFACT_NAME_LEN, 15);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_JEWELRY);
+    art = no_artifacts + ARTIFACT_SIZE * 2;
+    store64(art + ARTIFACT_NAME_PTR, "Runestone");
+    store64(art + ARTIFACT_NAME_LEN, 9);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_CRAFT);
+    hadara_set_artifacts(norse, no_artifacts, 3);
+
+    # Roman artifacts — Boatwright (2012)
+    var ro_artifacts = alloc(ARTIFACT_SIZE * 3);
+    art = ro_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Gladius");
+    store64(art + ARTIFACT_NAME_LEN, 7);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_WEAPON);
+    art = ro_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Toga");
+    store64(art + ARTIFACT_NAME_LEN, 4);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_CLOTHING);
+    art = ro_artifacts + ARTIFACT_SIZE * 2;
+    store64(art + ARTIFACT_NAME_PTR, "Amphora");
+    store64(art + ARTIFACT_NAME_LEN, 7);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_CONTAINER);
+    hadara_set_artifacts(roman, ro_artifacts, 3);
+
+    # Hip-Hop artifacts — Chang (2005)
+    var hp_artifacts = alloc(ARTIFACT_SIZE * 3);
+    art = hp_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Turntable");
+    store64(art + ARTIFACT_NAME_LEN, 9);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_INSTRUMENT);
+    art = hp_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Boombox");
+    store64(art + ARTIFACT_NAME_LEN, 7);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_INSTRUMENT);
+    art = hp_artifacts + ARTIFACT_SIZE * 2;
+    store64(art + ARTIFACT_NAME_PTR, "Spray Can");
+    store64(art + ARTIFACT_NAME_LEN, 9);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_TOOL);
+    hadara_set_artifacts(hiphop, hp_artifacts, 3);
+
+    # West African artifacts — Connah (2015)
+    var wa_artifacts = alloc(ARTIFACT_SIZE * 3);
+    art = wa_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Djembe");
+    store64(art + ARTIFACT_NAME_LEN, 6);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_INSTRUMENT);
+    art = wa_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Bogolan Cloth");
+    store64(art + ARTIFACT_NAME_LEN, 13);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_CLOTHING);
+    art = wa_artifacts + ARTIFACT_SIZE * 2;
+    store64(art + ARTIFACT_NAME_PTR, "Kora");
+    store64(art + ARTIFACT_NAME_LEN, 4);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_INSTRUMENT);
+    hadara_set_artifacts(westafrican, wa_artifacts, 3);
+
+    # Chinese artifacts — Stearns (2001)
+    var ch_artifacts = alloc(ARTIFACT_SIZE * 3);
+    art = ch_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Jian Sword");
+    store64(art + ARTIFACT_NAME_LEN, 10);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_WEAPON);
+    art = ch_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Porcelain Vessel");
+    store64(art + ARTIFACT_NAME_LEN, 16);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_CRAFT);
+    art = ch_artifacts + ARTIFACT_SIZE * 2;
+    store64(art + ARTIFACT_NAME_PTR, "Hanfu");
+    store64(art + ARTIFACT_NAME_LEN, 5);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_CLOTHING);
+    hadara_set_artifacts(chinese, ch_artifacts, 3);
+
+    # Maya artifacts — Coe (2015)
+    var ma_artifacts = alloc(ARTIFACT_SIZE * 2);
+    art = ma_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Jade Mask");
+    store64(art + ARTIFACT_NAME_LEN, 9);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_JEWELRY);
+    art = ma_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Obsidian Blade");
+    store64(art + ARTIFACT_NAME_LEN, 14);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_WEAPON);
+    hadara_set_artifacts(maya, ma_artifacts, 2);
+
+    # Aboriginal artifacts — Flood (2006)
+    var ab_artifacts = alloc(ARTIFACT_SIZE * 2);
+    art = ab_artifacts;
+    store64(art + ARTIFACT_NAME_PTR, "Boomerang");
+    store64(art + ARTIFACT_NAME_LEN, 9);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_TOOL);
+    art = ab_artifacts + ARTIFACT_SIZE;
+    store64(art + ARTIFACT_NAME_PTR, "Didgeridoo");
+    store64(art + ARTIFACT_NAME_LEN, 10);
+    store64(art + ARTIFACT_CATEGORY, ARTIFACT_INSTRUMENT);
+    hadara_set_artifacts(aboriginal, ab_artifacts, 2);
+
     # --- Seed relations ---
 
     # Persian-Egyptian exchange — Briant (2002): 525-404 BCE

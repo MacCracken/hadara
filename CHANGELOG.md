@@ -13,7 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - **main** — HTTP JSON API server (port 8391): `/stats`, `/list`, `/culture/{id}`, `/at?year=N`, `/search?q=...`
 - **docs/sources** — Per-module citation files following itihas pattern: general, cultures, practices, art-forms, figures, texts, relations
 - **sources** — Academic citations in module headers (culture.cyr, practice.cyr, art.cyr, figure.cyr, text.cyr, relation.cyr)
-- **tests** — 116 assertions: registry operations, seed verification, temporal queries, status counts, sub-entity data integrity
+- **query** — Phase 2 graph traversal: `hadara_influences_on`, `hadara_influenced_by`, `hadara_all_relations`, `hadara_related_by_type`, `hadara_influence_chain` (BFS forward), `hadara_lineage` (BFS backward), `hadara_syncretized_with`, `hadara_exchanged_with`
+- **main** — CLI commands: `lineage <id>`, `influence <id>`, `relations <id>`
+- **main** — HTTP endpoints: `/lineage/{id}`, `/influence/{id}`
+- **seed** — Artifacts for 8 cultures (Egyptian, Japanese, Norse, Roman, Hip-Hop, West African, Chinese, Maya, Aboriginal)
+- **seed** — Texts for Greek, Japanese, West African, Maya (completing text coverage)
+- **tests** — 150+ assertions: registry, seed, temporal, graph traversal, lineage chains
 
 ## [0.1.0] — 2026-04-12
 

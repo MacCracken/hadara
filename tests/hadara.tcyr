@@ -295,6 +295,102 @@ fn main() {
     assert_eq(art_form_medium(jp_ap), ART_CALLIGRAPHY, "shodo is calligraphy");
 
     prints("part 2: seed data — PASS\n");
+
+    # ================================================================
+    # Part 3: Relationship graph traversal (Phase 2)
+    # ================================================================
+
+    # Seed relations recap:
+    #   Persian --exchanged--> Egyptian
+    #   Egyptian --influenced--> Greek
+    #   West African --influenced--> Hip-Hop
+    #   Greek --influenced--> Roman
+    #   Chinese --influenced--> Japanese
+
+    var gbuf = alloc(32 * 8);
+
+    # influences_on: "what influenced Greek?" → Egyptian
+    var n8 = hadara_influences_on(3, gbuf, 32);
+    assert_eq(n8, 1, "greek has 1 influencer");
+    assert_eq(load64(gbuf), 0, "egyptian influenced greek");
+
+    # influences_on: "what influenced Roman?" → Greek
+    var n9 = hadara_influences_on(12, gbuf, 32);
+    assert_eq(n9, 1, "roman has 1 influencer");
+    assert_eq(load64(gbuf), 3, "greek influenced roman");
+
+    # influences_on: "what influenced Hip-Hop?" → West African
+    var n10 = hadara_influences_on(9, gbuf, 32);
+    assert_eq(n10, 1, "hiphop has 1 influencer");
+    assert_eq(load64(gbuf), 5, "westafrican influenced hiphop");
+
+    # influences_on: "what influenced Japanese?" → Chinese
+    var n11 = hadara_influences_on(4, gbuf, 32);
+    assert_eq(n11, 1, "japanese has 1 influencer");
+    assert_eq(load64(gbuf), 11, "chinese influenced japanese");
+
+    # influences_on: "what influenced Egyptian?" → nothing (it's a source, not target)
+    var n12 = hadara_influences_on(0, gbuf, 32);
+    assert_eq(n12, 0, "egyptian has 0 influencers");
+
+    # exchanged_with: Persian ↔ Egyptian
+    var n13 = hadara_exchanged_with(1, gbuf, 32);
+    assert_eq(n13, 1, "persian exchanged with 1");
+    assert_eq(load64(gbuf), 0, "persian exchanged with egyptian");
+
+    # exchanged_with: Egyptian ↔ Persian
+    var n14 = hadara_exchanged_with(0, gbuf, 32);
+    assert_eq(n14, 1, "egyptian exchanged with 1");
+    assert_eq(load64(gbuf), 1, "egyptian exchanged with persian");
+
+    # all_relations: Greek has influence-out (→ Roman) stored on itself,
+    # plus influence-in (Egyptian → Greek) stored on Egyptian
+    var n15 = hadara_all_relations(3, gbuf, 32);
+    assert_eq(n15, 2, "greek has 2 total relations");
+
+    # all_relations: Hip-Hop has 1 inbound influence from West African
+    var n16 = hadara_all_relations(9, gbuf, 32);
+    assert_eq(n16, 1, "hiphop has 1 total relation");
+
+    # Influence chain: Egyptian → Greek → Roman (forward propagation)
+    var n17 = hadara_influence_chain(0, gbuf, 32);
+    # Egyptian influenced Greek (direct), Greek influenced Roman (1 hop)
+    assert_eq(n17, 2, "egyptian influence chain reaches 2 cultures");
+    # First should be Greek (direct), second Roman (via Greek)
+    assert_eq(load64(gbuf), 3, "chain[0] = greek");
+    assert_eq(load64(gbuf + 8), 12, "chain[1] = roman");
+
+    # Influence chain: Chinese → Japanese (1 hop only)
+    var n18 = hadara_influence_chain(11, gbuf, 32);
+    assert_eq(n18, 1, "chinese influence chain reaches 1 culture");
+    assert_eq(load64(gbuf), 4, "chain[0] = japanese");
+
+    # Influence chain: West African → Hip-Hop (1 hop)
+    var n19 = hadara_influence_chain(5, gbuf, 32);
+    assert_eq(n19, 1, "westafrican influence chain reaches 1 culture");
+    assert_eq(load64(gbuf), 9, "chain[0] = hiphop");
+
+    # Lineage: "who are Roman's ancestors?" → Greek → Egyptian (backward)
+    var n20 = hadara_lineage(12, gbuf, 32);
+    assert_eq(n20, 2, "roman lineage has 2 ancestors");
+    assert_eq(load64(gbuf), 3, "lineage[0] = greek");
+    assert_eq(load64(gbuf + 8), 0, "lineage[1] = egyptian");
+
+    # Lineage: "who are Hip-Hop's ancestors?" → West African (1 only)
+    var n21 = hadara_lineage(9, gbuf, 32);
+    assert_eq(n21, 1, "hiphop lineage has 1 ancestor");
+    assert_eq(load64(gbuf), 5, "lineage[0] = westafrican");
+
+    # Lineage: "who are Egyptian's ancestors?" → none
+    var n22 = hadara_lineage(0, gbuf, 32);
+    assert_eq(n22, 0, "egyptian has no ancestors");
+
+    # related_by_type: find all REL_INFLUENCED connections for Egyptian
+    var n23 = hadara_related_by_type(0, REL_INFLUENCED, gbuf, 32);
+    assert_eq(n23, 1, "egyptian has 1 influence relation");
+    assert_eq(load64(gbuf), 3, "egyptian influence relation → greek");
+
+    prints("part 3: graph traversal — PASS\n");
     prints("hadara: all tests passed\n");
     return 0;
 }

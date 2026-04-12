@@ -123,6 +123,14 @@ fn hadara_set_relations(id, ptr, count) {
     store64(c + CULTURE_RELATIONS_COUNT, count);
 }
 
+# Set artifacts array on an existing culture
+fn hadara_set_artifacts(id, ptr, count) {
+    var c = hadara_get(id);
+    if (c == 0) { return; }
+    store64(c + CULTURE_ARTIFACTS_PTR, ptr);
+    store64(c + CULTURE_ARTIFACTS_COUNT, count);
+}
+
 # Set parent/child culture links
 fn hadara_set_parents(id, ptr, count) {
     var c = hadara_get(id);

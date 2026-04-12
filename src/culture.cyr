@@ -118,6 +118,10 @@ fn culture_figures_ptr(c) { return load64(c + CULTURE_FIGURES_PTR); }
 fn culture_figures_count(c) { return load64(c + CULTURE_FIGURES_COUNT); }
 fn culture_relations_ptr(c) { return load64(c + CULTURE_RELATIONS_PTR); }
 fn culture_relations_count(c) { return load64(c + CULTURE_RELATIONS_COUNT); }
+fn culture_artifacts_ptr(c) { return load64(c + CULTURE_ARTIFACTS_PTR); }
+fn culture_artifacts_count(c) { return load64(c + CULTURE_ARTIFACTS_COUNT); }
+fn culture_texts_ptr(c) { return load64(c + CULTURE_TEXTS_PTR); }
+fn culture_texts_count(c) { return load64(c + CULTURE_TEXTS_COUNT); }
 
 # --- Status check helpers ---
 

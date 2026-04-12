@@ -327,6 +327,87 @@ fn cmd_stats() {
     return 0;
 }
 
+fn cmd_lineage(id) {
+    var c = hadara_get(id);
+    if (c == 0) { prints("error: culture not found\n"); return 1; }
+    prints("Lineage of ");
+    syscall(1, 1, culture_name_ptr(c), culture_name_len(c));
+    prints(" (ancestors via influence):\n");
+    var buf = alloc(32 * 8);
+    var n = hadara_lineage(id, buf, 32);
+    if (n == 0) { prints("  (no ancestors found)\n"); return 0; }
+    var i = 0;
+    while (i < n) {
+        var aid = load64(buf + i * 8);
+        var ac = hadara_get(aid);
+        prints("  <- [");
+        print_num(aid);
+        prints("] ");
+        syscall(1, 1, culture_name_ptr(ac), culture_name_len(ac));
+        prints("\n");
+        i = i + 1;
+    }
+    return 0;
+}
+
+fn cmd_influence(id) {
+    var c = hadara_get(id);
+    if (c == 0) { prints("error: culture not found\n"); return 1; }
+    prints("Influence chain from ");
+    syscall(1, 1, culture_name_ptr(c), culture_name_len(c));
+    prints(":\n");
+    var buf = alloc(32 * 8);
+    var n = hadara_influence_chain(id, buf, 32);
+    if (n == 0) { prints("  (no downstream cultures found)\n"); return 0; }
+    var i = 0;
+    while (i < n) {
+        var tid = load64(buf + i * 8);
+        var tc = hadara_get(tid);
+        prints("  -> [");
+        print_num(tid);
+        prints("] ");
+        syscall(1, 1, culture_name_ptr(tc), culture_name_len(tc));
+        prints("\n");
+        i = i + 1;
+    }
+    return 0;
+}
+
+fn cmd_relations(id) {
+    var c = hadara_get(id);
+    if (c == 0) { prints("error: culture not found\n"); return 1; }
+    prints("All relations for ");
+    syscall(1, 1, culture_name_ptr(c), culture_name_len(c));
+    prints(":\n");
+    var buf = alloc(32 * 8);
+    var n = hadara_all_relations(id, buf, 32);
+    if (n == 0) { prints("  (no relations)\n"); return 0; }
+    var i = 0;
+    while (i < n) {
+        var rel = load64(buf + i * 8);
+        var src = relation_source(rel);
+        var tgt = relation_target(rel);
+        var rt = relation_type(rel);
+        prints("  ");
+        var sc = hadara_get(src);
+        syscall(1, 1, culture_name_ptr(sc), culture_name_len(sc));
+        prints(" --");
+        if (rt == REL_INFLUENCED) { prints("influenced"); }
+        elif (rt == REL_SYNCRETIZED) { prints("syncretized"); }
+        elif (rt == REL_BRANCHED_FROM) { prints("branched"); }
+        elif (rt == REL_CONFLICTED) { prints("conflicted"); }
+        elif (rt == REL_EXCHANGED) { prints("exchanged"); }
+        elif (rt == REL_ABSORBED) { prints("absorbed"); }
+        elif (rt == REL_REVIVED_FROM) { prints("revived"); }
+        prints("--> ");
+        var tc = hadara_get(tgt);
+        syscall(1, 1, culture_name_ptr(tc), culture_name_len(tc));
+        prints("\n");
+        i = i + 1;
+    }
+    return 0;
+}
+
 # ================================================================
 # HTTP Server — localhost JSON API
 # ================================================================
@@ -662,6 +743,56 @@ fn json_search(query, qlen) {
     return str_builder_build(sb);
 }
 
+fn json_lineage(culture_id) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+    var buf = alloc(32 * 8);
+    var n = hadara_lineage(culture_id, buf, 32);
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "{\"culture_id\":");
+    str_builder_add_int(sb, culture_id);
+    str_builder_add_cstr(sb, ",\"ancestors\":[");
+    var i = 0;
+    while (i < n) {
+        var aid = load64(buf + i * 8);
+        var ac = hadara_get(aid);
+        if (i > 0) { str_builder_add_cstr(sb, ","); }
+        str_builder_add_cstr(sb, "{\"id\":");
+        str_builder_add_int(sb, aid);
+        str_builder_add_cstr(sb, ",\"name\":\"");
+        str_builder_add_buf(sb, culture_name_ptr(ac), culture_name_len(ac));
+        str_builder_add_cstr(sb, "\"}");
+        i = i + 1;
+    }
+    str_builder_add_cstr(sb, "]}");
+    return str_builder_build(sb);
+}
+
+fn json_influence(culture_id) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+    var buf = alloc(32 * 8);
+    var n = hadara_influence_chain(culture_id, buf, 32);
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "{\"culture_id\":");
+    str_builder_add_int(sb, culture_id);
+    str_builder_add_cstr(sb, ",\"influenced\":[");
+    var i = 0;
+    while (i < n) {
+        var tid = load64(buf + i * 8);
+        var tc = hadara_get(tid);
+        if (i > 0) { str_builder_add_cstr(sb, ","); }
+        str_builder_add_cstr(sb, "{\"id\":");
+        str_builder_add_int(sb, tid);
+        str_builder_add_cstr(sb, ",\"name\":\"");
+        str_builder_add_buf(sb, culture_name_ptr(tc), culture_name_len(tc));
+        str_builder_add_cstr(sb, "\"}");
+        i = i + 1;
+    }
+    str_builder_add_cstr(sb, "]}");
+    return str_builder_build(sb);
+}
+
 # --- HTTP routing ---
 
 fn http_route(cfd, path) {
@@ -706,6 +837,24 @@ fn http_route(cfd, path) {
         var body = json_search(q, strlen(q));
         return http_ok(cfd, str_data(body), str_len(body));
     }
+    # GET /lineage/{id}
+    if (memeq(path, "/lineage/", 9) == 1) {
+        var seg = http_path_segment(path, 2);
+        if (seg == 0) { return http_bad_request(cfd); }
+        var id = parse_int(seg);
+        var body = json_lineage(id);
+        if (body == 0) { return http_not_found(cfd); }
+        return http_ok(cfd, str_data(body), str_len(body));
+    }
+    # GET /influence/{id}
+    if (memeq(path, "/influence/", 11) == 1) {
+        var seg = http_path_segment(path, 2);
+        if (seg == 0) { return http_bad_request(cfd); }
+        var id = parse_int(seg);
+        var body = json_influence(id);
+        if (body == 0) { return http_not_found(cfd); }
+        return http_ok(cfd, str_data(body), str_len(body));
+    }
     return http_not_found(cfd);
 }
 
@@ -735,7 +884,7 @@ fn cmd_serve(port) {
     prints("hadara serving on http://localhost:");
     print_num(_http_port);
     prints("\n");
-    prints("endpoints: /stats /list /culture/{id} /at?year=N /search?q=...\n");
+    prints("endpoints: /stats /list /culture/{id} /at?year=N /search?q=... /lineage/{id} /influence/{id}\n");
     sakshi_info("server started", 14);
 
     # Accept loop
@@ -781,6 +930,9 @@ fn usage() {
     println("  info <id>         show culture details");
     println("  search <query>    search cultures by name");
     println("  at <year>         cultures that existed at year (negative = BCE)");
+    println("  lineage <id>      show cultural ancestors (influence chain backward)");
+    println("  influence <id>    show downstream influence chain (forward)");
+    println("  relations <id>    show all relations for a culture");
     println("  stats             corpus statistics");
     println("  serve [port]      HTTP JSON API (default: 8391)");
     println("  help              show this help");
@@ -820,6 +972,24 @@ fn main() {
         if (argc() < 3) { prints("usage: hadara at <year>\n"); return 1; }
         var year = parse_int(argv(2));
         return cmd_at(year);
+    }
+
+    if (streq(cmd, "lineage") == 1) {
+        if (argc() < 3) { prints("usage: hadara lineage <id>\n"); return 1; }
+        var id = parse_int(argv(2));
+        return cmd_lineage(id);
+    }
+
+    if (streq(cmd, "influence") == 1) {
+        if (argc() < 3) { prints("usage: hadara influence <id>\n"); return 1; }
+        var id = parse_int(argv(2));
+        return cmd_influence(id);
+    }
+
+    if (streq(cmd, "relations") == 1) {
+        if (argc() < 3) { prints("usage: hadara relations <id>\n"); return 1; }
+        var id = parse_int(argv(2));
+        return cmd_relations(id);
     }
 
     if (streq(cmd, "serve") == 1) {

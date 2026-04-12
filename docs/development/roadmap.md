@@ -21,12 +21,17 @@
 - [ ] Expand texts for all cultures (Greek, Japanese, Chinese have partial)
 - [ ] Artifact seed data for all cultures
 
-## Phase 2 — Relationships and Lineage
+## Phase 2 — Relationships and Lineage (current)
 
-- [ ] Culture relationship graph traversal
-- [ ] Lineage queries: "what influenced this culture?" / "what did this culture produce?"
-- [ ] Syncretism modeling (Hermes Trismegistus as Greek-Egyptian syncretism)
-- [ ] Temporal relationship queries
+- [x] Culture relationship graph traversal (`hadara_all_relations`)
+- [x] Lineage queries: `hadara_lineage` (ancestors via influence, BFS backward)
+- [x] Influence chain: `hadara_influence_chain` (forward propagation, BFS)
+- [x] Direct influencer lookup: `hadara_influences_on`, `hadara_influenced_by`
+- [x] Typed relation queries: `hadara_related_by_type`, `hadara_exchanged_with`, `hadara_syncretized_with`
+- [x] CLI: `lineage <id>`, `influence <id>`, `relations <id>`
+- [x] HTTP: `/lineage/{id}`, `/influence/{id}`
+- [ ] Syncretism seed data (Hermes Trismegistus as Greek-Egyptian example)
+- [ ] Temporal relationship queries (filter relations by time period)
 
 ## Phase 3 — Consumer Integration
 

@@ -2,6 +2,9 @@
 #
 # Scan-based queries over the registry. Returns culture pointers
 # or counts. Callers provide output buffers for multi-result queries.
+#
+# Phase 2 adds graph traversal: influence chains, lineage queries,
+# mutual relationship discovery.
 
 # Count cultures with a given status
 fn hadara_count_by_status(status) {
@@ -40,4 +43,227 @@ fn hadara_find_by_year(year, out_buf, max) {
 # simultaneously at this moment in time?")
 fn hadara_coexisting_at(year, out_buf, max) {
     return hadara_find_by_year(year, out_buf, max);
+}
+
+# ================================================================
+# Phase 2: Relationship Graph Traversal
+# ================================================================
+
+# Find all cultures that influenced a given culture (inbound REL_INFLUENCED).
+# Scans all cultures' relations for edges targeting culture_id.
+# Writes source CultureIds to out_buf, returns count.
+fn hadara_influences_on(culture_id, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var c = hadara_get(i);
+        var rc = culture_relations_count(c);
+        var rp = culture_relations_ptr(c);
+        for (var j = 0; j < rc; j = j + 1) {
+            var rel = rp + j * RELATION_SIZE;
+            if (relation_target(rel) == culture_id) {
+                if (relation_type(rel) == REL_INFLUENCED) {
+                    store64(out_buf + count * 8, relation_source(rel));
+                    count = count + 1;
+                    if (count >= max) { return count; }
+                }
+            }
+        }
+    }
+    return count;
+}
+
+# Find all cultures that a given culture influenced (outbound REL_INFLUENCED).
+# Looks at the culture's own relations where it is the source.
+fn hadara_influenced_by(culture_id, out_buf, max) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+    var count = 0;
+    var rc = culture_relations_count(c);
+    var rp = culture_relations_ptr(c);
+    for (var j = 0; j < rc; j = j + 1) {
+        if (count >= max) { return count; }
+        var rel = rp + j * RELATION_SIZE;
+        if (relation_source(rel) == culture_id) {
+            if (relation_type(rel) == REL_INFLUENCED) {
+                store64(out_buf + count * 8, relation_target(rel));
+                count = count + 1;
+            }
+        }
+    }
+    # Also scan other cultures for relations where this culture is the source
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        if (i == culture_id) { continue; }
+        if (count >= max) { return count; }
+        var oc = hadara_get(i);
+        var orc = culture_relations_count(oc);
+        var orp = culture_relations_ptr(oc);
+        for (var k = 0; k < orc; k = k + 1) {
+            if (count >= max) { return count; }
+            var rel = orp + k * RELATION_SIZE;
+            if (relation_source(rel) == culture_id) {
+                if (relation_type(rel) == REL_INFLUENCED) {
+                    store64(out_buf + count * 8, relation_target(rel));
+                    count = count + 1;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+# Find all relations (any type) involving a culture — both as source and target.
+# Returns relation pointers in out_buf, count written.
+fn hadara_all_relations(culture_id, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        var c = hadara_get(i);
+        var rc = culture_relations_count(c);
+        var rp = culture_relations_ptr(c);
+        for (var j = 0; j < rc; j = j + 1) {
+            if (count >= max) { return count; }
+            var rel = rp + j * RELATION_SIZE;
+            if (relation_source(rel) == culture_id) {
+                store64(out_buf + count * 8, rel);
+                count = count + 1;
+            }
+            elif (relation_target(rel) == culture_id) {
+                store64(out_buf + count * 8, rel);
+                count = count + 1;
+            }
+        }
+    }
+    return count;
+}
+
+# Find cultures related by a specific relation type to a given culture.
+# Returns CultureIds of the "other" culture in each matching relation.
+fn hadara_related_by_type(culture_id, rel_type, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < hadara_count; i = i + 1) {
+        var c = hadara_get(i);
+        var rc = culture_relations_count(c);
+        var rp = culture_relations_ptr(c);
+        for (var j = 0; j < rc; j = j + 1) {
+            if (count >= max) { return count; }
+            var rel = rp + j * RELATION_SIZE;
+            if (relation_type(rel) != rel_type) { continue; }
+            if (relation_source(rel) == culture_id) {
+                store64(out_buf + count * 8, relation_target(rel));
+                count = count + 1;
+            }
+            elif (relation_target(rel) == culture_id) {
+                store64(out_buf + count * 8, relation_source(rel));
+                count = count + 1;
+            }
+        }
+    }
+    return count;
+}
+
+# Influence chain: BFS from a starting culture following REL_INFLUENCED edges
+# outward. Discovers all cultures reachable via influence chains.
+# Writes CultureIds in discovery order to out_buf, returns count.
+# Max depth prevents infinite loops (capped at 8 hops).
+fn hadara_influence_chain(start_id, out_buf, max) {
+    # BFS queue — reuse out_buf as both queue and result
+    var visited = alloc(REGISTRY_MAX);
+    memset(visited, 0, REGISTRY_MAX);
+    store8(visited + start_id, 1);
+
+    var head = 0;
+    var tail = 0;
+    var queue = alloc(REGISTRY_MAX * 8);
+
+    # Seed: find direct targets of start_id
+    var tmp = alloc(32 * 8);
+    var direct = hadara_influenced_by(start_id, tmp, 32);
+    for (var d = 0; d < direct; d = d + 1) {
+        var tid = load64(tmp + d * 8);
+        if (load8(visited + tid) == 0) {
+            store8(visited + tid, 1);
+            store64(queue + tail * 8, tid);
+            tail = tail + 1;
+            store64(out_buf + (tail - 1) * 8, tid);
+        }
+    }
+
+    # BFS loop (max depth 8)
+    var depth = 0;
+    while (head < tail) {
+        if (depth >= 8) { break; }
+        if (tail >= max) { break; }
+        var cur = load64(queue + head * 8);
+        head = head + 1;
+        var next = hadara_influenced_by(cur, tmp, 32);
+        for (var n = 0; n < next; n = n + 1) {
+            if (tail >= max) { break; }
+            var nid = load64(tmp + n * 8);
+            if (load8(visited + nid) == 0) {
+                store8(visited + nid, 1);
+                store64(queue + tail * 8, nid);
+                store64(out_buf + tail * 8, nid);
+                tail = tail + 1;
+            }
+        }
+        depth = depth + 1;
+    }
+    return tail;
+}
+
+# Lineage: find all ancestors (cultures that influenced this one,
+# recursively back). BFS following REL_INFLUENCED edges backward.
+fn hadara_lineage(culture_id, out_buf, max) {
+    var visited = alloc(REGISTRY_MAX);
+    memset(visited, 0, REGISTRY_MAX);
+    store8(visited + culture_id, 1);
+
+    var head = 0;
+    var tail = 0;
+    var queue = alloc(REGISTRY_MAX * 8);
+    var tmp = alloc(32 * 8);
+
+    # Seed: find direct influencers
+    var direct = hadara_influences_on(culture_id, tmp, 32);
+    for (var d = 0; d < direct; d = d + 1) {
+        var sid = load64(tmp + d * 8);
+        if (load8(visited + sid) == 0) {
+            store8(visited + sid, 1);
+            store64(queue + tail * 8, sid);
+            store64(out_buf + tail * 8, sid);
+            tail = tail + 1;
+        }
+    }
+
+    # BFS backward
+    var depth = 0;
+    while (head < tail) {
+        if (depth >= 8) { break; }
+        if (tail >= max) { break; }
+        var cur = load64(queue + head * 8);
+        head = head + 1;
+        var ancestors = hadara_influences_on(cur, tmp, 32);
+        for (var n = 0; n < ancestors; n = n + 1) {
+            if (tail >= max) { break; }
+            var aid = load64(tmp + n * 8);
+            if (load8(visited + aid) == 0) {
+                store8(visited + aid, 1);
+                store64(queue + tail * 8, aid);
+                store64(out_buf + tail * 8, aid);
+                tail = tail + 1;
+            }
+        }
+        depth = depth + 1;
+    }
+    return tail;
+}
+
+# Syncretism query: find cultures that have REL_SYNCRETIZED with a given culture
+fn hadara_syncretized_with(culture_id, out_buf, max) {
+    return hadara_related_by_type(culture_id, REL_SYNCRETIZED, out_buf, max);
+}
+
+# Exchange query: find cultures that have REL_EXCHANGED with a given culture
+fn hadara_exchanged_with(culture_id, out_buf, max) {
+    return hadara_related_by_type(culture_id, REL_EXCHANGED, out_buf, max);
 }
