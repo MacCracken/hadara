@@ -2766,5 +2766,139 @@ fn hadara_seed() {
     memcpy(ve_rels2 + RELATION_SIZE, rels4 + RELATION_SIZE, RELATION_SIZE);  # Vedic→Tibetan influence
     hadara_set_relations(vedic, ve_rels2, 2);
 
+    # ================================================================
+    # Evolution tracking — historical status transitions
+    # ================================================================
+
+    hadara_evo_init();
+
+    # Scottish Gaelic: Active → Dormant (Highland Clearances, 1750s) → Revived (20th c.)
+    hadara_evo_record(scottish, 843, 0 - 1, CULTURE_ACTIVE);    # emergence
+    hadara_evo_record(scottish, 1746, CULTURE_ACTIVE, CULTURE_DORMANT);  # Culloden
+    hadara_evo_record(scottish, 1970, CULTURE_DORMANT, CULTURE_REVIVED); # Gaelic revival
+
+    # Norse: Active → Historical (end of Viking Age)
+    hadara_evo_record(norse, 793, 0 - 1, CULTURE_ACTIVE);       # Viking Age begins
+    hadara_evo_record(norse, 1066, CULTURE_ACTIVE, CULTURE_HISTORICAL); # Battle of Stamford Bridge
+
+    # Egyptian: Active → Historical (Arab conquest)
+    hadara_evo_record(egyptian, 0 - 3100, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(egyptian, 641, CULTURE_ACTIVE, CULTURE_HISTORICAL);
+
+    # Greek: Active → Historical (Roman conquest)
+    hadara_evo_record(greek, 0 - 800, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(greek, 0 - 146, CULTURE_ACTIVE, CULTURE_HISTORICAL);
+
+    # Byzantine: Active → Historical (Ottoman conquest)
+    hadara_evo_record(byzantine, 330, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(byzantine, 1453, CULTURE_ACTIVE, CULTURE_HISTORICAL);
+
+    # Ainu: Active → Dormant (Meiji assimilation) → Revived (modern recognition)
+    hadara_evo_record(ainu, 0 - 1000, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(ainu, 1869, CULTURE_ACTIVE, CULTURE_DORMANT);  # Hokkaido colonization
+    hadara_evo_record(ainu, 2008, CULTURE_DORMANT, CULTURE_REVIVED); # official recognition
+
+    # Aztec: Active → Historical (Spanish conquest)
+    hadara_evo_record(aztec, 1325, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(aztec, 1521, CULTURE_ACTIVE, CULTURE_HISTORICAL);
+
+    # ================================================================
+    # Relation descriptions — seed desc_ptr/desc_len on existing relations
+    # ================================================================
+
+    # We can't easily retrofit descriptions onto already-stored relations
+    # because they're allocated inline. Instead, add a lookup function.
+    # (Relation descriptions are looked up via hadara_relation_desc below)
+
     return hadara_count;
+}
+
+# Relation description lookup — returns a description string for known relation pairs.
+# This avoids modifying the already-allocated relation records.
+fn hadara_relation_desc(source_id, target_id, rel_type) {
+    # Persian↔Egyptian exchange
+    if (source_id == 1) {
+        if (target_id == 0) {
+            if (rel_type == REL_EXCHANGED) { return "Achaemenid conquest led to administrative and cultural exchange"; }
+        }
+    }
+    # Egyptian→Greek influence
+    if (source_id == 0) {
+        if (target_id == 3) {
+            if (rel_type == REL_INFLUENCED) { return "Egyptian geometry, medicine, and theology transmitted via trade and colonization"; }
+        }
+    }
+    # Greek↔Egyptian syncretism
+    if (source_id == 3) {
+        if (target_id == 0) {
+            if (rel_type == REL_SYNCRETIZED) { return "Hermetic tradition blended Greek philosophy with Egyptian mystery religion"; }
+        }
+    }
+    # Greek→Roman influence
+    if (source_id == 3) {
+        if (target_id == 12) {
+            if (rel_type == REL_INFLUENCED) { return "Greek art, philosophy, and religion adopted wholesale after conquest of Greece"; }
+        }
+    }
+    # Greek absorbed→Roman
+    if (source_id == 3) {
+        if (target_id == 12) {
+            if (rel_type == REL_ABSORBED) { return "Greek cultural identity subsumed into Greco-Roman synthesis post-146 BCE"; }
+        }
+    }
+    # West African→Hip-Hop influence
+    if (source_id == 5) {
+        if (target_id == 9) {
+            if (rel_type == REL_INFLUENCED) { return "Griot oral tradition, call-and-response, and drumming patterns carried via African diaspora"; }
+        }
+    }
+    # Chinese→Japanese influence
+    if (source_id == 11) {
+        if (target_id == 4) {
+            if (rel_type == REL_INFLUENCED) { return "Writing system, Buddhism, Confucian governance transmitted via Korea and direct contact"; }
+        }
+    }
+    # Vedic↔Chinese exchange
+    if (source_id == 2) {
+        if (target_id == 11) {
+            if (rel_type == REL_EXCHANGED) { return "Buddhist transmission via Silk Road, Kushan intermediaries, pilgrim monks"; }
+        }
+    }
+    # Vedic→Tibetan influence
+    if (source_id == 2) {
+        if (target_id == 15) {
+            if (rel_type == REL_INFLUENCED) { return "Vajrayana Buddhism transmitted from Indian monasteries to Tibet via Padmasambhava"; }
+        }
+    }
+    # Arab↔Persian exchange
+    if (source_id == 13) {
+        if (target_id == 1) {
+            if (rel_type == REL_EXCHANGED) { return "Post-conquest synthesis: Arabic script adopted, Persian literature and administration preserved"; }
+        }
+    }
+    # Roman→Byzantine branched
+    if (source_id == 12) {
+        if (target_id == 19) {
+            if (rel_type == REL_BRANCHED_FROM) { return "Eastern Roman continuation: Greek language, Orthodox Christianity, imperial tradition"; }
+        }
+    }
+    # Chinese→Korean influence
+    if (source_id == 11) {
+        if (target_id == 14) {
+            if (rel_type == REL_INFLUENCED) { return "Confucianism, Buddhist monasticism, Chinese script transmitted to Three Kingdoms Korea"; }
+        }
+    }
+    # Jewish↔Arab syncretism
+    if (source_id == 18) {
+        if (target_id == 13) {
+            if (rel_type == REL_SYNCRETIZED) { return "Judeo-Arabic philosophical tradition: Maimonides, Ibn Gabirol, shared Aristotelian commentary"; }
+        }
+    }
+    # Mesopotamian↔Egyptian exchange
+    if (source_id == 16) {
+        if (target_id == 0) {
+            if (rel_type == REL_EXCHANGED) { return "Bronze Age trade: lapis lazuli, cylinder seals, astronomical knowledge exchange"; }
+        }
+    }
+    return 0;
 }

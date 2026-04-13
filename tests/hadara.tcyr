@@ -867,6 +867,81 @@ fn main() {
     assert_eq(hadara_subculture_count(12), 0, "roman has no subcultures");
 
     prints("part 8: subcultures — PASS\n");
+
+    # ================================================================
+    # Part 9: Evolution tracking
+    # ================================================================
+
+    # Transitions were recorded during seed
+    var ec2 = hadara_evo_count();
+    var evo_ok = 0;
+    if (ec2 >= 15) { evo_ok = 1; }
+    assert_eq(evo_ok, 1, "at least 15 evolution transitions recorded");
+
+    # Scottish Gaelic transitions
+    var evo_buf = alloc(16 * 8);
+    var sc_evo = hadara_evo_for(6, evo_buf, 16);
+    assert_eq(sc_evo, 3, "scottish has 3 transitions");
+
+    # Check Scottish status at different points
+    # At 1000 CE: Active (after 843 emergence, before 1746 Culloden)
+    var sc_1000 = hadara_status_at(6, 1000);
+    assert_eq(sc_1000, CULTURE_ACTIVE, "scottish active in 1000 CE");
+
+    # At 1800 CE: Dormant (after 1746, before 1970)
+    var sc_1800 = hadara_status_at(6, 1800);
+    assert_eq(sc_1800, CULTURE_DORMANT, "scottish dormant in 1800");
+
+    # At 2020 CE: Revived (after 1970)
+    var sc_2020 = hadara_status_at(6, 2020);
+    assert_eq(sc_2020, CULTURE_REVIVED, "scottish revived in 2020");
+
+    # Norse: Active at 900 CE, Historical at 1100 CE
+    var no_900 = hadara_status_at(7, 900);
+    assert_eq(no_900, CULTURE_ACTIVE, "norse active in 900");
+    var no_1100 = hadara_status_at(7, 1100);
+    assert_eq(no_1100, CULTURE_HISTORICAL, "norse historical in 1100");
+
+    # Ainu: Active at 1800, Dormant at 1950, Revived at 2020
+    var ai_1800 = hadara_status_at(46, 1800);
+    assert_eq(ai_1800, CULTURE_ACTIVE, "ainu active in 1800");
+    var ai_1950 = hadara_status_at(46, 1950);
+    assert_eq(ai_1950, CULTURE_DORMANT, "ainu dormant in 1950");
+    var ai_2020 = hadara_status_at(46, 2020);
+    assert_eq(ai_2020, CULTURE_REVIVED, "ainu revived in 2020");
+
+    # Egyptian: Active at 0 CE, Historical at 700 CE
+    var eg_0 = hadara_status_at(0, 0);
+    assert_eq(eg_0, CULTURE_ACTIVE, "egyptian active at 0 CE");
+    var eg_700 = hadara_status_at(0, 700);
+    assert_eq(eg_700, CULTURE_HISTORICAL, "egyptian historical at 700");
+
+    prints("part 9: evolution tracking — PASS\n");
+
+    # ================================================================
+    # Part 10: Relation descriptions
+    # ================================================================
+
+    var desc = hadara_relation_desc(5, 9, REL_INFLUENCED);
+    assert_neq(desc, 0, "westafrican→hiphop influence has description");
+
+    desc = hadara_relation_desc(3, 0, REL_SYNCRETIZED);
+    assert_neq(desc, 0, "greek↔egyptian syncretism has description");
+
+    desc = hadara_relation_desc(2, 15, REL_INFLUENCED);
+    assert_neq(desc, 0, "vedic→tibetan influence has description");
+
+    desc = hadara_relation_desc(12, 19, REL_BRANCHED_FROM);
+    assert_neq(desc, 0, "roman→byzantine branched has description");
+
+    desc = hadara_relation_desc(18, 13, REL_SYNCRETIZED);
+    assert_neq(desc, 0, "jewish↔arab syncretism has description");
+
+    # Unknown pair returns 0
+    desc = hadara_relation_desc(9, 7, REL_INFLUENCED);
+    assert_eq(desc, 0, "unknown relation has no description");
+
+    prints("part 10: relation descriptions — PASS\n");
     prints("hadara: all tests passed\n");
     return 0;
 }

@@ -75,9 +75,9 @@
 
 - [x] 50 cultures target reached
 - [x] Subculture modeling: Hip-Hop (3 regional variants), Polynesian→Maori, Japanese→Ainu, Sikh→Vedic
-- [ ] Living culture evolution tracking (status transitions over time)
-- [ ] Relation descriptions (seed `desc_ptr/desc_len`)
-- [ ] hoosh integration (LLM-grounded cultural queries)
+- [x] Living culture evolution tracking: `hadara_evolve`, `hadara_status_at`, `hadara_evo_for` — 15+ historical transitions seeded (Scottish 3-phase, Norse, Egyptian, Greek, Byzantine, Ainu 3-phase, Aztec)
+- [x] Relation descriptions: `hadara_relation_desc` — 15 annotated relation pairs
+- [ ] hoosh integration (LLM-grounded cultural queries — last item)
 - [ ] Version bump to 1.0.0
 - [ ] Consumer: kshetra, varna (future)
 

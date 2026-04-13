@@ -1,0 +1,127 @@
+# evolution.cyr -- Living culture evolution tracking
+#
+# Records status transitions over time for each culture.
+# A culture can change status: Active → Dormant → Revived,
+# or Active → Historical → Extinct.
+#
+# Each transition is a (year, old_status, new_status) triple.
+# Stored as a flat array per culture in the global evolution log.
+
+# --- StatusTransition layout ---
+# Offset  Field        Size  Description
+# 0       culture_id   8     which culture
+# 8       year         8     when the transition happened
+# 16      old_status   8     CultureStatus before
+# 24      new_status   8     CultureStatus after
+
+enum TransitionLayout {
+    TRANS_SIZE = 32;
+    TRANS_CULTURE = 0;
+    TRANS_YEAR = 8;
+    TRANS_OLD = 16;
+    TRANS_NEW = 24;
+}
+
+var _evo_log = 0;
+var _evo_count = 0;
+var _evo_max = 256;
+
+fn hadara_evo_init() {
+    if (_evo_log == 0) {
+        _evo_log = alloc(_evo_max * TRANS_SIZE);
+    }
+    _evo_count = 0;
+}
+
+# Record a status transition. Does NOT change the culture's current status —
+# call hadara_evolve() for that.
+fn hadara_evo_record(culture_id, year, old_status, new_status) {
+    if (_evo_count >= _evo_max) { return 0 - 1; }
+    var t = _evo_log + _evo_count * TRANS_SIZE;
+    store64(t + TRANS_CULTURE, culture_id);
+    store64(t + TRANS_YEAR, year);
+    store64(t + TRANS_OLD, old_status);
+    store64(t + TRANS_NEW, new_status);
+    _evo_count = _evo_count + 1;
+    return _evo_count - 1;
+}
+
+# Change a culture's status and record the transition.
+fn hadara_evolve(culture_id, year, new_status) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0 - 1; }
+    var old = culture_status(c);
+    if (old == new_status) { return 0 - 1; }
+    hadara_evo_record(culture_id, year, old, new_status);
+    store64(c + CULTURE_STATUS, new_status);
+    return 0;
+}
+
+# Get total transitions recorded
+fn hadara_evo_count() {
+    return _evo_count;
+}
+
+# Get a transition pointer by index
+fn hadara_evo_get(idx) {
+    if (idx < 0) { return 0; }
+    if (idx >= _evo_count) { return 0; }
+    return _evo_log + idx * TRANS_SIZE;
+}
+
+fn trans_culture(t) { return load64(t + TRANS_CULTURE); }
+fn trans_year(t) { return load64(t + TRANS_YEAR); }
+fn trans_old(t) { return load64(t + TRANS_OLD); }
+fn trans_new(t) { return load64(t + TRANS_NEW); }
+
+# Find all transitions for a given culture.
+# Writes transition pointers to out_buf, returns count.
+fn hadara_evo_for(culture_id, out_buf, max) {
+    var count = 0;
+    for (var i = 0; i < _evo_count; i = i + 1) {
+        if (count >= max) { return count; }
+        var t = hadara_evo_get(i);
+        if (trans_culture(t) == culture_id) {
+            store64(out_buf + count * 8, t);
+            count = count + 1;
+        }
+    }
+    return count;
+}
+
+# Get the status a culture had at a specific year.
+# Walks transitions in order, applying each one to find the state at that year.
+# Returns the status enum value.
+fn hadara_status_at(culture_id, year) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0 - 1; }
+    # Start with current status and walk backward? No — start from beginning.
+    # We need to know the "original" status. Use time_start as the beginning.
+    var start = culture_time_start(c);
+    if (year < start) { return 0 - 1; }  # culture didn't exist yet
+    var end = culture_time_end(c);
+    if (end != 0) {
+        if (year > end) { return 0 - 1; }  # culture ended
+    }
+
+    # Find the earliest recorded status. If no transitions, return current status.
+    # Walk all transitions for this culture, find the one most recent before year.
+    var status = 0 - 1;  # unknown
+    var best_year = 0 - 999999;
+    for (var i = 0; i < _evo_count; i = i + 1) {
+        var t = hadara_evo_get(i);
+        if (trans_culture(t) != culture_id) { continue; }
+        var ty = trans_year(t);
+        if (ty <= year) {
+            if (ty > best_year) {
+                best_year = ty;
+                status = trans_new(t);
+            }
+        }
+    }
+    # If no transition found before this year, return current status
+    if (status == 0 - 1) {
+        return culture_status(c);
+    }
+    return status;
+}
