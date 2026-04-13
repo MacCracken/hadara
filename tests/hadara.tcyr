@@ -1015,7 +1015,7 @@ fn main() {
 
     prints("part 11: hoosh integration — PASS\n");
     prints("hadara: all tests passed\n");
-    return 0;
+    return assert_summary();
 }
 
 var exit_code = main();

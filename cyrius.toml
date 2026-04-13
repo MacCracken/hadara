@@ -10,6 +10,9 @@ cyrius = "3.7.0"
 src = "src/lib.cyr"
 output = "build/hadara"
 
+[deps]
+stdlib = ["string", "fmt", "alloc", "io", "vec", "str", "hashmap", "args", "syscalls", "tagged", "assert", "bench", "freelist", "chrono", "json", "math", "regex", "toml", "net", "http", "fs", "sakshi"]
+
 [[programs]]
 name = "hadara"
 src = "src/main.cyr"
