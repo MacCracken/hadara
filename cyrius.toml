@@ -4,6 +4,7 @@ version = "1.0.0"
 description = "Hadara — Culture as a first-class entity. Cultures with practices, values, art forms, lineage, evolution, diaspora, and relationships."
 license = "GPL-3.0-only"
 repository = "https://github.com/MacCracken/hadara"
+cyrius = "3.7.0"
 
 [build]
 src = "src/lib.cyr"
@@ -14,6 +15,3 @@ name = "hadara"
 src = "src/main.cyr"
 output = "build/hadara"
 description = "Culture corpus CLI and HTTP server"
-
-[deps]
-sakshi = { git = "https://github.com/MacCracken/sakshi", version = "0.9.0" }

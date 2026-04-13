@@ -1,0 +1,303 @@
+# hadara.bcyr -- Benchmarks for hadara
+#
+# Benchmarks covering: registry, queries, graph traversal, consumer APIs,
+# context generation, evolution tracking.
+
+include "lib/string.cyr"
+include "lib/fmt.cyr"
+include "lib/alloc.cyr"
+include "lib/vec.cyr"
+include "lib/str.cyr"
+include "lib/math.cyr"
+include "lib/syscalls.cyr"
+include "lib/bench.cyr"
+include "lib/sakshi.cyr"
+
+fn sakshi_span_enter(name, name_len) { return 0; }
+fn sakshi_span_exit() { return 0; }
+
+fn prints(s) { syscall(1, 1, s, strlen(s)); return 0; }
+fn to_cstr(s) {
+    if (s == 0) { return ""; }
+    var len = str_len(s);
+    var buf = alloc(len + 1);
+    memcpy(buf, str_data(s), len);
+    store8(buf + len, 0);
+    return buf;
+}
+fn str_builder_add_buf(sb, ptr, len) {
+    var i = 0;
+    while (i < len) { str_builder_add_byte(sb, load8(ptr + i)); i = i + 1; }
+    return 0;
+}
+
+include "src/lib.cyr"
+include "src/seed.cyr"
+
+var N = 1000;
+var b = 0;
+
+alloc_init();
+hadara_init();
+hadara_seed();
+
+println("=== hadara benchmarks ===");
+
+# ================================================================
+# Tier 1: Registry operations
+# ================================================================
+println("");
+println("--- tier 1: registry ---");
+
+b = bench_new("registry/get_by_id");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_get(9); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("registry/len");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_len(); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("registry/culture_accessors");
+bench_batch_start(b);
+var c = hadara_get(4);
+for (var i = 0; i < N; i = i + 1) {
+    culture_name_ptr(c);
+    culture_status(c);
+    culture_time_start(c);
+    culture_formality(c);
+    culture_values_count(c);
+}
+bench_batch_stop(b, N);
+bench_report(b);
+
+# ================================================================
+# Tier 2: Status and temporal queries
+# ================================================================
+println("");
+println("--- tier 2: queries ---");
+
+b = bench_new("query/count_by_status");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_count_by_status(CULTURE_ACTIVE); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("query/count_active");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_count_active(); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+var qbuf = alloc(64 * 8);
+
+b = bench_new("query/coexisting_2026");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_coexisting_at(2026, qbuf, 64); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("query/coexisting_1000bce");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_coexisting_at(0 - 1000, qbuf, 64); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("query/existed_at");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { culture_existed_at(hadara_get(0), 0 - 1000); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+# ================================================================
+# Tier 3: Search queries
+# ================================================================
+println("");
+println("--- tier 3: search ---");
+
+b = bench_new("query/by_region_east_asia");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_by_region("East Asia", 9, qbuf, 64); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("query/search_all_latin");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_search_all("Latin", 5, qbuf, 64); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("query/practice_category_ritual");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_with_practice_category(PRACTICE_RITUAL, qbuf, 64); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("query/art_medium_calligraphy");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_with_art_medium(ART_CALLIGRAPHY, qbuf, 64); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("query/diaspora_americas");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_diaspora_in("Americas", 8, qbuf, 64); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+# ================================================================
+# Tier 4: Graph traversal
+# ================================================================
+println("");
+println("--- tier 4: graph ---");
+
+b = bench_new("graph/influences_on");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_influences_on(3, qbuf, 32); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("graph/all_relations");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_all_relations(3, qbuf, 32); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("graph/influence_chain");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_influence_chain(0, qbuf, 32); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("graph/lineage");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_lineage(12, qbuf, 32); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("graph/exchanged_with");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_exchanged_with(1, qbuf, 32); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+# ================================================================
+# Tier 5: Temporal relations
+# ================================================================
+println("");
+println("--- tier 5: temporal relations ---");
+
+b = bench_new("temporal/relations_at");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_relations_at(0, 0 - 400, qbuf, 32); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("temporal/connected_at");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_connected_at(11, 600, qbuf, 32); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+# ================================================================
+# Tier 6: Consumer APIs
+# ================================================================
+println("");
+println("--- tier 6: consumer ---");
+
+b = bench_new("consumer/display_rule");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_display_rule(4); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("consumer/dominant_practice");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_dominant_practice(9); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("consumer/sacred_ratio");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_sacred_ratio(7); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("consumer/narrative_count");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_narrative_count(5); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("consumer/fact_count");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_fact_count(9); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("consumer/total_facts");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_total_facts(); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+# ================================================================
+# Tier 7: Bridge
+# ================================================================
+println("");
+println("--- tier 7: bridge ---");
+
+b = bench_new("bridge/traditions");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_traditions(2, qbuf, 8); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("bridge/civilizations");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_civilizations(1, qbuf, 8); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("bridge/culture_for_tradition");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_culture_for_tradition("Buddhist", qbuf, 16); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+# ================================================================
+# Tier 8: Evolution + Context
+# ================================================================
+println("");
+println("--- tier 8: evolution + context ---");
+
+b = bench_new("evolution/status_at");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_status_at(6, 1800); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("evolution/evo_for");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_evo_for(6, qbuf, 16); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("hoosh/context_build");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_context(4); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+b = bench_new("hoosh/context_json");
+bench_batch_start(b);
+for (var i = 0; i < N; i = i + 1) { hadara_context_json(4); }
+bench_batch_stop(b, N);
+bench_report(b);
+
+println("");
+println("=== hadara: 33 benchmarks complete ===");
+syscall(60, 0);

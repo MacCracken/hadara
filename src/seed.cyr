@@ -11,38 +11,55 @@
 # --- Seed cultures ---
 # Called after hadara_init() to populate the registry.
 
-fn hadara_seed() {
+# Culture ID constants (deterministic add order)
+enum CultureId {
+    CID_EGYPTIAN = 0; CID_PERSIAN = 1; CID_VEDIC = 2; CID_GREEK = 3;
+    CID_JAPANESE = 4; CID_WESTAFRICAN = 5; CID_SCOTTISH = 6; CID_NORSE = 7;
+    CID_ABORIGINAL = 8; CID_HIPHOP = 9; CID_MAYA = 10; CID_CHINESE = 11;
+    CID_ROMAN = 12; CID_ARAB = 13; CID_KOREAN = 14; CID_TIBETAN = 15;
+    CID_MESOPOTAMIAN = 16; CID_MONGOL = 17; CID_JEWISH = 18; CID_BYZANTINE = 19;
+    CID_POLYNESIAN = 20; CID_AZTEC = 21; CID_INCA = 22; CID_OTTOMAN = 23;
+    CID_KHMER = 24; CID_SWAHILI = 25; CID_YORUBA = 26; CID_AMAZIGH = 27;
+    CID_INUIT = 28; CID_MAORI = 29; CID_SIKH = 30; CID_ETHIOPIAN = 31;
+    CID_TAMIL = 32; CID_JAVANESE = 33; CID_ARMENIAN = 34; CID_ROMANI = 35;
+    CID_BASQUE = 36; CID_HAUDENOSAUNEE = 37; CID_EASTCOAST = 38;
+    CID_SOMALI = 39; CID_TUAREG = 40; CID_ZULU = 41; CID_GEORGIAN = 42;
+    CID_BALINESE = 43; CID_IGBO = 44; CID_LAKOTA = 45; CID_AINU = 46;
+    CID_WESTCOAST = 47; CID_SOUTHERN = 48; CID_CATALAN = 49;
+}
+
+fn hadara_seed_cultures() {
     # 0: Egyptian — Shaw (2000): c. 3100 BCE (Narmer unification) to 641 CE (Arab conquest)
-    var egyptian = hadara_add("Egyptian", 8, CULTURE_HISTORICAL, 0 - 3100, 641);
-    hadara_set_endonym(egyptian, "Kemet", 5);
+    hadara_add("Egyptian", 8, CULTURE_HISTORICAL, 0 - 3100, 641);
+    hadara_set_endonym(CID_EGYPTIAN, "Kemet", 5);
 
     # 1: Persian — Brosius (2006): Achaemenid founding 550 BCE, continuous to present
     var persian = hadara_add("Persian", 7, CULTURE_ACTIVE, 0 - 550, 0);
-    hadara_set_endonym(persian, "Irani", 5);
+    hadara_set_endonym(CID_PERSIAN, "Irani", 5);
 
     # 2: Vedic/Hindu — Basham (1967): Vedic period c. 1500 BCE, continuous
     var vedic = hadara_add("Vedic-Hindu", 10, CULTURE_ACTIVE, 0 - 1500, 0);
-    hadara_set_endonym(vedic, "Sanatana Dharma", 15);
+    hadara_set_endonym(CID_VEDIC, "Sanatana Dharma", 15);
 
     # 3: Greek — Boardman (1970--2005): Archaic period c. 800 BCE to 146 BCE (Roman conquest)
     var greek = hadara_add("Ancient Greek", 12, CULTURE_HISTORICAL, 0 - 800, 0 - 146);
-    hadara_set_endonym(greek, "Hellas", 6);
+    hadara_set_endonym(CID_GREEK, "Hellas", 6);
 
     # 4: Japanese — Varley (2000): Jomon/Yayoi transition c. 300 BCE, continuous
     var japanese = hadara_add("Japanese", 8, CULTURE_ACTIVE, 0 - 300, 0);
-    hadara_set_endonym(japanese, "Nihon", 5);
+    hadara_set_endonym(CID_JAPANESE, "Nihon", 5);
 
     # 5: West African (Mali/Mande) — Iliffe (2007): Ghana Empire c. 300 CE, Mande continuous
     var westafrican = hadara_add("West African Mande", 18, CULTURE_ACTIVE, 300, 0);
-    hadara_set_endonym(westafrican, "Manden", 6);
+    hadara_set_endonym(CID_WESTAFRICAN, "Manden", 6);
 
     # 6: Scottish/Gaelic — Cunliffe (2018): Kingdom of Alba 843 CE, Gaelic revival ongoing
     var scottish = hadara_add("Scottish Gaelic", 15, CULTURE_REVIVED, 843, 0);
-    hadara_set_endonym(scottish, "Gaidheal", 8);
+    hadara_set_endonym(CID_SCOTTISH, "Gaidheal", 8);
 
     # 7: Norse — Price (2019): Viking Age c. 793 CE to c. 1066 CE
     var norse = hadara_add("Norse", 5, CULTURE_HISTORICAL, 793, 1066);
-    hadara_set_endonym(norse, "Norroen", 7);
+    hadara_set_endonym(CID_NORSE, "Norroen", 7);
 
     # 8: Aboriginal Australian — Flood (2006): 65,000+ years continuous
     var aboriginal = hadara_add("Aboriginal Australian", 21, CULTURE_ACTIVE, 0 - 65000, 0);
@@ -52,21 +69,32 @@ fn hadara_seed() {
 
     # 10: Maya — Coe (2015): Preclassic c. 2000 BCE, living Maya culture continuous
     var maya = hadara_add("Maya", 4, CULTURE_ACTIVE, 0 - 2000, 0);
-    hadara_set_endonym(maya, "Mayab", 5);
+    hadara_set_endonym(CID_MAYA, "Mayab", 5);
 
     # 11: Chinese — Stearns (2001): Shang Dynasty c. 1600 BCE, continuous
     var chinese = hadara_add("Chinese", 7, CULTURE_ACTIVE, 0 - 1600, 0);
-    hadara_set_endonym(chinese, "Zhonghua", 8);
+    hadara_set_endonym(CID_CHINESE, "Zhonghua", 8);
 
     # 12: Roman — Boatwright (2012): 753 BCE founding to 476 CE (Western fall)
     var roman = hadara_add("Roman", 5, CULTURE_HISTORICAL, 0 - 753, 476);
-    hadara_set_endonym(roman, "Roma", 4);
+    hadara_set_endonym(CID_ROMAN, "Roma", 4);
+
+    return hadara_count;
+}
+
+fn hadara_seed_subentities() {
+    var p = 0;
+    var a = 0;
+    var f = 0;
+    var t = 0;
+    var r = 0;
+    var art = 0;
 
     # --- Seed practices ---
 
     # Hip-Hop practices — Chang (2005), Schloss (2009)
     var hp_practices = alloc(PRACTICE_SIZE * 4);
-    var p = hp_practices;
+    p = hp_practices;
     store64(p + PRACTICE_NAME_PTR, "Cypher");
     store64(p + PRACTICE_NAME_LEN, 6);
     store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
@@ -90,7 +118,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
     store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(hiphop, hp_practices, 4);
+    hadara_set_practices(CID_HIPHOP, hp_practices, 4);
 
     # Vedic practices — Flood (1996)
     var v_practices = alloc(PRACTICE_SIZE * 3);
@@ -112,7 +140,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_DAILY);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(vedic, v_practices, 3);
+    hadara_set_practices(CID_VEDIC, v_practices, 3);
 
     # Japanese practices — Varley (2000), Friday (1997)
     var j_practices = alloc(PRACTICE_SIZE * 3);
@@ -134,13 +162,13 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(japanese, j_practices, 3);
+    hadara_set_practices(CID_JAPANESE, j_practices, 3);
 
     # --- Seed art forms ---
 
     # Hip-Hop art forms ��� Rose (1994), Fricke & Ahearn (2002)
     var hp_arts = alloc(ART_FORM_SIZE * 4);
-    var a = hp_arts;
+    a = hp_arts;
     store64(a + ART_FORM_NAME_PTR, "MCing");
     store64(a + ART_FORM_NAME_LEN, 5);
     store64(a + ART_FORM_MEDIUM, ART_MUSIC);
@@ -156,7 +184,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Breakdancing");
     store64(a + ART_FORM_NAME_LEN, 12);
     store64(a + ART_FORM_MEDIUM, ART_DANCE);
-    hadara_set_art_forms(hiphop, hp_arts, 4);
+    hadara_set_art_forms(CID_HIPHOP, hp_arts, 4);
 
     # Japanese art forms — Varley (2000), Nakata (1973)
     var j_arts = alloc(ART_FORM_SIZE * 4);
@@ -176,7 +204,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Gagaku");
     store64(a + ART_FORM_NAME_LEN, 6);
     store64(a + ART_FORM_MEDIUM, ART_MUSIC);
-    hadara_set_art_forms(japanese, j_arts, 4);
+    hadara_set_art_forms(CID_JAPANESE, j_arts, 4);
 
     # West African art forms — Nettl et al. (1998--2002), Vansina (1985)
     var wa_arts = alloc(ART_FORM_SIZE * 3);
@@ -192,13 +220,13 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Mud Cloth Dyeing");
     store64(a + ART_FORM_NAME_LEN, 16);
     store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
-    hadara_set_art_forms(westafrican, wa_arts, 3);
+    hadara_set_art_forms(CID_WESTAFRICAN, wa_arts, 3);
 
     # --- Seed figures ---
 
     # Hip-Hop — Chang (2005), KRS-One (2009)
     var hp_figs = alloc(FIGURE_SIZE * 3);
-    var f = hp_figs;
+    f = hp_figs;
     store64(f + FIGURE_NAME_PTR, "DJ Kool Herc");
     store64(f + FIGURE_NAME_LEN, 12);
     store64(f + FIGURE_ROLE_PTR, "Originated hip-hop DJ style at 1520 Sedgwick Ave party");
@@ -219,7 +247,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 52);
     store64(f + FIGURE_ERA_START, 1957);
     store64(f + FIGURE_ERA_END, 0);
-    hadara_set_figures(hiphop, hp_figs, 3);
+    hadara_set_figures(CID_HIPHOP, hp_figs, 3);
 
     # Persian — Brosius (2006), Boyce (2001)
     var pe_figs = alloc(FIGURE_SIZE * 2);
@@ -237,13 +265,13 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 44);
     store64(f + FIGURE_ERA_START, 0 - 1500);
     store64(f + FIGURE_ERA_END, 0 - 1000);
-    hadara_set_figures(persian, pe_figs, 2);
+    hadara_set_figures(CID_PERSIAN, pe_figs, 2);
 
     # --- Seed texts ---
 
     # Vedic — Witzel (2003), Flood (1996)
     var v_texts = alloc(TEXT_SIZE * 2);
-    var t = v_texts;
+    t = v_texts;
     store64(t + TEXT_TITLE_PTR, "Rigveda");
     store64(t + TEXT_TITLE_LEN, 7);
     store64(t + TEXT_AUTHOR_PTR, 0);
@@ -257,7 +285,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 5);
     store64(t + TEXT_YEAR, 0 - 200);
     store64(t + TEXT_SACRED, 1);
-    hadara_set_texts(vedic, v_texts, 2);
+    hadara_set_texts(CID_VEDIC, v_texts, 2);
 
     # Persian — Boyce (2001)
     var pe_texts = alloc(TEXT_SIZE * 1);
@@ -268,7 +296,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 9);
     store64(t + TEXT_YEAR, 0 - 1000);
     store64(t + TEXT_SACRED, 1);
-    hadara_set_texts(persian, pe_texts, 1);
+    hadara_set_texts(CID_PERSIAN, pe_texts, 1);
 
     # Norse — Larrington (2014)
     var n_texts = alloc(TEXT_SIZE * 2);
@@ -286,7 +314,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 16);
     store64(t + TEXT_YEAR, 1220);
     store64(t + TEXT_SACRED, 0);
-    hadara_set_texts(norse, n_texts, 2);
+    hadara_set_texts(CID_NORSE, n_texts, 2);
 
     # Greek texts — Boardman (1970--2005)
     var gr_texts = alloc(TEXT_SIZE * 2);
@@ -304,7 +332,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 5);
     store64(t + TEXT_YEAR, 0 - 375);
     store64(t + TEXT_SACRED, 0);
-    hadara_set_texts(greek, gr_texts, 2);
+    hadara_set_texts(CID_GREEK, gr_texts, 2);
 
     # Japanese texts — Keene (1976--1999), Philippi (1968)
     var jp_texts = alloc(TEXT_SIZE * 2);
@@ -322,7 +350,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 16);
     store64(t + TEXT_YEAR, 1000);
     store64(t + TEXT_SACRED, 0);
-    hadara_set_texts(japanese, jp_texts, 2);
+    hadara_set_texts(CID_JAPANESE, jp_texts, 2);
 
     # West African texts — Vansina (1985), Niane (1965)
     var wa_texts = alloc(TEXT_SIZE * 1);
@@ -333,7 +361,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 0);
     store64(t + TEXT_YEAR, 1235);
     store64(t + TEXT_SACRED, 0);
-    hadara_set_texts(westafrican, wa_texts, 1);
+    hadara_set_texts(CID_WESTAFRICAN, wa_texts, 1);
 
     # Maya texts — Coe (2015)
     var ma_texts = alloc(TEXT_SIZE * 1);
@@ -344,13 +372,13 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 0);
     store64(t + TEXT_YEAR, 1550);
     store64(t + TEXT_SACRED, 1);
-    hadara_set_texts(maya, ma_texts, 1);
+    hadara_set_texts(CID_MAYA, ma_texts, 1);
 
     # --- Seed artifacts ---
 
     # Egyptian artifacts — Shaw (2000), Prown (1982)
     var eg_artifacts = alloc(ARTIFACT_SIZE * 3);
-    var art = eg_artifacts;
+    art = eg_artifacts;
     store64(art + ARTIFACT_NAME_PTR, "Sarcophagus");
     store64(art + ARTIFACT_NAME_LEN, 11);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_CONTAINER);
@@ -362,7 +390,7 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Papyrus Scroll");
     store64(art + ARTIFACT_NAME_LEN, 14);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_TOOL);
-    hadara_set_artifacts(egyptian, eg_artifacts, 3);
+    hadara_set_artifacts(CID_EGYPTIAN, eg_artifacts, 3);
 
     # Japanese artifacts — Varley (2000)
     var jp_artifacts = alloc(ARTIFACT_SIZE * 3);
@@ -378,7 +406,7 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Torii Gate");
     store64(art + ARTIFACT_NAME_LEN, 10);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_ARCHITECTURE);
-    hadara_set_artifacts(japanese, jp_artifacts, 3);
+    hadara_set_artifacts(CID_JAPANESE, jp_artifacts, 3);
 
     # Norse artifacts — Price (2019)
     var no_artifacts = alloc(ARTIFACT_SIZE * 3);
@@ -394,7 +422,7 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Runestone");
     store64(art + ARTIFACT_NAME_LEN, 9);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_CRAFT);
-    hadara_set_artifacts(norse, no_artifacts, 3);
+    hadara_set_artifacts(CID_NORSE, no_artifacts, 3);
 
     # Roman artifacts — Boatwright (2012)
     var ro_artifacts = alloc(ARTIFACT_SIZE * 3);
@@ -410,7 +438,7 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Amphora");
     store64(art + ARTIFACT_NAME_LEN, 7);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_CONTAINER);
-    hadara_set_artifacts(roman, ro_artifacts, 3);
+    hadara_set_artifacts(CID_ROMAN, ro_artifacts, 3);
 
     # Hip-Hop artifacts — Chang (2005)
     var hp_artifacts = alloc(ARTIFACT_SIZE * 3);
@@ -426,7 +454,7 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Spray Can");
     store64(art + ARTIFACT_NAME_LEN, 9);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_TOOL);
-    hadara_set_artifacts(hiphop, hp_artifacts, 3);
+    hadara_set_artifacts(CID_HIPHOP, hp_artifacts, 3);
 
     # West African artifacts — Connah (2015)
     var wa_artifacts = alloc(ARTIFACT_SIZE * 3);
@@ -442,7 +470,7 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Kora");
     store64(art + ARTIFACT_NAME_LEN, 4);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_INSTRUMENT);
-    hadara_set_artifacts(westafrican, wa_artifacts, 3);
+    hadara_set_artifacts(CID_WESTAFRICAN, wa_artifacts, 3);
 
     # Chinese artifacts — Stearns (2001)
     var ch_artifacts = alloc(ARTIFACT_SIZE * 3);
@@ -458,7 +486,7 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Hanfu");
     store64(art + ARTIFACT_NAME_LEN, 5);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_CLOTHING);
-    hadara_set_artifacts(chinese, ch_artifacts, 3);
+    hadara_set_artifacts(CID_CHINESE, ch_artifacts, 3);
 
     # Maya artifacts — Coe (2015)
     var ma_artifacts = alloc(ARTIFACT_SIZE * 2);
@@ -470,7 +498,7 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Obsidian Blade");
     store64(art + ARTIFACT_NAME_LEN, 14);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_WEAPON);
-    hadara_set_artifacts(maya, ma_artifacts, 2);
+    hadara_set_artifacts(CID_MAYA, ma_artifacts, 2);
 
     # Aboriginal artifacts — Flood (2006)
     var ab_artifacts = alloc(ARTIFACT_SIZE * 2);
@@ -482,38 +510,37 @@ fn hadara_seed() {
     store64(art + ARTIFACT_NAME_PTR, "Didgeridoo");
     store64(art + ARTIFACT_NAME_LEN, 10);
     store64(art + ARTIFACT_CATEGORY, ARTIFACT_INSTRUMENT);
-    hadara_set_artifacts(aboriginal, ab_artifacts, 2);
+    hadara_set_artifacts(CID_ABORIGINAL, ab_artifacts, 2);
 
     # --- Seed relations ---
 
     # Persian-Egyptian exchange — Briant (2002): 525-404 BCE
     var rels = alloc(RELATION_SIZE * 3);
-    var r = rels;
-    store64(r + RELATION_SOURCE, persian);
-    store64(r + RELATION_TARGET, egyptian);
+    r = rels;
+    store64(r + RELATION_SOURCE, CID_PERSIAN);
+    store64(r + RELATION_TARGET, CID_EGYPTIAN);
     store64(r + RELATION_TYPE, REL_EXCHANGED);
     store64(r + RELATION_PERIOD_START, 0 - 525);
     store64(r + RELATION_PERIOD_END, 0 - 404);
 
     # Greek influenced by Egyptian — Boardman (1970--2005)
     r = rels + RELATION_SIZE;
-    store64(r + RELATION_SOURCE, egyptian);
-    store64(r + RELATION_TARGET, greek);
+    store64(r + RELATION_SOURCE, CID_EGYPTIAN);
+    store64(r + RELATION_TARGET, CID_GREEK);
     store64(r + RELATION_TYPE, REL_INFLUENCED);
     store64(r + RELATION_PERIOD_START, 0 - 600);
     store64(r + RELATION_PERIOD_END, 0 - 300);
 
     # Hip-Hop branched from West African (oral/musical tradition) — Rose (1994)
     r = rels + RELATION_SIZE * 2;
-    store64(r + RELATION_SOURCE, westafrican);
-    store64(r + RELATION_TARGET, hiphop);
+    store64(r + RELATION_SOURCE, CID_WESTAFRICAN);
+    store64(r + RELATION_TARGET, CID_HIPHOP);
     store64(r + RELATION_TYPE, REL_INFLUENCED);
     store64(r + RELATION_PERIOD_START, 1960);
     store64(r + RELATION_PERIOD_END, 1980);
 
-    hadara_set_relations(persian, rels, 1);
-    hadara_set_relations(egyptian, rels + RELATION_SIZE, 1);
-    hadara_set_relations(hiphop, rels + RELATION_SIZE * 2, 1);
+    # Persian and Egyptian relations set in _1b() with composite arrays
+    hadara_set_relations(CID_HIPHOP, rels + RELATION_SIZE * 2, 1);
 
     # --- Egyptian practices — Shaw (2000), Eliade (1959) ---
     var eg_practices = alloc(PRACTICE_SIZE * 3);
@@ -535,7 +562,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(egyptian, eg_practices, 3);
+    hadara_set_practices(CID_EGYPTIAN, eg_practices, 3);
 
     # --- Egyptian art forms — Shaw (2000) ---
     var eg_arts = alloc(ART_FORM_SIZE * 3);
@@ -551,7 +578,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Tomb Painting");
     store64(a + ART_FORM_NAME_LEN, 13);
     store64(a + ART_FORM_MEDIUM, ART_VISUAL);
-    hadara_set_art_forms(egyptian, eg_arts, 3);
+    hadara_set_art_forms(CID_EGYPTIAN, eg_arts, 3);
 
     # --- Egyptian figures — Shaw (2000), Hornblower & Spawforth (2012) ---
     var eg_figs = alloc(FIGURE_SIZE * 2);
@@ -569,7 +596,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 64);
     store64(f + FIGURE_ERA_START, 0 - 1507);
     store64(f + FIGURE_ERA_END, 0 - 1458);
-    hadara_set_figures(egyptian, eg_figs, 2);
+    hadara_set_figures(CID_EGYPTIAN, eg_figs, 2);
 
     # --- Egyptian texts — Faulkner (1969) ---
     var eg_texts = alloc(TEXT_SIZE * 2);
@@ -587,7 +614,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 0);
     store64(t + TEXT_YEAR, 0 - 2400);
     store64(t + TEXT_SACRED, 1);
-    hadara_set_texts(egyptian, eg_texts, 2);
+    hadara_set_texts(CID_EGYPTIAN, eg_texts, 2);
 
     # --- Greek practices — Boardman (1970--2005) ---
     var gr_practices = alloc(PRACTICE_SIZE * 3);
@@ -609,7 +636,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(greek, gr_practices, 3);
+    hadara_set_practices(CID_GREEK, gr_practices, 3);
 
     # --- Greek art forms ---
     var gr_arts = alloc(ART_FORM_SIZE * 3);
@@ -625,7 +652,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Epic Poetry");
     store64(a + ART_FORM_NAME_LEN, 11);
     store64(a + ART_FORM_MEDIUM, ART_LITERATURE);
-    hadara_set_art_forms(greek, gr_arts, 3);
+    hadara_set_art_forms(CID_GREEK, gr_arts, 3);
 
     # --- Greek figures ---
     var gr_figs = alloc(FIGURE_SIZE * 2);
@@ -643,7 +670,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 55);
     store64(f + FIGURE_ERA_START, 0 - 800);
     store64(f + FIGURE_ERA_END, 0 - 700);
-    hadara_set_figures(greek, gr_figs, 2);
+    hadara_set_figures(CID_GREEK, gr_figs, 2);
 
     # --- Norse practices — Price (2019) ---
     var no_practices = alloc(PRACTICE_SIZE * 3);
@@ -665,7 +692,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(norse, no_practices, 3);
+    hadara_set_practices(CID_NORSE, no_practices, 3);
 
     # --- Norse art forms ---
     var no_arts = alloc(ART_FORM_SIZE * 3);
@@ -681,7 +708,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Wood Carving");
     store64(a + ART_FORM_NAME_LEN, 12);
     store64(a + ART_FORM_MEDIUM, ART_VISUAL);
-    hadara_set_art_forms(norse, no_arts, 3);
+    hadara_set_art_forms(CID_NORSE, no_arts, 3);
 
     # --- Chinese practices — Stearns (2001) ---
     var ch_practices = alloc(PRACTICE_SIZE * 3);
@@ -703,7 +730,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_MARTIAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(chinese, ch_practices, 3);
+    hadara_set_practices(CID_CHINESE, ch_practices, 3);
 
     # --- Chinese art forms ---
     var ch_arts = alloc(ART_FORM_SIZE * 3);
@@ -719,7 +746,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Silk Weaving");
     store64(a + ART_FORM_NAME_LEN, 12);
     store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
-    hadara_set_art_forms(chinese, ch_arts, 3);
+    hadara_set_art_forms(CID_CHINESE, ch_arts, 3);
 
     # --- Chinese figures ---
     var ch_figs = alloc(FIGURE_SIZE * 2);
@@ -737,7 +764,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 51);
     store64(f + FIGURE_ERA_START, 0 - 600);
     store64(f + FIGURE_ERA_END, 0 - 500);
-    hadara_set_figures(chinese, ch_figs, 2);
+    hadara_set_figures(CID_CHINESE, ch_figs, 2);
 
     # --- Chinese texts ---
     var ch_texts = alloc(TEXT_SIZE * 2);
@@ -755,7 +782,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 9);
     store64(t + TEXT_YEAR, 0 - 475);
     store64(t + TEXT_SACRED, 0);
-    hadara_set_texts(chinese, ch_texts, 2);
+    hadara_set_texts(CID_CHINESE, ch_texts, 2);
 
     # --- Maya practices — Coe (2015) ---
     var ma_practices = alloc(PRACTICE_SIZE * 2);
@@ -771,7 +798,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(maya, ma_practices, 2);
+    hadara_set_practices(CID_MAYA, ma_practices, 2);
 
     # --- Maya art forms ---
     var ma_arts = alloc(ART_FORM_SIZE * 3);
@@ -787,7 +814,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Pyramid Architecture");
     store64(a + ART_FORM_NAME_LEN, 20);
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
-    hadara_set_art_forms(maya, ma_arts, 3);
+    hadara_set_art_forms(CID_MAYA, ma_arts, 3);
 
     # --- Aboriginal Australian practices — Flood (2006) ---
     var ab_practices = alloc(PRACTICE_SIZE * 3);
@@ -809,7 +836,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(aboriginal, ab_practices, 3);
+    hadara_set_practices(CID_ABORIGINAL, ab_practices, 3);
 
     # --- Aboriginal art forms ---
     var ab_arts = alloc(ART_FORM_SIZE * 3);
@@ -825,7 +852,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Dreamtime Stories");
     store64(a + ART_FORM_NAME_LEN, 17);
     store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
-    hadara_set_art_forms(aboriginal, ab_arts, 3);
+    hadara_set_art_forms(CID_ABORIGINAL, ab_arts, 3);
 
     # --- Scottish practices — Cunliffe (2018) ---
     var sc_practices = alloc(PRACTICE_SIZE * 2);
@@ -841,7 +868,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(scottish, sc_practices, 2);
+    hadara_set_practices(CID_SCOTTISH, sc_practices, 2);
 
     # --- Scottish art forms ---
     var sc_arts = alloc(ART_FORM_SIZE * 2);
@@ -853,7 +880,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Gaelic Song");
     store64(a + ART_FORM_NAME_LEN, 11);
     store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
-    hadara_set_art_forms(scottish, sc_arts, 2);
+    hadara_set_art_forms(CID_SCOTTISH, sc_arts, 2);
 
     # --- Roman practices — Boatwright (2012) ---
     var ro_practices = alloc(PRACTICE_SIZE * 3);
@@ -875,7 +902,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(roman, ro_practices, 3);
+    hadara_set_practices(CID_ROMAN, ro_practices, 3);
 
     # --- Roman art forms ---
     var ro_arts = alloc(ART_FORM_SIZE * 3);
@@ -891,7 +918,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Latin Oratory");
     store64(a + ART_FORM_NAME_LEN, 13);
     store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
-    hadara_set_art_forms(roman, ro_arts, 3);
+    hadara_set_art_forms(CID_ROMAN, ro_arts, 3);
 
     # --- Roman figures ---
     var ro_figs = alloc(FIGURE_SIZE * 2);
@@ -909,31 +936,42 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 57);
     store64(f + FIGURE_ERA_START, 0 - 70);
     store64(f + FIGURE_ERA_END, 0 - 19);
-    hadara_set_figures(roman, ro_figs, 2);
+    hadara_set_figures(CID_ROMAN, ro_figs, 2);
+
+    return 0;
+}
+
+fn hadara_seed_subentities_1b() {
+    var p = 0;
+    var a = 0;
+    var f = 0;
+    var t = 0;
+    var r = 0;
+    var art = 0;
 
     # --- Additional relations ---
 
     # Greek influenced Roman — Boardman (1970--2005)
     var rels2 = alloc(RELATION_SIZE * 2);
     r = rels2;
-    store64(r + RELATION_SOURCE, greek);
-    store64(r + RELATION_TARGET, roman);
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_ROMAN);
     store64(r + RELATION_TYPE, REL_INFLUENCED);
     store64(r + RELATION_PERIOD_START, 0 - 300);
     store64(r + RELATION_PERIOD_END, 0 - 100);
 
     # Chinese influenced Japanese — Varley (2000)
     r = rels2 + RELATION_SIZE;
-    store64(r + RELATION_SOURCE, chinese);
-    store64(r + RELATION_TARGET, japanese);
+    store64(r + RELATION_SOURCE, CID_CHINESE);
+    store64(r + RELATION_TARGET, CID_JAPANESE);
     store64(r + RELATION_TYPE, REL_INFLUENCED);
     store64(r + RELATION_PERIOD_START, 500);
     store64(r + RELATION_PERIOD_END, 900);
 
-    hadara_set_relations(greek, rels2, 1);
-    hadara_set_relations(roman, rels2, 1);
-    hadara_set_relations(chinese, rels2 + RELATION_SIZE, 1);
-    hadara_set_relations(japanese, rels2 + RELATION_SIZE, 1);
+    hadara_set_relations(CID_GREEK, rels2, 1);
+    hadara_set_relations(CID_ROMAN, rels2, 1);
+    hadara_set_relations(CID_CHINESE, rels2 + RELATION_SIZE, 1);
+    hadara_set_relations(CID_JAPANESE, rels2 + RELATION_SIZE, 1);
 
     # --- Syncretism and additional relations ---
 
@@ -941,56 +979,110 @@ fn hadara_seed() {
     # Mutual blending of Hellenic philosophy + Egyptian mystery tradition (c. 300 BCE - 200 CE)
     var rels3 = alloc(RELATION_SIZE * 3);
     r = rels3;
-    store64(r + RELATION_SOURCE, greek);
-    store64(r + RELATION_TARGET, egyptian);
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_EGYPTIAN);
     store64(r + RELATION_TYPE, REL_SYNCRETIZED);
     store64(r + RELATION_PERIOD_START, 0 - 300);
     store64(r + RELATION_PERIOD_END, 200);
 
     # Vedic-Chinese exchange via Silk Road Buddhism — Curtin (1984), Hansen (2012)
     r = rels3 + RELATION_SIZE;
-    store64(r + RELATION_SOURCE, vedic);
-    store64(r + RELATION_TARGET, chinese);
+    store64(r + RELATION_SOURCE, CID_VEDIC);
+    store64(r + RELATION_TARGET, CID_CHINESE);
     store64(r + RELATION_TYPE, REL_EXCHANGED);
     store64(r + RELATION_PERIOD_START, 0 - 100);
     store64(r + RELATION_PERIOD_END, 800);
 
     # Roman absorbed Greek — Boardman (1970--2005): cultural absorption post-146 BCE
     r = rels3 + RELATION_SIZE * 2;
-    store64(r + RELATION_SOURCE, greek);
-    store64(r + RELATION_TARGET, roman);
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_ROMAN);
     store64(r + RELATION_TYPE, REL_ABSORBED);
     store64(r + RELATION_PERIOD_START, 0 - 146);
     store64(r + RELATION_PERIOD_END, 0 - 30);
 
-    # Append syncretism to Egyptian (now has 2 relations: exchange + syncretism)
-    # We need to re-assign with both relations
-    var eg_rels = alloc(RELATION_SIZE * 2);
-    memcpy(eg_rels, rels + RELATION_SIZE, RELATION_SIZE);  # Egyptian→Greek influence
-    memcpy(eg_rels + RELATION_SIZE, rels3, RELATION_SIZE);  # Greek↔Egyptian syncretism
-    hadara_set_relations(egyptian, eg_rels, 2);
+    # Build composite relation arrays for cultures with multiple relations.
+    # Each record built fresh (no cross-function references).
 
-    # Greek: now has influence→Roman + syncretism↔Egyptian + absorbed→Roman
+    # Egyptian: influence→Greek + syncretism↔Greek
+    var eg_rels = alloc(RELATION_SIZE * 2);
+    r = eg_rels;
+    store64(r + RELATION_SOURCE, CID_EGYPTIAN);
+    store64(r + RELATION_TARGET, CID_GREEK);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 0 - 600);
+    store64(r + RELATION_PERIOD_END, 0 - 300);
+    r = eg_rels + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_EGYPTIAN);
+    store64(r + RELATION_TYPE, REL_SYNCRETIZED);
+    store64(r + RELATION_PERIOD_START, 0 - 300);
+    store64(r + RELATION_PERIOD_END, 200);
+    hadara_set_relations(CID_EGYPTIAN, eg_rels, 2);
+
+    # Greek: influence→Roman + syncretism↔Egyptian + absorbed→Roman
     var gr_rels = alloc(RELATION_SIZE * 3);
-    memcpy(gr_rels, rels2, RELATION_SIZE);                  # Greek→Roman influence
-    memcpy(gr_rels + RELATION_SIZE, rels3, RELATION_SIZE);  # Greek↔Egyptian syncretism
-    memcpy(gr_rels + RELATION_SIZE * 2, rels3 + RELATION_SIZE * 2, RELATION_SIZE);  # Greek absorbed→Roman
-    hadara_set_relations(greek, gr_rels, 3);
+    r = gr_rels;
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_ROMAN);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 0 - 300);
+    store64(r + RELATION_PERIOD_END, 0 - 100);
+    r = gr_rels + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_EGYPTIAN);
+    store64(r + RELATION_TYPE, REL_SYNCRETIZED);
+    store64(r + RELATION_PERIOD_START, 0 - 300);
+    store64(r + RELATION_PERIOD_END, 200);
+    r = gr_rels + RELATION_SIZE * 2;
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_ROMAN);
+    store64(r + RELATION_TYPE, REL_ABSORBED);
+    store64(r + RELATION_PERIOD_START, 0 - 146);
+    store64(r + RELATION_PERIOD_END, 0 - 30);
+    hadara_set_relations(CID_GREEK, gr_rels, 3);
 
     # Roman: influence from Greek + absorbed from Greek
     var ro_rels = alloc(RELATION_SIZE * 2);
-    memcpy(ro_rels, rels2, RELATION_SIZE);                  # Greek→Roman influence
-    memcpy(ro_rels + RELATION_SIZE, rels3 + RELATION_SIZE * 2, RELATION_SIZE);  # Greek absorbed→Roman
-    hadara_set_relations(roman, ro_rels, 2);
+    r = ro_rels;
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_ROMAN);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 0 - 300);
+    store64(r + RELATION_PERIOD_END, 0 - 100);
+    r = ro_rels + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, CID_GREEK);
+    store64(r + RELATION_TARGET, CID_ROMAN);
+    store64(r + RELATION_TYPE, REL_ABSORBED);
+    store64(r + RELATION_PERIOD_START, 0 - 146);
+    store64(r + RELATION_PERIOD_END, 0 - 30);
+    hadara_set_relations(CID_ROMAN, ro_rels, 2);
 
     # Vedic: exchange with Chinese
-    hadara_set_relations(vedic, rels3 + RELATION_SIZE, 1);
+    var ve_rel = alloc(RELATION_SIZE);
+    r = ve_rel;
+    store64(r + RELATION_SOURCE, CID_VEDIC);
+    store64(r + RELATION_TARGET, CID_CHINESE);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 0 - 100);
+    store64(r + RELATION_PERIOD_END, 800);
+    hadara_set_relations(CID_VEDIC, ve_rel, 1);
 
     # Chinese: influence→Japanese + exchange with Vedic
     var ch_rels = alloc(RELATION_SIZE * 2);
-    memcpy(ch_rels, rels2 + RELATION_SIZE, RELATION_SIZE);      # Chinese→Japanese influence
-    memcpy(ch_rels + RELATION_SIZE, rels3 + RELATION_SIZE, RELATION_SIZE);  # Vedic↔Chinese exchange
-    hadara_set_relations(chinese, ch_rels, 2);
+    r = ch_rels;
+    store64(r + RELATION_SOURCE, CID_CHINESE);
+    store64(r + RELATION_TARGET, CID_JAPANESE);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 500);
+    store64(r + RELATION_PERIOD_END, 900);
+    r = ch_rels + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, CID_VEDIC);
+    store64(r + RELATION_TARGET, CID_CHINESE);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 0 - 100);
+    store64(r + RELATION_PERIOD_END, 800);
+    hadara_set_relations(CID_CHINESE, ch_rels, 2);
 
     # --- West African figure — Levtzion & Pouwels (2000), Niane (1965) ---
     var wa_figs = alloc(FIGURE_SIZE * 2);
@@ -1008,62 +1100,62 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 58);
     store64(f + FIGURE_ERA_START, 1280);
     store64(f + FIGURE_ERA_END, 1337);
-    hadara_set_figures(westafrican, wa_figs, 2);
+    hadara_set_figures(CID_WESTAFRICAN, wa_figs, 2);
 
     # --- Region, language, script for existing cultures ---
     # Daniels & Bright (1996) for scripts, Campbell (2021) for languages
 
-    hadara_set_region(egyptian, "North Africa", 12);
-    hadara_set_language(egyptian, "Egyptian", 8);
-    hadara_set_script(egyptian, "Hieroglyphic", 12);
+    hadara_set_region(CID_EGYPTIAN, "North Africa", 12);
+    hadara_set_language(CID_EGYPTIAN, "Egyptian", 8);
+    hadara_set_script(CID_EGYPTIAN, "Hieroglyphic", 12);
 
-    hadara_set_region(persian, "West Asia", 9);
-    hadara_set_language(persian, "Farsi", 5);
-    hadara_set_script(persian, "Perso-Arabic", 12);
+    hadara_set_region(CID_PERSIAN, "West Asia", 9);
+    hadara_set_language(CID_PERSIAN, "Farsi", 5);
+    hadara_set_script(CID_PERSIAN, "Perso-Arabic", 12);
 
-    hadara_set_region(vedic, "South Asia", 10);
-    hadara_set_language(vedic, "Sanskrit", 8);
-    hadara_set_script(vedic, "Devanagari", 10);
+    hadara_set_region(CID_VEDIC, "South Asia", 10);
+    hadara_set_language(CID_VEDIC, "Sanskrit", 8);
+    hadara_set_script(CID_VEDIC, "Devanagari", 10);
 
-    hadara_set_region(greek, "Mediterranean", 13);
-    hadara_set_language(greek, "Ancient Greek", 12);
-    hadara_set_script(greek, "Greek alphabet", 14);
+    hadara_set_region(CID_GREEK, "Mediterranean", 13);
+    hadara_set_language(CID_GREEK, "Ancient Greek", 12);
+    hadara_set_script(CID_GREEK, "Greek alphabet", 14);
 
-    hadara_set_region(japanese, "East Asia", 9);
-    hadara_set_language(japanese, "Japanese", 8);
-    hadara_set_script(japanese, "Kanji/Kana", 10);
+    hadara_set_region(CID_JAPANESE, "East Asia", 9);
+    hadara_set_language(CID_JAPANESE, "Japanese", 8);
+    hadara_set_script(CID_JAPANESE, "Kanji/Kana", 10);
 
-    hadara_set_region(westafrican, "West Africa", 11);
-    hadara_set_language(westafrican, "Manding", 7);
-    hadara_set_script(westafrican, "N'Ko", 4);
+    hadara_set_region(CID_WESTAFRICAN, "West Africa", 11);
+    hadara_set_language(CID_WESTAFRICAN, "Manding", 7);
+    hadara_set_script(CID_WESTAFRICAN, "N'Ko", 4);
 
-    hadara_set_region(scottish, "British Isles", 13);
-    hadara_set_language(scottish, "Scottish Gaelic", 15);
-    hadara_set_script(scottish, "Latin", 5);
+    hadara_set_region(CID_SCOTTISH, "British Isles", 13);
+    hadara_set_language(CID_SCOTTISH, "Scottish Gaelic", 15);
+    hadara_set_script(CID_SCOTTISH, "Latin", 5);
 
-    hadara_set_region(norse, "Scandinavia", 11);
-    hadara_set_language(norse, "Old Norse", 9);
-    hadara_set_script(norse, "Runic", 5);
+    hadara_set_region(CID_NORSE, "Scandinavia", 11);
+    hadara_set_language(CID_NORSE, "Old Norse", 9);
+    hadara_set_script(CID_NORSE, "Runic", 5);
 
-    hadara_set_region(aboriginal, "Australia", 9);
-    hadara_set_language(aboriginal, "Pama-Nyungan", 12);
+    hadara_set_region(CID_ABORIGINAL, "Australia", 9);
+    hadara_set_language(CID_ABORIGINAL, "Pama-Nyungan", 12);
     # No single script — oral tradition culture
 
-    hadara_set_region(hiphop, "North America", 13);
-    hadara_set_language(hiphop, "English", 7);
-    hadara_set_script(hiphop, "Latin", 5);
+    hadara_set_region(CID_HIPHOP, "North America", 13);
+    hadara_set_language(CID_HIPHOP, "English", 7);
+    hadara_set_script(CID_HIPHOP, "Latin", 5);
 
-    hadara_set_region(maya, "Mesoamerica", 11);
-    hadara_set_language(maya, "Mayan", 5);
-    hadara_set_script(maya, "Maya glyphs", 11);
+    hadara_set_region(CID_MAYA, "Mesoamerica", 11);
+    hadara_set_language(CID_MAYA, "Mayan", 5);
+    hadara_set_script(CID_MAYA, "Maya glyphs", 11);
 
-    hadara_set_region(chinese, "East Asia", 9);
-    hadara_set_language(chinese, "Chinese", 7);
-    hadara_set_script(chinese, "Hanzi", 5);
+    hadara_set_region(CID_CHINESE, "East Asia", 9);
+    hadara_set_language(CID_CHINESE, "Chinese", 7);
+    hadara_set_script(CID_CHINESE, "Hanzi", 5);
 
-    hadara_set_region(roman, "Mediterranean", 13);
-    hadara_set_language(roman, "Latin", 5);
-    hadara_set_script(roman, "Latin alphabet", 14);
+    hadara_set_region(CID_ROMAN, "Mediterranean", 13);
+    hadara_set_language(CID_ROMAN, "Latin", 5);
+    hadara_set_script(CID_ROMAN, "Latin alphabet", 14);
 
     # ================================================================
     # High-priority new cultures (P-1 audit findings)
@@ -1071,57 +1163,57 @@ fn hadara_seed() {
 
     # 13: Arab/Islamic — Hourani (1991): 7th century CE, continuous
     var arab = hadara_add("Arab-Islamic", 12, CULTURE_ACTIVE, 622, 0);
-    hadara_set_endonym(arab, "Arabi", 5);
-    hadara_set_region(arab, "West Asia, North Africa", 23);
-    hadara_set_language(arab, "Arabic", 6);
-    hadara_set_script(arab, "Arabic", 6);
+    hadara_set_endonym(CID_ARAB, "Arabi", 5);
+    hadara_set_region(CID_ARAB, "West Asia, North Africa", 23);
+    hadara_set_language(CID_ARAB, "Arabic", 6);
+    hadara_set_script(CID_ARAB, "Arabic", 6);
 
     # 14: Korean — Eckert et al. (1990): Three Kingdoms period c. 57 BCE, continuous
     var korean = hadara_add("Korean", 6, CULTURE_ACTIVE, 0 - 57, 0);
-    hadara_set_endonym(korean, "Hanguk", 6);
-    hadara_set_region(korean, "East Asia", 9);
-    hadara_set_language(korean, "Korean", 6);
-    hadara_set_script(korean, "Hangul", 6);
+    hadara_set_endonym(CID_KOREAN, "Hanguk", 6);
+    hadara_set_region(CID_KOREAN, "East Asia", 9);
+    hadara_set_language(CID_KOREAN, "Korean", 6);
+    hadara_set_script(CID_KOREAN, "Hangul", 6);
 
     # 15: Tibetan — Samuel (1993): Tibetan Empire 7th c., Buddhist from 8th c.
     var tibetan = hadara_add("Tibetan", 7, CULTURE_ACTIVE, 627, 0);
-    hadara_set_endonym(tibetan, "Bod", 3);
-    hadara_set_region(tibetan, "Central Asia", 12);
-    hadara_set_language(tibetan, "Tibetan", 7);
-    hadara_set_script(tibetan, "Tibetan", 7);
+    hadara_set_endonym(CID_TIBETAN, "Bod", 3);
+    hadara_set_region(CID_TIBETAN, "Central Asia", 12);
+    hadara_set_language(CID_TIBETAN, "Tibetan", 7);
+    hadara_set_script(CID_TIBETAN, "Tibetan", 7);
 
     # 16: Mesopotamian — Kramer (1963): Sumerian city-states c. 3500 BCE to 539 BCE
     var mesopotamian = hadara_add("Mesopotamian", 12, CULTURE_HISTORICAL, 0 - 3500, 0 - 539);
-    hadara_set_endonym(mesopotamian, "Kiengi", 6);
-    hadara_set_region(mesopotamian, "Near East", 9);
-    hadara_set_language(mesopotamian, "Sumerian", 8);
-    hadara_set_script(mesopotamian, "Cuneiform", 9);
+    hadara_set_endonym(CID_MESOPOTAMIAN, "Kiengi", 6);
+    hadara_set_region(CID_MESOPOTAMIAN, "Near East", 9);
+    hadara_set_language(CID_MESOPOTAMIAN, "Sumerian", 8);
+    hadara_set_script(CID_MESOPOTAMIAN, "Cuneiform", 9);
 
     # 17: Mongol — Weatherford (2004): steppe culture from antiquity, Empire 1206 CE
     var mongol = hadara_add("Mongol", 6, CULTURE_ACTIVE, 0 - 200, 0);
-    hadara_set_endonym(mongol, "Mongol", 6);
-    hadara_set_region(mongol, "Central Asia", 12);
-    hadara_set_language(mongol, "Mongolian", 9);
-    hadara_set_script(mongol, "Mongolian", 9);
+    hadara_set_endonym(CID_MONGOL, "Mongol", 6);
+    hadara_set_region(CID_MONGOL, "Central Asia", 12);
+    hadara_set_language(CID_MONGOL, "Mongolian", 9);
+    hadara_set_script(CID_MONGOL, "Mongolian", 9);
 
     # 18: Jewish/Hebrew — Seltzer (1980): Israelite emergence c. 1200 BCE, continuous
     var jewish = hadara_add("Jewish", 6, CULTURE_ACTIVE, 0 - 1200, 0);
-    hadara_set_endonym(jewish, "Yehudi", 6);
-    hadara_set_region(jewish, "Near East, Diaspora", 19);
-    hadara_set_language(jewish, "Hebrew", 6);
-    hadara_set_script(jewish, "Hebrew", 6);
+    hadara_set_endonym(CID_JEWISH, "Yehudi", 6);
+    hadara_set_region(CID_JEWISH, "Near East, Diaspora", 19);
+    hadara_set_language(CID_JEWISH, "Hebrew", 6);
+    hadara_set_script(CID_JEWISH, "Hebrew", 6);
 
     # 19: Byzantine — Mango (1980): 330 CE (Constantinople) to 1453 CE (Ottoman conquest)
     var byzantine = hadara_add("Byzantine", 9, CULTURE_HISTORICAL, 330, 1453);
-    hadara_set_endonym(byzantine, "Romaioi", 7);
-    hadara_set_region(byzantine, "Eastern Mediterranean", 21);
-    hadara_set_language(byzantine, "Greek", 5);
-    hadara_set_script(byzantine, "Greek alphabet", 14);
+    hadara_set_endonym(CID_BYZANTINE, "Romaioi", 7);
+    hadara_set_region(CID_BYZANTINE, "Eastern Mediterranean", 21);
+    hadara_set_language(CID_BYZANTINE, "Greek", 5);
+    hadara_set_script(CID_BYZANTINE, "Greek alphabet", 14);
 
     # 20: Polynesian — Howe (2006): Lapita expansion c. 1500 BCE, continuous
     var polynesian = hadara_add("Polynesian", 10, CULTURE_ACTIVE, 0 - 1500, 0);
-    hadara_set_region(polynesian, "Pacific Islands", 15);
-    hadara_set_language(polynesian, "Proto-Polynesian", 16);
+    hadara_set_region(CID_POLYNESIAN, "Pacific Islands", 15);
+    hadara_set_language(CID_POLYNESIAN, "Proto-Polynesian", 16);
     # Oral tradition culture — no indigenous script
 
     # ================================================================
@@ -1131,62 +1223,62 @@ fn hadara_seed() {
     # 21: Aztec/Mexica — Townsend (2009): 1325 CE (Tenochtitlan) to 1521 CE
     var aztec = hadara_add("Aztec", 5, CULTURE_HISTORICAL, 1325, 1521);
     hadara_set_endonym(aztec, "Mexica", 6);
-    hadara_set_region(aztec, "Mesoamerica", 11);
-    hadara_set_language(aztec, "Nahuatl", 7);
-    hadara_set_script(aztec, "Aztec pictographs", 17);
-    hadara_set_display(aztec, 9, 6, 3, 5);
+    hadara_set_region(CID_AZTEC, "Mesoamerica", 11);
+    hadara_set_language(CID_AZTEC, "Nahuatl", 7);
+    hadara_set_script(CID_AZTEC, "Aztec pictographs", 17);
+    hadara_set_display(CID_AZTEC, 9, 6, 3, 5);
 
     # 22: Inca/Quechua — D'Altroy (2014): 1438 CE empire, Quechua culture continuous
     var inca = hadara_add("Inca-Quechua", 12, CULTURE_ACTIVE, 0 - 2000, 0);
     hadara_set_endonym(inca, "Tawantinsuyu", 12);
-    hadara_set_region(inca, "South America", 13);
-    hadara_set_language(inca, "Quechua", 7);
-    hadara_set_display(inca, 8, 5, 2, 4);
+    hadara_set_region(CID_INCA, "South America", 13);
+    hadara_set_language(CID_INCA, "Quechua", 7);
+    hadara_set_display(CID_INCA, 8, 5, 2, 4);
 
     # 23: Ottoman/Turkish — Finkel (2007): 1299 CE to 1922 CE (empire), Turkish culture continuous
     var ottoman = hadara_add("Turkish-Ottoman", 15, CULTURE_ACTIVE, 1299, 0);
-    hadara_set_region(ottoman, "West Asia, Southeast Europe", 27);
-    hadara_set_language(ottoman, "Turkish", 7);
-    hadara_set_script(ottoman, "Latin alphabet", 14);
-    hadara_set_display(ottoman, 7, 6, 5, 6);
+    hadara_set_region(CID_OTTOMAN, "West Asia, Southeast Europe", 27);
+    hadara_set_language(CID_OTTOMAN, "Turkish", 7);
+    hadara_set_script(CID_OTTOMAN, "Latin alphabet", 14);
+    hadara_set_display(CID_OTTOMAN, 7, 6, 5, 6);
 
     # 24: Khmer — Higham (2001): Angkor period 802 CE, Khmer culture continuous
     var khmer = hadara_add("Khmer", 5, CULTURE_ACTIVE, 802, 0);
-    hadara_set_region(khmer, "Southeast Asia", 14);
-    hadara_set_language(khmer, "Khmer", 5);
-    hadara_set_script(khmer, "Khmer script", 12);
-    hadara_set_display(khmer, 7, 5, 3, 4);
+    hadara_set_region(CID_KHMER, "Southeast Asia", 14);
+    hadara_set_language(CID_KHMER, "Khmer", 5);
+    hadara_set_script(CID_KHMER, "Khmer script", 12);
+    hadara_set_display(CID_KHMER, 7, 5, 3, 4);
 
     # 25: Swahili — Nurse & Spear (1985): East African coast from c. 100 CE
     var swahili = hadara_add("Swahili", 7, CULTURE_ACTIVE, 100, 0);
-    hadara_set_region(swahili, "East Africa", 11);
-    hadara_set_language(swahili, "Kiswahili", 9);
-    hadara_set_script(swahili, "Arabic/Latin", 12);
-    hadara_set_display(swahili, 6, 7, 4, 6);
+    hadara_set_region(CID_SWAHILI, "East Africa", 11);
+    hadara_set_language(CID_SWAHILI, "Kiswahili", 9);
+    hadara_set_script(CID_SWAHILI, "Arabic/Latin", 12);
+    hadara_set_display(CID_SWAHILI, 6, 7, 4, 6);
 
     # 26: Yoruba — Bascom (1969): pre-1000 CE origins, continuous
     var yoruba = hadara_add("Yoruba", 6, CULTURE_ACTIVE, 0 - 500, 0);
-    hadara_set_endonym(yoruba, "Yoruba", 6);
-    hadara_set_region(yoruba, "West Africa", 11);
-    hadara_set_language(yoruba, "Yoruba", 6);
-    hadara_set_script(yoruba, "Latin alphabet", 14);
-    hadara_set_display(yoruba, 6, 8, 4, 6);
+    hadara_set_endonym(CID_YORUBA, "Yoruba", 6);
+    hadara_set_region(CID_YORUBA, "West Africa", 11);
+    hadara_set_language(CID_YORUBA, "Yoruba", 6);
+    hadara_set_script(CID_YORUBA, "Latin alphabet", 14);
+    hadara_set_display(CID_YORUBA, 6, 8, 4, 6);
 
     # 27: Berber/Amazigh — Brett & Fentress (1996): ancient, continuous
     var amazigh = hadara_add("Amazigh", 7, CULTURE_ACTIVE, 0 - 3000, 0);
-    hadara_set_endonym(amazigh, "Imazighen", 9);
-    hadara_set_region(amazigh, "North Africa", 12);
-    hadara_set_language(amazigh, "Tamazight", 9);
-    hadara_set_script(amazigh, "Tifinagh", 8);
-    hadara_set_display(amazigh, 5, 7, 5, 7);
+    hadara_set_endonym(CID_AMAZIGH, "Imazighen", 9);
+    hadara_set_region(CID_AMAZIGH, "North Africa", 12);
+    hadara_set_language(CID_AMAZIGH, "Tamazight", 9);
+    hadara_set_script(CID_AMAZIGH, "Tifinagh", 8);
+    hadara_set_display(CID_AMAZIGH, 5, 7, 5, 7);
 
     # 28: Inuit — Stern (2004): Arctic cultures, continuous from c. 1000 CE (Thule)
     var inuit = hadara_add("Inuit", 5, CULTURE_ACTIVE, 1000, 0);
-    hadara_set_endonym(inuit, "Inuit", 5);
-    hadara_set_region(inuit, "Arctic", 6);
-    hadara_set_language(inuit, "Inuktitut", 9);
-    hadara_set_script(inuit, "Syllabics", 9);
-    hadara_set_display(inuit, 5, 5, 4, 5);
+    hadara_set_endonym(CID_INUIT, "Inuit", 5);
+    hadara_set_region(CID_INUIT, "Arctic", 6);
+    hadara_set_language(CID_INUIT, "Inuktitut", 9);
+    hadara_set_script(CID_INUIT, "Syllabics", 9);
+    hadara_set_display(CID_INUIT, 5, 5, 4, 5);
 
     # ================================================================
     # Sub-entities for new cultures (Phase 4a)
@@ -1212,7 +1304,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_DIETARY);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(arab, ar_practices, 3);
+    hadara_set_practices(CID_ARAB, ar_practices, 3);
 
     # --- Arab art forms ---
     var ar_arts = alloc(ART_FORM_SIZE * 3);
@@ -1228,7 +1320,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Qasida Poetry");
     store64(a + ART_FORM_NAME_LEN, 13);
     store64(a + ART_FORM_MEDIUM, ART_LITERATURE);
-    hadara_set_art_forms(arab, ar_arts, 3);
+    hadara_set_art_forms(CID_ARAB, ar_arts, 3);
 
     # --- Arab figures ---
     var ar_figs = alloc(FIGURE_SIZE * 2);
@@ -1246,7 +1338,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 62);
     store64(f + FIGURE_ERA_START, 1207);
     store64(f + FIGURE_ERA_END, 1273);
-    hadara_set_figures(arab, ar_figs, 2);
+    hadara_set_figures(CID_ARAB, ar_figs, 2);
 
     # --- Arab texts ---
     var ar_texts = alloc(TEXT_SIZE * 2);
@@ -1264,7 +1356,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 11);
     store64(t + TEXT_YEAR, 1377);
     store64(t + TEXT_SACRED, 0);
-    hadara_set_texts(arab, ar_texts, 2);
+    hadara_set_texts(CID_ARAB, ar_texts, 2);
 
     # --- Korean practices — Eckert et al. (1990) ---
     var ko_practices = alloc(PRACTICE_SIZE * 2);
@@ -1280,7 +1372,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_DIETARY);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(korean, ko_practices, 2);
+    hadara_set_practices(CID_KOREAN, ko_practices, 2);
 
     # --- Korean art forms ---
     var ko_arts = alloc(ART_FORM_SIZE * 3);
@@ -1296,7 +1388,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Hanok Architecture");
     store64(a + ART_FORM_NAME_LEN, 18);
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
-    hadara_set_art_forms(korean, ko_arts, 3);
+    hadara_set_art_forms(CID_KOREAN, ko_arts, 3);
 
     # --- Jewish practices — Seltzer (1980) ---
     var je_practices = alloc(PRACTICE_SIZE * 3);
@@ -1318,7 +1410,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_DIETARY);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(jewish, je_practices, 3);
+    hadara_set_practices(CID_JEWISH, je_practices, 3);
 
     # --- Jewish texts ---
     var je_texts = alloc(TEXT_SIZE * 2);
@@ -1336,7 +1428,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 0);
     store64(t + TEXT_YEAR, 500);
     store64(t + TEXT_SACRED, 1);
-    hadara_set_texts(jewish, je_texts, 2);
+    hadara_set_texts(CID_JEWISH, je_texts, 2);
 
     # --- Mesopotamian practices — Kramer (1963) ---
     var ms_practices = alloc(PRACTICE_SIZE * 2);
@@ -1352,7 +1444,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(mesopotamian, ms_practices, 2);
+    hadara_set_practices(CID_MESOPOTAMIAN, ms_practices, 2);
 
     # --- Mesopotamian art forms ---
     var ms_arts = alloc(ART_FORM_SIZE * 2);
@@ -1364,7 +1456,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Ziggurat Architecture");
     store64(a + ART_FORM_NAME_LEN, 21);
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
-    hadara_set_art_forms(mesopotamian, ms_arts, 2);
+    hadara_set_art_forms(CID_MESOPOTAMIAN, ms_arts, 2);
 
     # --- Mesopotamian texts ---
     var ms_texts = alloc(TEXT_SIZE * 2);
@@ -1382,7 +1474,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 9);
     store64(t + TEXT_YEAR, 0 - 1754);
     store64(t + TEXT_SACRED, 0);
-    hadara_set_texts(mesopotamian, ms_texts, 2);
+    hadara_set_texts(CID_MESOPOTAMIAN, ms_texts, 2);
 
     # --- Polynesian practices — Howe (2006) ---
     var po_practices = alloc(PRACTICE_SIZE * 2);
@@ -1398,7 +1490,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
     store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(polynesian, po_practices, 2);
+    hadara_set_practices(CID_POLYNESIAN, po_practices, 2);
 
     # --- Polynesian art forms ---
     var po_arts = alloc(ART_FORM_SIZE * 2);
@@ -1410,7 +1502,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Oral Navigation Chants");
     store64(a + ART_FORM_NAME_LEN, 22);
     store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
-    hadara_set_art_forms(polynesian, po_arts, 2);
+    hadara_set_art_forms(CID_POLYNESIAN, po_arts, 2);
 
     # --- Tibetan practices — Samuel (1993) ---
     var ti_practices = alloc(PRACTICE_SIZE * 3);
@@ -1432,7 +1524,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(tibetan, ti_practices, 3);
+    hadara_set_practices(CID_TIBETAN, ti_practices, 3);
 
     # --- Tibetan art forms ---
     var ti_arts = alloc(ART_FORM_SIZE * 2);
@@ -1444,7 +1536,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Overtone Chanting");
     store64(a + ART_FORM_NAME_LEN, 17);
     store64(a + ART_FORM_MEDIUM, ART_MUSIC);
-    hadara_set_art_forms(tibetan, ti_arts, 2);
+    hadara_set_art_forms(CID_TIBETAN, ti_arts, 2);
 
     # --- Tibetan texts ---
     var ti_texts = alloc(TEXT_SIZE * 1);
@@ -1455,7 +1547,7 @@ fn hadara_seed() {
     store64(t + TEXT_AUTHOR_LEN, 13);
     store64(t + TEXT_YEAR, 800);
     store64(t + TEXT_SACRED, 1);
-    hadara_set_texts(tibetan, ti_texts, 1);
+    hadara_set_texts(CID_TIBETAN, ti_texts, 1);
 
     # --- Mongol practices — Weatherford (2004) ---
     var mo_practices = alloc(PRACTICE_SIZE * 2);
@@ -1471,7 +1563,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_DAILY);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(mongol, mo_practices, 2);
+    hadara_set_practices(CID_MONGOL, mo_practices, 2);
 
     # --- Mongol art forms ---
     var mo_arts = alloc(ART_FORM_SIZE * 2);
@@ -1483,7 +1575,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Epic of Jangar");
     store64(a + ART_FORM_NAME_LEN, 14);
     store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
-    hadara_set_art_forms(mongol, mo_arts, 2);
+    hadara_set_art_forms(CID_MONGOL, mo_arts, 2);
 
     # --- Byzantine practices — Mango (1980) ---
     var by_practices = alloc(PRACTICE_SIZE * 2);
@@ -1499,7 +1591,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(byzantine, by_practices, 2);
+    hadara_set_practices(CID_BYZANTINE, by_practices, 2);
 
     # --- Byzantine art forms ---
     var by_arts = alloc(ART_FORM_SIZE * 2);
@@ -1511,7 +1603,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Hagia Sophia Style");
     store64(a + ART_FORM_NAME_LEN, 18);
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
-    hadara_set_art_forms(byzantine, by_arts, 2);
+    hadara_set_art_forms(CID_BYZANTINE, by_arts, 2);
 
     # --- Mesopotamian figures — Kramer (1963) ---
     var ms_figs = alloc(FIGURE_SIZE * 2);
@@ -1529,7 +1621,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 54);
     store64(f + FIGURE_ERA_START, 0 - 2285);
     store64(f + FIGURE_ERA_END, 0 - 2250);
-    hadara_set_figures(mesopotamian, ms_figs, 2);
+    hadara_set_figures(CID_MESOPOTAMIAN, ms_figs, 2);
 
     # --- Korean figure — Eckert et al. (1990) ---
     var ko_figs = alloc(FIGURE_SIZE * 1);
@@ -1540,7 +1632,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 55);
     store64(f + FIGURE_ERA_START, 1397);
     store64(f + FIGURE_ERA_END, 1450);
-    hadara_set_figures(korean, ko_figs, 1);
+    hadara_set_figures(CID_KOREAN, ko_figs, 1);
 
     # --- Tibetan figure — Samuel (1993) ---
     var ti_figs = alloc(FIGURE_SIZE * 1);
@@ -1551,7 +1643,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 60);
     store64(f + FIGURE_ERA_START, 700);
     store64(f + FIGURE_ERA_END, 800);
-    hadara_set_figures(tibetan, ti_figs, 1);
+    hadara_set_figures(CID_TIBETAN, ti_figs, 1);
 
     # --- Mongol figure — Weatherford (2004) ---
     var mo_figs = alloc(FIGURE_SIZE * 1);
@@ -1562,7 +1654,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 56);
     store64(f + FIGURE_ERA_START, 1162);
     store64(f + FIGURE_ERA_END, 1227);
-    hadara_set_figures(mongol, mo_figs, 1);
+    hadara_set_figures(CID_MONGOL, mo_figs, 1);
 
     # --- Byzantine figure — Mango (1980) ---
     var by_figs = alloc(FIGURE_SIZE * 1);
@@ -1573,7 +1665,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 56);
     store64(f + FIGURE_ERA_START, 482);
     store64(f + FIGURE_ERA_END, 565);
-    hadara_set_figures(byzantine, by_figs, 1);
+    hadara_set_figures(CID_BYZANTINE, by_figs, 1);
 
     # --- Jewish figures — Seltzer (1980) ---
     var je_figs = alloc(FIGURE_SIZE * 2);
@@ -1591,7 +1683,7 @@ fn hadara_seed() {
     store64(f + FIGURE_ROLE_LEN, 49);
     store64(f + FIGURE_ERA_START, 1138);
     store64(f + FIGURE_ERA_END, 1204);
-    hadara_set_figures(jewish, je_figs, 2);
+    hadara_set_figures(CID_JEWISH, je_figs, 2);
 
     # ================================================================
     # Cultures 29-38: push toward 50 + subculture wiring
@@ -1599,77 +1691,87 @@ fn hadara_seed() {
 
     # 29: Maori — Howe (2006): Polynesian settlers c. 1300 CE, continuous
     var maori = hadara_add("Maori", 5, CULTURE_ACTIVE, 1300, 0);
-    hadara_set_endonym(maori, "Tangata Whenua", 14);
-    hadara_set_region(maori, "Aotearoa", 8);
-    hadara_set_language(maori, "Te Reo Maori", 12);
-    hadara_set_script(maori, "Latin alphabet", 14);
-    hadara_set_display(maori, 7, 8, 4, 7);
+    hadara_set_endonym(CID_MAORI, "Tangata Whenua", 14);
+    hadara_set_region(CID_MAORI, "Aotearoa", 8);
+    hadara_set_language(CID_MAORI, "Te Reo Maori", 12);
+    hadara_set_script(CID_MAORI, "Latin alphabet", 14);
+    hadara_set_display(CID_MAORI, 7, 8, 4, 7);
 
     # 30: Sikh — McLeod (1997): founded 1469 CE, continuous
     var sikh = hadara_add("Sikh", 4, CULTURE_ACTIVE, 1469, 0);
-    hadara_set_endonym(sikh, "Khalsa", 6);
-    hadara_set_region(sikh, "South Asia", 10);
-    hadara_set_language(sikh, "Punjabi", 7);
-    hadara_set_script(sikh, "Gurmukhi", 8);
-    hadara_set_display(sikh, 6, 7, 5, 8);
+    hadara_set_endonym(CID_SIKH, "Khalsa", 6);
+    hadara_set_region(CID_SIKH, "South Asia", 10);
+    hadara_set_language(CID_SIKH, "Punjabi", 7);
+    hadara_set_script(CID_SIKH, "Gurmukhi", 8);
+    hadara_set_display(CID_SIKH, 6, 7, 5, 8);
 
     # 31: Ethiopian/Ge'ez — Henze (2000): Aksumite roots 100 CE, continuous
     var ethiopian = hadara_add("Ethiopian", 9, CULTURE_ACTIVE, 100, 0);
-    hadara_set_endonym(ethiopian, "Habesha", 7);
-    hadara_set_region(ethiopian, "East Africa", 11);
-    hadara_set_language(ethiopian, "Amharic", 7);
-    hadara_set_script(ethiopian, "Ge'ez", 5);
-    hadara_set_display(ethiopian, 7, 6, 3, 5);
+    hadara_set_endonym(CID_ETHIOPIAN, "Habesha", 7);
+    hadara_set_region(CID_ETHIOPIAN, "East Africa", 11);
+    hadara_set_language(CID_ETHIOPIAN, "Amharic", 7);
+    hadara_set_script(CID_ETHIOPIAN, "Ge'ez", 5);
+    hadara_set_display(CID_ETHIOPIAN, 7, 6, 3, 5);
 
     # 32: Tamil — Zvelebil (1973): Sangam period c. 300 BCE, continuous
     var tamil = hadara_add("Tamil", 5, CULTURE_ACTIVE, 0 - 300, 0);
-    hadara_set_endonym(tamil, "Tamizh", 6);
-    hadara_set_region(tamil, "South Asia", 10);
-    hadara_set_language(tamil, "Tamil", 5);
-    hadara_set_script(tamil, "Tamil script", 12);
-    hadara_set_display(tamil, 7, 7, 5, 6);
+    hadara_set_endonym(CID_TAMIL, "Tamizh", 6);
+    hadara_set_region(CID_TAMIL, "South Asia", 10);
+    hadara_set_language(CID_TAMIL, "Tamil", 5);
+    hadara_set_script(CID_TAMIL, "Tamil script", 12);
+    hadara_set_display(CID_TAMIL, 7, 7, 5, 6);
 
     # 33: Javanese — Ricklefs (2001): Hindu-Buddhist period c. 400 CE, continuous
     var javanese = hadara_add("Javanese", 8, CULTURE_ACTIVE, 400, 0);
-    hadara_set_region(javanese, "Southeast Asia", 14);
-    hadara_set_language(javanese, "Javanese", 8);
-    hadara_set_script(javanese, "Javanese script", 15);
-    hadara_set_display(javanese, 8, 5, 3, 3);
+    hadara_set_region(CID_JAVANESE, "Southeast Asia", 14);
+    hadara_set_language(CID_JAVANESE, "Javanese", 8);
+    hadara_set_script(CID_JAVANESE, "Javanese script", 15);
+    hadara_set_display(CID_JAVANESE, 8, 5, 3, 3);
 
     # 34: Armenian — Hovannisian (1997): Urartu roots c. 600 BCE, continuous
     var armenian = hadara_add("Armenian", 8, CULTURE_ACTIVE, 0 - 600, 0);
-    hadara_set_endonym(armenian, "Hay", 3);
-    hadara_set_region(armenian, "West Asia", 9);
-    hadara_set_language(armenian, "Armenian", 8);
-    hadara_set_script(armenian, "Armenian alphabet", 17);
-    hadara_set_display(armenian, 6, 7, 6, 7);
+    hadara_set_endonym(CID_ARMENIAN, "Hay", 3);
+    hadara_set_region(CID_ARMENIAN, "West Asia", 9);
+    hadara_set_language(CID_ARMENIAN, "Armenian", 8);
+    hadara_set_script(CID_ARMENIAN, "Armenian alphabet", 17);
+    hadara_set_display(CID_ARMENIAN, 6, 7, 6, 7);
 
     # 35: Romani — Hancock (2002): diaspora from 11th c., continuous
     var romani = hadara_add("Romani", 6, CULTURE_ACTIVE, 1000, 0);
-    hadara_set_endonym(romani, "Roma", 4);
-    hadara_set_region(romani, "Europe, Diaspora", 16);
-    hadara_set_language(romani, "Romani", 6);
-    hadara_set_display(romani, 3, 9, 6, 7);
+    hadara_set_endonym(CID_ROMANI, "Roma", 4);
+    hadara_set_region(CID_ROMANI, "Europe, Diaspora", 16);
+    hadara_set_language(CID_ROMANI, "Romani", 6);
+    hadara_set_display(CID_ROMANI, 3, 9, 6, 7);
 
     # 36: Basque — Collins (1990): pre-Indo-European, continuous
     var basque = hadara_add("Basque", 6, CULTURE_ACTIVE, 0 - 3000, 0);
-    hadara_set_endonym(basque, "Euskaldun", 9);
-    hadara_set_region(basque, "Western Europe", 14);
-    hadara_set_language(basque, "Euskara", 7);
-    hadara_set_script(basque, "Latin alphabet", 14);
-    hadara_set_display(basque, 5, 7, 7, 8);
+    hadara_set_endonym(CID_BASQUE, "Euskaldun", 9);
+    hadara_set_region(CID_BASQUE, "Western Europe", 14);
+    hadara_set_language(CID_BASQUE, "Euskara", 7);
+    hadara_set_script(CID_BASQUE, "Latin alphabet", 14);
+    hadara_set_display(CID_BASQUE, 5, 7, 7, 8);
 
     # 37: Haudenosaunee — Fenton (1998): Iroquois Confederacy c. 1142 CE
     var haudenosaunee = hadara_add("Haudenosaunee", 13, CULTURE_ACTIVE, 1142, 0);
-    hadara_set_region(haudenosaunee, "North America", 13);
-    hadara_set_language(haudenosaunee, "Mohawk", 6);
-    hadara_set_display(haudenosaunee, 7, 6, 4, 6);
+    hadara_set_region(CID_HAUDENOSAUNEE, "North America", 13);
+    hadara_set_language(CID_HAUDENOSAUNEE, "Mohawk", 6);
+    hadara_set_display(CID_HAUDENOSAUNEE, 7, 6, 4, 6);
 
     # 38: East Coast Hip-Hop — subculture of Hip-Hop (#9)
     var eastcoast = hadara_add("East Coast Hip-Hop", 18, CULTURE_ACTIVE, 1973, 0);
-    hadara_set_region(eastcoast, "North America", 13);
-    hadara_set_language(eastcoast, "English", 7);
-    hadara_set_display(eastcoast, 2, 9, 8, 9);
+    hadara_set_region(CID_EASTCOAST, "North America", 13);
+    hadara_set_language(CID_EASTCOAST, "English", 7);
+    hadara_set_display(CID_EASTCOAST, 2, 9, 8, 9);
+
+    return 0;
+}
+
+fn hadara_seed_subentities_2() {
+    var p = 0;
+    var a = 0;
+    var f = 0;
+    var t = 0;
+    var art = 0;
 
     # --- Sub-entities for cultures 29-38 ---
 
@@ -1687,7 +1789,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
     store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(maori, mr_practices, 2);
+    hadara_set_practices(CID_MAORI, mr_practices, 2);
 
     var mr_arts = alloc(ART_FORM_SIZE * 2);
     a = mr_arts;
@@ -1698,7 +1800,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Waiata");
     store64(a + ART_FORM_NAME_LEN, 6);
     store64(a + ART_FORM_MEDIUM, ART_MUSIC);
-    hadara_set_art_forms(maori, mr_arts, 2);
+    hadara_set_art_forms(CID_MAORI, mr_arts, 2);
 
     # Sikh practices — McLeod (1997)
     var si_practices = alloc(PRACTICE_SIZE * 2);
@@ -1714,7 +1816,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(sikh, si_practices, 2);
+    hadara_set_practices(CID_SIKH, si_practices, 2);
 
     var si_arts = alloc(ART_FORM_SIZE * 2);
     a = si_arts;
@@ -1725,7 +1827,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Gurdwara Architecture");
     store64(a + ART_FORM_NAME_LEN, 21);
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
-    hadara_set_art_forms(sikh, si_arts, 2);
+    hadara_set_art_forms(CID_SIKH, si_arts, 2);
 
     # Ethiopian practices — Henze (2000)
     var et_practices = alloc(PRACTICE_SIZE * 2);
@@ -1741,7 +1843,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(ethiopian, et_practices, 2);
+    hadara_set_practices(CID_ETHIOPIAN, et_practices, 2);
 
     var et_arts = alloc(ART_FORM_SIZE * 2);
     a = et_arts;
@@ -1752,7 +1854,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Rock-Hewn Church");
     store64(a + ART_FORM_NAME_LEN, 16);
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
-    hadara_set_art_forms(ethiopian, et_arts, 2);
+    hadara_set_art_forms(CID_ETHIOPIAN, et_arts, 2);
 
     # Tamil practices — Zvelebil (1973)
     var ta_practices = alloc(PRACTICE_SIZE * 2);
@@ -1768,7 +1870,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(tamil, ta_practices, 2);
+    hadara_set_practices(CID_TAMIL, ta_practices, 2);
 
     var ta_arts = alloc(ART_FORM_SIZE * 2);
     a = ta_arts;
@@ -1779,7 +1881,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Sangam Poetry");
     store64(a + ART_FORM_NAME_LEN, 13);
     store64(a + ART_FORM_MEDIUM, ART_LITERATURE);
-    hadara_set_art_forms(tamil, ta_arts, 2);
+    hadara_set_art_forms(CID_TAMIL, ta_arts, 2);
 
     # Javanese practices — Ricklefs (2001)
     var jv_practices = alloc(PRACTICE_SIZE * 2);
@@ -1795,7 +1897,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(javanese, jv_practices, 2);
+    hadara_set_practices(CID_JAVANESE, jv_practices, 2);
 
     var jv_arts = alloc(ART_FORM_SIZE * 2);
     a = jv_arts;
@@ -1806,7 +1908,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Wayang Kulit");
     store64(a + ART_FORM_NAME_LEN, 12);
     store64(a + ART_FORM_MEDIUM, ART_THEATER);
-    hadara_set_art_forms(javanese, jv_arts, 2);
+    hadara_set_art_forms(CID_JAVANESE, jv_arts, 2);
 
     # Armenian practices — Hovannisian (1997)
     var arm_practices = alloc(PRACTICE_SIZE * 2);
@@ -1822,7 +1924,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(armenian, arm_practices, 2);
+    hadara_set_practices(CID_ARMENIAN, arm_practices, 2);
 
     var arm_arts = alloc(ART_FORM_SIZE * 2);
     a = arm_arts;
@@ -1833,7 +1935,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Duduk Music");
     store64(a + ART_FORM_NAME_LEN, 11);
     store64(a + ART_FORM_MEDIUM, ART_MUSIC);
-    hadara_set_art_forms(armenian, arm_arts, 2);
+    hadara_set_art_forms(CID_ARMENIAN, arm_arts, 2);
 
     # Romani practices — Hancock (2002)
     var rom_practices = alloc(PRACTICE_SIZE * 2);
@@ -1849,7 +1951,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
     store64(p + PRACTICE_FREQUENCY, FREQ_LIFECYCLE);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(romani, rom_practices, 2);
+    hadara_set_practices(CID_ROMANI, rom_practices, 2);
 
     var rom_arts = alloc(ART_FORM_SIZE * 2);
     a = rom_arts;
@@ -1860,7 +1962,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Oral Storytelling");
     store64(a + ART_FORM_NAME_LEN, 17);
     store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
-    hadara_set_art_forms(romani, rom_arts, 2);
+    hadara_set_art_forms(CID_ROMANI, rom_arts, 2);
 
     # Basque practices — Collins (1990)
     var bq_practices = alloc(PRACTICE_SIZE * 2);
@@ -1876,7 +1978,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_MARTIAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(basque, bq_practices, 2);
+    hadara_set_practices(CID_BASQUE, bq_practices, 2);
 
     var bq_arts = alloc(ART_FORM_SIZE * 2);
     a = bq_arts;
@@ -1887,7 +1989,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Stone Lifting");
     store64(a + ART_FORM_NAME_LEN, 13);
     store64(a + ART_FORM_MEDIUM, ART_MARTIAL);
-    hadara_set_art_forms(basque, bq_arts, 2);
+    hadara_set_art_forms(CID_BASQUE, bq_arts, 2);
 
     # Haudenosaunee practices — Fenton (1998)
     var hd_practices = alloc(PRACTICE_SIZE * 2);
@@ -1903,7 +2005,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_CEREMONY);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(haudenosaunee, hd_practices, 2);
+    hadara_set_practices(CID_HAUDENOSAUNEE, hd_practices, 2);
 
     var hd_arts = alloc(ART_FORM_SIZE * 2);
     a = hd_arts;
@@ -1914,30 +2016,30 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "False Face Carving");
     store64(a + ART_FORM_NAME_LEN, 18);
     store64(a + ART_FORM_MEDIUM, ART_VISUAL);
-    hadara_set_art_forms(haudenosaunee, hd_arts, 2);
+    hadara_set_art_forms(CID_HAUDENOSAUNEE, hd_arts, 2);
 
     # --- Subculture wiring ---
     # Maori is a subculture of Polynesian
     var po_subs = alloc(1 * 8);
-    store64(po_subs, maori);
-    hadara_set_subcultures(polynesian, po_subs, 1);
+    store64(po_subs, CID_MAORI);
+    hadara_set_subcultures(CID_POLYNESIAN, po_subs, 1);
     var maori_parents = alloc(1 * 8);
-    store64(maori_parents, polynesian);
-    hadara_set_parents(maori, maori_parents, 1);
+    store64(maori_parents, CID_POLYNESIAN);
+    hadara_set_parents(CID_MAORI, maori_parents, 1);
 
     # East Coast Hip-Hop is subculture of Hip-Hop
     var hp_subs = alloc(1 * 8);
-    store64(hp_subs, eastcoast);
-    hadara_set_subcultures(hiphop, hp_subs, 1);
+    store64(hp_subs, CID_EASTCOAST);
+    hadara_set_subcultures(CID_HIPHOP, hp_subs, 1);
     var ec_parents = alloc(1 * 8);
-    store64(ec_parents, hiphop);
-    hadara_set_parents(eastcoast, ec_parents, 1);
+    store64(ec_parents, CID_HIPHOP);
+    hadara_set_parents(CID_EASTCOAST, ec_parents, 1);
 
     # Tamil is related to (but not subculture of) Vedic-Hindu
     # Sikh branched from Vedic-Hindu
     var sikh_parents = alloc(1 * 8);
-    store64(sikh_parents, vedic);
-    hadara_set_parents(sikh, sikh_parents, 1);
+    store64(sikh_parents, CID_VEDIC);
+    hadara_set_parents(CID_SIKH, sikh_parents, 1);
 
     # ================================================================
     # Cultures 39-49: hitting 50 target
@@ -1945,107 +2047,107 @@ fn hadara_seed() {
 
     # 39: Somali — Lewis (2002): pastoralist tradition, continuous
     var somali = hadara_add("Somali", 6, CULTURE_ACTIVE, 0 - 100, 0);
-    hadara_set_endonym(somali, "Soomaali", 8);
-    hadara_set_region(somali, "East Africa", 11);
-    hadara_set_language(somali, "Somali", 6);
-    hadara_set_display(somali, 5, 8, 6, 8);
+    hadara_set_endonym(CID_SOMALI, "Soomaali", 8);
+    hadara_set_region(CID_SOMALI, "East Africa", 11);
+    hadara_set_language(CID_SOMALI, "Somali", 6);
+    hadara_set_display(CID_SOMALI, 5, 8, 6, 8);
 
     # 40: Tuareg — Keenan (1977): Saharan nomads, continuous
     var tuareg = hadara_add("Tuareg", 6, CULTURE_ACTIVE, 0 - 500, 0);
-    hadara_set_endonym(tuareg, "Kel Tamasheq", 12);
-    hadara_set_region(tuareg, "Sahara", 6);
-    hadara_set_language(tuareg, "Tamashek", 8);
-    hadara_set_script(tuareg, "Tifinagh", 8);
-    hadara_set_display(tuareg, 6, 7, 7, 6);
+    hadara_set_endonym(CID_TUAREG, "Kel Tamasheq", 12);
+    hadara_set_region(CID_TUAREG, "Sahara", 6);
+    hadara_set_language(CID_TUAREG, "Tamashek", 8);
+    hadara_set_script(CID_TUAREG, "Tifinagh", 8);
+    hadara_set_display(CID_TUAREG, 6, 7, 7, 6);
 
     # 41: Zulu — Morris (1965): Shaka's kingdom 1816, Zulu culture continuous
     var zulu = hadara_add("Zulu", 4, CULTURE_ACTIVE, 1816, 0);
-    hadara_set_endonym(zulu, "AmaZulu", 7);
-    hadara_set_region(zulu, "Southern Africa", 15);
-    hadara_set_language(zulu, "isiZulu", 7);
-    hadara_set_script(zulu, "Latin alphabet", 14);
-    hadara_set_display(zulu, 7, 8, 4, 7);
+    hadara_set_endonym(CID_ZULU, "AmaZulu", 7);
+    hadara_set_region(CID_ZULU, "Southern Africa", 15);
+    hadara_set_language(CID_ZULU, "isiZulu", 7);
+    hadara_set_script(CID_ZULU, "Latin alphabet", 14);
+    hadara_set_display(CID_ZULU, 7, 8, 4, 7);
 
     # 42: Georgian — Suny (1994): ancient Colchis roots, Christian from 337 CE
     var georgian = hadara_add("Georgian", 8, CULTURE_ACTIVE, 0 - 300, 0);
-    hadara_set_endonym(georgian, "Kartveli", 8);
-    hadara_set_region(georgian, "Caucasus", 8);
-    hadara_set_language(georgian, "Georgian", 8);
-    hadara_set_script(georgian, "Mkhedruli", 9);
-    hadara_set_display(georgian, 6, 8, 6, 7);
+    hadara_set_endonym(CID_GEORGIAN, "Kartveli", 8);
+    hadara_set_region(CID_GEORGIAN, "Caucasus", 8);
+    hadara_set_language(CID_GEORGIAN, "Georgian", 8);
+    hadara_set_script(CID_GEORGIAN, "Mkhedruli", 9);
+    hadara_set_display(CID_GEORGIAN, 6, 8, 6, 7);
 
     # 43: Balinese — Geertz (1980): Hindu-Buddhist island culture
     var balinese = hadara_add("Balinese", 8, CULTURE_ACTIVE, 800, 0);
-    hadara_set_region(balinese, "Southeast Asia", 14);
-    hadara_set_language(balinese, "Balinese", 8);
-    hadara_set_script(balinese, "Balinese script", 15);
-    hadara_set_display(balinese, 8, 7, 3, 3);
+    hadara_set_region(CID_BALINESE, "Southeast Asia", 14);
+    hadara_set_language(CID_BALINESE, "Balinese", 8);
+    hadara_set_script(CID_BALINESE, "Balinese script", 15);
+    hadara_set_display(CID_BALINESE, 8, 7, 3, 3);
 
     # 44: Igbo — Uchendu (1965): pre-colonial, continuous
     var igbo = hadara_add("Igbo", 4, CULTURE_ACTIVE, 0 - 900, 0);
-    hadara_set_endonym(igbo, "Ndi Igbo", 8);
-    hadara_set_region(igbo, "West Africa", 11);
-    hadara_set_language(igbo, "Igbo", 4);
-    hadara_set_display(igbo, 5, 8, 7, 8);
+    hadara_set_endonym(CID_IGBO, "Ndi Igbo", 8);
+    hadara_set_region(CID_IGBO, "West Africa", 11);
+    hadara_set_language(CID_IGBO, "Igbo", 4);
+    hadara_set_display(CID_IGBO, 5, 8, 7, 8);
 
     # 45: Lakota — DeMallie (2001): Plains culture, continuous
     var lakota = hadara_add("Lakota", 6, CULTURE_ACTIVE, 1700, 0);
-    hadara_set_endonym(lakota, "Lakota", 6);
-    hadara_set_region(lakota, "North America", 13);
-    hadara_set_language(lakota, "Lakota", 6);
-    hadara_set_display(lakota, 6, 7, 5, 6);
+    hadara_set_endonym(CID_LAKOTA, "Lakota", 6);
+    hadara_set_region(CID_LAKOTA, "North America", 13);
+    hadara_set_language(CID_LAKOTA, "Lakota", 6);
+    hadara_set_display(CID_LAKOTA, 6, 7, 5, 6);
 
     # 46: Ainu — Kayano (1994): indigenous Hokkaido, reviving
     var ainu = hadara_add("Ainu", 4, CULTURE_REVIVED, 0 - 1000, 0);
-    hadara_set_endonym(ainu, "Aynu", 4);
-    hadara_set_region(ainu, "East Asia", 9);
-    hadara_set_language(ainu, "Ainu", 4);
-    hadara_set_display(ainu, 6, 6, 4, 5);
+    hadara_set_endonym(CID_AINU, "Aynu", 4);
+    hadara_set_region(CID_AINU, "East Asia", 9);
+    hadara_set_language(CID_AINU, "Ainu", 4);
+    hadara_set_display(CID_AINU, 6, 6, 4, 5);
 
     # 47: West Coast Hip-Hop — subculture of Hip-Hop
     var westcoast = hadara_add("West Coast Hip-Hop", 18, CULTURE_ACTIVE, 1983, 0);
-    hadara_set_region(westcoast, "North America", 13);
-    hadara_set_language(westcoast, "English", 7);
-    hadara_set_display(westcoast, 2, 9, 8, 8);
+    hadara_set_region(CID_WESTCOAST, "North America", 13);
+    hadara_set_language(CID_WESTCOAST, "English", 7);
+    hadara_set_display(CID_WESTCOAST, 2, 9, 8, 8);
 
     # 48: Southern Hip-Hop — subculture of Hip-Hop
     var southern = hadara_add("Southern Hip-Hop", 16, CULTURE_ACTIVE, 1990, 0);
-    hadara_set_region(southern, "North America", 13);
-    hadara_set_language(southern, "English", 7);
-    hadara_set_display(southern, 2, 9, 7, 7);
+    hadara_set_region(CID_SOUTHERN, "North America", 13);
+    hadara_set_language(CID_SOUTHERN, "English", 7);
+    hadara_set_display(CID_SOUTHERN, 2, 9, 7, 7);
 
     # 49: Catalan — Balcells (1996): distinct from Spanish, continuous
     var catalan = hadara_add("Catalan", 7, CULTURE_ACTIVE, 988, 0);
-    hadara_set_endonym(catalan, "Catala", 6);
-    hadara_set_region(catalan, "Western Europe", 14);
-    hadara_set_language(catalan, "Catalan", 7);
-    hadara_set_script(catalan, "Latin alphabet", 14);
-    hadara_set_display(catalan, 5, 7, 7, 7);
+    hadara_set_endonym(CID_CATALAN, "Catala", 6);
+    hadara_set_region(CID_CATALAN, "Western Europe", 14);
+    hadara_set_language(CID_CATALAN, "Catalan", 7);
+    hadara_set_script(CID_CATALAN, "Latin alphabet", 14);
+    hadara_set_display(CID_CATALAN, 5, 7, 7, 7);
 
     # --- Additional subculture wiring ---
     # West Coast + Southern are subcultures of Hip-Hop
     # Update Hip-Hop subcultures: East Coast + West Coast + Southern
     var hp_subs3 = alloc(3 * 8);
-    store64(hp_subs3, eastcoast);
-    store64(hp_subs3 + 8, westcoast);
-    store64(hp_subs3 + 16, southern);
-    hadara_set_subcultures(hiphop, hp_subs3, 3);
+    store64(hp_subs3, CID_EASTCOAST);
+    store64(hp_subs3 + 8, CID_WESTCOAST);
+    store64(hp_subs3 + 16, CID_SOUTHERN);
+    hadara_set_subcultures(CID_HIPHOP, hp_subs3, 3);
 
     var wc_parents = alloc(1 * 8);
-    store64(wc_parents, hiphop);
-    hadara_set_parents(westcoast, wc_parents, 1);
+    store64(wc_parents, CID_HIPHOP);
+    hadara_set_parents(CID_WESTCOAST, wc_parents, 1);
 
     var so_parents = alloc(1 * 8);
-    store64(so_parents, hiphop);
-    hadara_set_parents(southern, so_parents, 1);
+    store64(so_parents, CID_HIPHOP);
+    hadara_set_parents(CID_SOUTHERN, so_parents, 1);
 
     # Ainu as subculture of Japanese
     var jp_subs = alloc(1 * 8);
-    store64(jp_subs, ainu);
-    hadara_set_subcultures(japanese, jp_subs, 1);
+    store64(jp_subs, CID_AINU);
+    hadara_set_subcultures(CID_JAPANESE, jp_subs, 1);
     var ainu_parents = alloc(1 * 8);
-    store64(ainu_parents, japanese);
-    hadara_set_parents(ainu, ainu_parents, 1);
+    store64(ainu_parents, CID_JAPANESE);
+    hadara_set_parents(CID_AINU, ainu_parents, 1);
 
     # ================================================================
     # Sub-entities for medium-priority cultures
@@ -2065,7 +2167,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_MARTIAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_SEASONAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(aztec, az_practices, 2);
+    hadara_set_practices(CID_AZTEC, az_practices, 2);
 
     var az_arts = alloc(ART_FORM_SIZE * 2);
     a = az_arts;
@@ -2076,7 +2178,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Nahuatl Poetry");
     store64(a + ART_FORM_NAME_LEN, 14);
     store64(a + ART_FORM_MEDIUM, ART_LITERATURE);
-    hadara_set_art_forms(aztec, az_arts, 2);
+    hadara_set_art_forms(CID_AZTEC, az_arts, 2);
 
     # --- Inca/Quechua — D'Altroy (2014) ---
     var ic_practices = alloc(PRACTICE_SIZE * 2);
@@ -2092,7 +2194,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_SOCIAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(inca, ic_practices, 2);
+    hadara_set_practices(CID_INCA, ic_practices, 2);
 
     var ic_arts = alloc(ART_FORM_SIZE * 2);
     a = ic_arts;
@@ -2103,7 +2205,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Andean Weaving");
     store64(a + ART_FORM_NAME_LEN, 14);
     store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
-    hadara_set_art_forms(inca, ic_arts, 2);
+    hadara_set_art_forms(CID_INCA, ic_arts, 2);
 
     # --- Yoruba — Bascom (1969) ---
     var yo_practices = alloc(PRACTICE_SIZE * 2);
@@ -2119,7 +2221,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(yoruba, yo_practices, 2);
+    hadara_set_practices(CID_YORUBA, yo_practices, 2);
 
     var yo_arts = alloc(ART_FORM_SIZE * 2);
     a = yo_arts;
@@ -2130,7 +2232,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Talking Drums");
     store64(a + ART_FORM_NAME_LEN, 13);
     store64(a + ART_FORM_MEDIUM, ART_MUSIC);
-    hadara_set_art_forms(yoruba, yo_arts, 2);
+    hadara_set_art_forms(CID_YORUBA, yo_arts, 2);
 
     # --- Swahili — Nurse & Spear (1985) ---
     var sw_practices = alloc(PRACTICE_SIZE * 2);
@@ -2146,7 +2248,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(swahili, sw_practices, 2);
+    hadara_set_practices(CID_SWAHILI, sw_practices, 2);
 
     var sw_arts = alloc(ART_FORM_SIZE * 2);
     a = sw_arts;
@@ -2157,7 +2259,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Coral Stone Architecture");
     store64(a + ART_FORM_NAME_LEN, 24);
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
-    hadara_set_art_forms(swahili, sw_arts, 2);
+    hadara_set_art_forms(CID_SWAHILI, sw_arts, 2);
 
     # --- Amazigh — Brett & Fentress (1996) ---
     var am_practices = alloc(PRACTICE_SIZE * 2);
@@ -2173,7 +2275,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_FESTIVAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_ANNUAL);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(amazigh, am_practices, 2);
+    hadara_set_practices(CID_AMAZIGH, am_practices, 2);
 
     var am_arts = alloc(ART_FORM_SIZE * 2);
     a = am_arts;
@@ -2184,7 +2286,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Berber Carpet Weaving");
     store64(a + ART_FORM_NAME_LEN, 21);
     store64(a + ART_FORM_MEDIUM, ART_TEXTILE);
-    hadara_set_art_forms(amazigh, am_arts, 2);
+    hadara_set_art_forms(CID_AMAZIGH, am_arts, 2);
 
     # --- Inuit — Stern (2004) ---
     var in_practices = alloc(PRACTICE_SIZE * 2);
@@ -2200,7 +2302,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_ART);
     store64(p + PRACTICE_FREQUENCY, FREQ_SPONTANEOUS);
     store64(p + PRACTICE_SACRED, 0);
-    hadara_set_practices(inuit, in_practices, 2);
+    hadara_set_practices(CID_INUIT, in_practices, 2);
 
     var in_arts = alloc(ART_FORM_SIZE * 2);
     a = in_arts;
@@ -2211,7 +2313,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Oral Storytelling");
     store64(a + ART_FORM_NAME_LEN, 17);
     store64(a + ART_FORM_MEDIUM, ART_ORAL_TRADITION);
-    hadara_set_art_forms(inuit, in_arts, 2);
+    hadara_set_art_forms(CID_INUIT, in_arts, 2);
 
     # --- Khmer — Higham (2001) ---
     var km_practices = alloc(PRACTICE_SIZE * 2);
@@ -2227,7 +2329,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_DAILY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(khmer, km_practices, 2);
+    hadara_set_practices(CID_KHMER, km_practices, 2);
 
     var km_arts = alloc(ART_FORM_SIZE * 2);
     a = km_arts;
@@ -2238,7 +2340,7 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Temple Relief Sculpture");
     store64(a + ART_FORM_NAME_LEN, 23);
     store64(a + ART_FORM_MEDIUM, ART_VISUAL);
-    hadara_set_art_forms(khmer, km_arts, 2);
+    hadara_set_art_forms(CID_KHMER, km_arts, 2);
 
     # --- Ottoman/Turkish — Finkel (2007) ---
     var ot_practices = alloc(PRACTICE_SIZE * 2);
@@ -2254,7 +2356,7 @@ fn hadara_seed() {
     store64(p + PRACTICE_CATEGORY, PRACTICE_RITUAL);
     store64(p + PRACTICE_FREQUENCY, FREQ_WEEKLY);
     store64(p + PRACTICE_SACRED, 1);
-    hadara_set_practices(ottoman, ot_practices, 2);
+    hadara_set_practices(CID_OTTOMAN, ot_practices, 2);
 
     var ot_arts = alloc(ART_FORM_SIZE * 2);
     a = ot_arts;
@@ -2265,31 +2367,31 @@ fn hadara_seed() {
     store64(a + ART_FORM_NAME_PTR, "Ottoman Architecture");
     store64(a + ART_FORM_NAME_LEN, 20);
     store64(a + ART_FORM_MEDIUM, ART_ARCHITECTURE);
-    hadara_set_art_forms(ottoman, ot_arts, 2);
+    hadara_set_art_forms(CID_OTTOMAN, ot_arts, 2);
 
     # --- Display dimensions (formality, expressiveness, individualism, directness) ---
     # Sources: Kottak (2019), Ember & Ember (2015), culture-specific refs
-    hadara_set_display(egyptian, 9, 6, 2, 4);     # highly formal, collective, hieratic society
-    hadara_set_display(persian, 8, 7, 4, 4);      # formal, poetic, communal
-    hadara_set_display(vedic, 8, 6, 3, 4);        # formal, collective, indirect
-    hadara_set_display(greek, 5, 8, 7, 8);        # moderate formality, expressive, individual, direct
-    hadara_set_display(japanese, 9, 3, 2, 3);     # high formality, restrained, collective, indirect
-    hadara_set_display(westafrican, 6, 8, 3, 6);  # moderate formal, expressive, collective
-    hadara_set_display(scottish, 4, 7, 6, 7);     # informal, expressive, fairly direct
-    hadara_set_display(norse, 4, 8, 7, 8);        # informal, expressive, individual, direct
-    hadara_set_display(aboriginal, 7, 6, 2, 4);   # formal elder protocols, collective
-    hadara_set_display(hiphop, 2, 9, 8, 9);       # informal, highly expressive, individual, direct
-    hadara_set_display(maya, 8, 5, 3, 4);         # formal, hieratic, collective
-    hadara_set_display(chinese, 8, 5, 3, 4);      # formal, restrained, collective, indirect
-    hadara_set_display(roman, 8, 6, 4, 7);        # formal, civic, fairly direct
-    hadara_set_display(arab, 8, 7, 4, 5);         # formal, poetic, communal
-    hadara_set_display(korean, 8, 5, 3, 4);       # formal, restrained, collective
-    hadara_set_display(tibetan, 7, 4, 2, 3);      # formal, restrained, collective, gentle
-    hadara_set_display(mesopotamian, 9, 5, 3, 5); # highly formal, hieratic
-    hadara_set_display(mongol, 3, 8, 7, 9);       # informal, bold, individual, very direct
-    hadara_set_display(jewish, 6, 7, 6, 7);       # moderate, argumentative tradition, direct
-    hadara_set_display(byzantine, 9, 5, 3, 4);    # highly formal, liturgical, collective
-    hadara_set_display(polynesian, 6, 8, 4, 6);   # moderate formal, expressive, communal
+    hadara_set_display(CID_EGYPTIAN, 9, 6, 2, 4);     # highly formal, collective, hieratic society
+    hadara_set_display(CID_PERSIAN, 8, 7, 4, 4);      # formal, poetic, communal
+    hadara_set_display(CID_VEDIC, 8, 6, 3, 4);        # formal, collective, indirect
+    hadara_set_display(CID_GREEK, 5, 8, 7, 8);        # moderate formality, expressive, individual, direct
+    hadara_set_display(CID_JAPANESE, 9, 3, 2, 3);     # high formality, restrained, collective, indirect
+    hadara_set_display(CID_WESTAFRICAN, 6, 8, 3, 6);  # moderate formal, expressive, collective
+    hadara_set_display(CID_SCOTTISH, 4, 7, 6, 7);     # informal, expressive, fairly direct
+    hadara_set_display(CID_NORSE, 4, 8, 7, 8);        # informal, expressive, individual, direct
+    hadara_set_display(CID_ABORIGINAL, 7, 6, 2, 4);   # formal elder protocols, collective
+    hadara_set_display(CID_HIPHOP, 2, 9, 8, 9);       # informal, highly expressive, individual, direct
+    hadara_set_display(CID_MAYA, 8, 5, 3, 4);         # formal, hieratic, collective
+    hadara_set_display(CID_CHINESE, 8, 5, 3, 4);      # formal, restrained, collective, indirect
+    hadara_set_display(CID_ROMAN, 8, 6, 4, 7);        # formal, civic, fairly direct
+    hadara_set_display(CID_ARAB, 8, 7, 4, 5);         # formal, poetic, communal
+    hadara_set_display(CID_KOREAN, 8, 5, 3, 4);       # formal, restrained, collective
+    hadara_set_display(CID_TIBETAN, 7, 4, 2, 3);      # formal, restrained, collective, gentle
+    hadara_set_display(CID_MESOPOTAMIAN, 9, 5, 3, 5); # highly formal, hieratic
+    hadara_set_display(CID_MONGOL, 3, 8, 7, 9);       # informal, bold, individual, very direct
+    hadara_set_display(CID_JEWISH, 6, 7, 6, 7);       # moderate, argumentative tradition, direct
+    hadara_set_display(CID_BYZANTINE, 9, 5, 3, 4);    # highly formal, liturgical, collective
+    hadara_set_display(CID_POLYNESIAN, 6, 8, 4, 6);   # moderate formal, expressive, communal
 
     # --- Diaspora data ---
     # Stored as arrays of string pointers (regions of dispersal)
@@ -2300,42 +2402,46 @@ fn hadara_seed() {
     store64(je_dias + 8, "North Africa");
     store64(je_dias + 16, "Americas");
     store64(je_dias + 24, "Central Asia");
-    hadara_set_diaspora(jewish, je_dias, 4);
+    hadara_set_diaspora(CID_JEWISH, je_dias, 4);
 
     # Chinese diaspora — Stearns (2001): Southeast Asia, Americas, worldwide
     var ch_dias = alloc(3 * 8);
     store64(ch_dias, "Southeast Asia");
     store64(ch_dias + 8, "Americas");
     store64(ch_dias + 16, "Oceania");
-    hadara_set_diaspora(chinese, ch_dias, 3);
+    hadara_set_diaspora(CID_CHINESE, ch_dias, 3);
 
     # West African diaspora — Iliffe (2007): transatlantic slave trade dispersal
     var wa_dias = alloc(3 * 8);
     store64(wa_dias, "Caribbean");
     store64(wa_dias + 8, "Americas");
     store64(wa_dias + 16, "Europe");
-    hadara_set_diaspora(westafrican, wa_dias, 3);
+    hadara_set_diaspora(CID_WESTAFRICAN, wa_dias, 3);
 
     # Polynesian diaspora — Howe (2006): Pacific expansion
     var po_dias = alloc(3 * 8);
     store64(po_dias, "Hawaii");
     store64(po_dias + 8, "Aotearoa");
     store64(po_dias + 16, "Rapa Nui");
-    hadara_set_diaspora(polynesian, po_dias, 3);
+    hadara_set_diaspora(CID_POLYNESIAN, po_dias, 3);
 
     # Hip-Hop diaspora — Chang (2005): global spread from NYC
     var hp_dias = alloc(3 * 8);
     store64(hp_dias, "Europe");
     store64(hp_dias + 8, "East Asia");
     store64(hp_dias + 16, "Africa");
-    hadara_set_diaspora(hiphop, hp_dias, 3);
+    hadara_set_diaspora(CID_HIPHOP, hp_dias, 3);
 
     # Persian diaspora — Brosius (2006): post-revolution dispersal
     var pe_dias = alloc(2 * 8);
     store64(pe_dias, "Americas");
     store64(pe_dias + 8, "Europe");
-    hadara_set_diaspora(persian, pe_dias, 2);
+    hadara_set_diaspora(CID_PERSIAN, pe_dias, 2);
 
+    return 0;
+}
+
+fn hadara_seed_values() {
     # ================================================================
     # Values/Worldview — Kottak (2019), Ember & Ember (2015)
     # Each culture gets 3-4 core values as string pointers (8 bytes each)
@@ -2346,351 +2452,356 @@ fn hadara_seed() {
     store64(eg_vals, "Ma'at");
     store64(eg_vals + 8, "Afterlife preparation");
     store64(eg_vals + 16, "Divine kingship");
-    hadara_set_values(egyptian, eg_vals, 3);
+    hadara_set_values(CID_EGYPTIAN, eg_vals, 3);
 
     # Persian: Asha (truth/righteousness), hospitality, dualism
     var pe_vals = alloc(3 * 8);
     store64(pe_vals, "Asha");
     store64(pe_vals + 8, "Hospitality");
     store64(pe_vals + 16, "Cosmic dualism");
-    hadara_set_values(persian, pe_vals, 3);
+    hadara_set_values(CID_PERSIAN, pe_vals, 3);
 
     # Vedic: Dharma, ahimsa, cyclical time
     var ve_vals = alloc(3 * 8);
     store64(ve_vals, "Dharma");
     store64(ve_vals + 8, "Ahimsa");
     store64(ve_vals + 16, "Cyclical time");
-    hadara_set_values(vedic, ve_vals, 3);
+    hadara_set_values(CID_VEDIC, ve_vals, 3);
 
     # Greek: Arete (excellence), logos, democratic participation
     var gr_vals = alloc(3 * 8);
     store64(gr_vals, "Arete");
     store64(gr_vals + 8, "Logos");
     store64(gr_vals + 16, "Democratic participation");
-    hadara_set_values(greek, gr_vals, 3);
+    hadara_set_values(CID_GREEK, gr_vals, 3);
 
     # Japanese: Wa (harmony), on (obligation), mono no aware
     var jp_vals = alloc(3 * 8);
     store64(jp_vals, "Wa");
     store64(jp_vals + 8, "On");
     store64(jp_vals + 16, "Mono no aware");
-    hadara_set_values(japanese, jp_vals, 3);
+    hadara_set_values(CID_JAPANESE, jp_vals, 3);
 
     # West African: Ubuntu, communalism, ancestral continuity
     var wa_vals = alloc(3 * 8);
     store64(wa_vals, "Ubuntu");
     store64(wa_vals + 8, "Communalism");
     store64(wa_vals + 16, "Ancestral continuity");
-    hadara_set_values(westafrican, wa_vals, 3);
+    hadara_set_values(CID_WESTAFRICAN, wa_vals, 3);
 
     # Norse: Honor, fate (wyrd), heroic death
     var no_vals = alloc(3 * 8);
     store64(no_vals, "Honor");
     store64(no_vals + 8, "Wyrd");
     store64(no_vals + 16, "Heroic death");
-    hadara_set_values(norse, no_vals, 3);
+    hadara_set_values(CID_NORSE, no_vals, 3);
 
     # Hip-Hop: Authenticity, self-expression, community uplift
     var hp_vals = alloc(3 * 8);
     store64(hp_vals, "Authenticity");
     store64(hp_vals + 8, "Self-expression");
     store64(hp_vals + 16, "Community uplift");
-    hadara_set_values(hiphop, hp_vals, 3);
+    hadara_set_values(CID_HIPHOP, hp_vals, 3);
 
     # Roman: Virtus, pietas, civic duty
     var ro_vals = alloc(3 * 8);
     store64(ro_vals, "Virtus");
     store64(ro_vals + 8, "Pietas");
     store64(ro_vals + 16, "Civic duty");
-    hadara_set_values(roman, ro_vals, 3);
+    hadara_set_values(CID_ROMAN, ro_vals, 3);
 
     # Chinese: Ren (benevolence), li (ritual propriety), filial piety
     var ch_vals = alloc(3 * 8);
     store64(ch_vals, "Ren");
     store64(ch_vals + 8, "Li");
     store64(ch_vals + 16, "Filial piety");
-    hadara_set_values(chinese, ch_vals, 3);
+    hadara_set_values(CID_CHINESE, ch_vals, 3);
 
     # Aboriginal: Dreamtime, country (land-spirit bond), kinship
     var ab_vals = alloc(3 * 8);
     store64(ab_vals, "Dreamtime");
     store64(ab_vals + 8, "Country");
     store64(ab_vals + 16, "Kinship law");
-    hadara_set_values(aboriginal, ab_vals, 3);
+    hadara_set_values(CID_ABORIGINAL, ab_vals, 3);
 
     # Maya: K'uhul (sacredness), cyclical calendar, reciprocity with gods
     var ma_vals = alloc(3 * 8);
     store64(ma_vals, "K'uhul");
     store64(ma_vals + 8, "Cyclical calendar");
     store64(ma_vals + 16, "Divine reciprocity");
-    hadara_set_values(maya, ma_vals, 3);
+    hadara_set_values(CID_MAYA, ma_vals, 3);
 
     # Scottish: Clan loyalty, independence, oral tradition
     var sc_vals = alloc(3 * 8);
     store64(sc_vals, "Clan loyalty");
     store64(sc_vals + 8, "Independence");
     store64(sc_vals + 16, "Oral tradition");
-    hadara_set_values(scottish, sc_vals, 3);
+    hadara_set_values(CID_SCOTTISH, sc_vals, 3);
 
     # Arab: Ummah (community), hospitality, divine submission
     var ar_vals = alloc(3 * 8);
     store64(ar_vals, "Ummah");
     store64(ar_vals + 8, "Hospitality");
     store64(ar_vals + 16, "Tawhid");
-    hadara_set_values(arab, ar_vals, 3);
+    hadara_set_values(CID_ARAB, ar_vals, 3);
 
     # Jewish: Tikkun olam, covenant, learning/study
     var je_vals = alloc(3 * 8);
     store64(je_vals, "Tikkun olam");
     store64(je_vals + 8, "Covenant");
     store64(je_vals + 16, "Torah study");
-    hadara_set_values(jewish, je_vals, 3);
+    hadara_set_values(CID_JEWISH, je_vals, 3);
 
     # Korean: Jeong (deep affection), han (collective grief), filial piety
     var ko_vals = alloc(3 * 8);
     store64(ko_vals, "Jeong");
     store64(ko_vals + 8, "Han");
     store64(ko_vals + 16, "Filial piety");
-    hadara_set_values(korean, ko_vals, 3);
+    hadara_set_values(CID_KOREAN, ko_vals, 3);
 
     # Tibetan: Compassion, impermanence, liberation
     var ti_vals = alloc(3 * 8);
     store64(ti_vals, "Compassion");
     store64(ti_vals + 8, "Impermanence");
     store64(ti_vals + 16, "Liberation");
-    hadara_set_values(tibetan, ti_vals, 3);
+    hadara_set_values(CID_TIBETAN, ti_vals, 3);
 
     # Mongol: Eternal Blue Sky, freedom, strength
     var mo_vals = alloc(3 * 8);
     store64(mo_vals, "Eternal Blue Sky");
     store64(mo_vals + 8, "Freedom");
     store64(mo_vals + 16, "Strength");
-    hadara_set_values(mongol, mo_vals, 3);
+    hadara_set_values(CID_MONGOL, mo_vals, 3);
 
     # Byzantine: Orthodoxy, imperial continuity, divine mandate
     var by_vals = alloc(3 * 8);
     store64(by_vals, "Orthodoxy");
     store64(by_vals + 8, "Imperial continuity");
     store64(by_vals + 16, "Theosis");
-    hadara_set_values(byzantine, by_vals, 3);
+    hadara_set_values(CID_BYZANTINE, by_vals, 3);
 
     # Mesopotamian: Divine order, civilization, written law
     var ms_vals = alloc(3 * 8);
     store64(ms_vals, "Divine order");
     store64(ms_vals + 8, "Civilization");
     store64(ms_vals + 16, "Written law");
-    hadara_set_values(mesopotamian, ms_vals, 3);
+    hadara_set_values(CID_MESOPOTAMIAN, ms_vals, 3);
 
     # Polynesian: Mana, tapu, navigation mastery
     var po_vals = alloc(3 * 8);
     store64(po_vals, "Mana");
     store64(po_vals + 8, "Tapu");
     store64(po_vals + 16, "Navigation mastery");
-    hadara_set_values(polynesian, po_vals, 3);
+    hadara_set_values(CID_POLYNESIAN, po_vals, 3);
 
     # Maori: manaakitanga, kaitiakitanga, whakapapa
     var ma2_vals = alloc(3 * 8);
     store64(ma2_vals, "Manaakitanga");
     store64(ma2_vals + 8, "Kaitiakitanga");
     store64(ma2_vals + 16, "Whakapapa");
-    hadara_set_values(maori, ma2_vals, 3);
+    hadara_set_values(CID_MAORI, ma2_vals, 3);
 
     # Sikh: seva, equality, martial valor
     var si_vals = alloc(3 * 8);
     store64(si_vals, "Seva");
     store64(si_vals + 8, "Equality");
     store64(si_vals + 16, "Martial valor");
-    hadara_set_values(sikh, si_vals, 3);
+    hadara_set_values(CID_SIKH, si_vals, 3);
 
     # Ethiopian: faith, sovereignty, coffee ritual
     var et_vals = alloc(3 * 8);
     store64(et_vals, "Faith");
     store64(et_vals + 8, "Sovereignty");
     store64(et_vals + 16, "Hospitality");
-    hadara_set_values(ethiopian, et_vals, 3);
+    hadara_set_values(CID_ETHIOPIAN, et_vals, 3);
 
     # Tamil: sangam, devotion, language pride
     var ta_vals = alloc(3 * 8);
     store64(ta_vals, "Sangam");
     store64(ta_vals + 8, "Bhakti");
     store64(ta_vals + 16, "Language pride");
-    hadara_set_values(tamil, ta_vals, 3);
+    hadara_set_values(CID_TAMIL, ta_vals, 3);
 
     # Javanese: halus (refinement), harmony, mysticism
     var jv_vals = alloc(3 * 8);
     store64(jv_vals, "Halus");
     store64(jv_vals + 8, "Rukun");
     store64(jv_vals + 16, "Kebatinan");
-    hadara_set_values(javanese, jv_vals, 3);
+    hadara_set_values(CID_JAVANESE, jv_vals, 3);
 
     # Armenian: survival, faith, education
     var arm_vals = alloc(3 * 8);
     store64(arm_vals, "Survival");
     store64(arm_vals + 8, "Apostolic faith");
     store64(arm_vals + 16, "Education");
-    hadara_set_values(armenian, arm_vals, 3);
+    hadara_set_values(CID_ARMENIAN, arm_vals, 3);
 
     # Romani: freedom, family, oral tradition
     var rom_vals = alloc(3 * 8);
     store64(rom_vals, "Freedom");
     store64(rom_vals + 8, "Family");
     store64(rom_vals + 16, "Romanipen");
-    hadara_set_values(romani, rom_vals, 3);
+    hadara_set_values(CID_ROMANI, rom_vals, 3);
 
     # Basque: independence, communal labor, oral tradition
     var bq_vals = alloc(3 * 8);
     store64(bq_vals, "Auzolan");
     store64(bq_vals + 8, "Independence");
     store64(bq_vals + 16, "Bertsolaritza");
-    hadara_set_values(basque, bq_vals, 3);
+    hadara_set_values(CID_BASQUE, bq_vals, 3);
 
     # Haudenosaunee: Great Law, consensus, seventh generation
     var hd_vals = alloc(3 * 8);
     store64(hd_vals, "Great Law");
     store64(hd_vals + 8, "Consensus");
     store64(hd_vals + 16, "Seventh generation");
-    hadara_set_values(haudenosaunee, hd_vals, 3);
+    hadara_set_values(CID_HAUDENOSAUNEE, hd_vals, 3);
 
     # East Coast Hip-Hop: lyricism, battle, street knowledge
     var ec_vals = alloc(3 * 8);
     store64(ec_vals, "Lyricism");
     store64(ec_vals + 8, "Battle");
     store64(ec_vals + 16, "Street knowledge");
-    hadara_set_values(eastcoast, ec_vals, 3);
+    hadara_set_values(CID_EASTCOAST, ec_vals, 3);
 
     # Somali: xeer (customary law), clan honor, poetry
     var so2_vals = alloc(3 * 8);
     store64(so2_vals, "Xeer");
     store64(so2_vals + 8, "Clan honor");
     store64(so2_vals + 16, "Poetry");
-    hadara_set_values(somali, so2_vals, 3);
+    hadara_set_values(CID_SOMALI, so2_vals, 3);
 
     # Tuareg: freedom, hospitality, desert mastery
     var tu_vals = alloc(3 * 8);
     store64(tu_vals, "Aman");
     store64(tu_vals + 8, "Hospitality");
     store64(tu_vals + 16, "Desert mastery");
-    hadara_set_values(tuareg, tu_vals, 3);
+    hadara_set_values(CID_TUAREG, tu_vals, 3);
 
     # Zulu: ubuntu, warrior courage, respect for elders
     var zu_vals = alloc(3 * 8);
     store64(zu_vals, "Ubuntu");
     store64(zu_vals + 8, "Isibindi");
     store64(zu_vals + 16, "Hlonipha");
-    hadara_set_values(zulu, zu_vals, 3);
+    hadara_set_values(CID_ZULU, zu_vals, 3);
 
     # Georgian: hospitality, wine culture, faith
     var ge_vals = alloc(3 * 8);
     store64(ge_vals, "Stumar-maspin");
     store64(ge_vals + 8, "Wine culture");
     store64(ge_vals + 16, "Orthodox faith");
-    hadara_set_values(georgian, ge_vals, 3);
+    hadara_set_values(CID_GEORGIAN, ge_vals, 3);
 
     # Balinese: tri hita karana (three harmonies), ceremony, artistic devotion
     var ba_vals = alloc(3 * 8);
     store64(ba_vals, "Tri Hita Karana");
     store64(ba_vals + 8, "Ceremony");
     store64(ba_vals + 16, "Artistic devotion");
-    hadara_set_values(balinese, ba_vals, 3);
+    hadara_set_values(CID_BALINESE, ba_vals, 3);
 
     # Igbo: personal achievement, community, oratory
     var ig_vals = alloc(3 * 8);
     store64(ig_vals, "Ogu na Ofo");
     store64(ig_vals + 8, "Personal achievement");
     store64(ig_vals + 16, "Community");
-    hadara_set_values(igbo, ig_vals, 3);
+    hadara_set_values(CID_IGBO, ig_vals, 3);
 
     # Lakota: mitakuye oyasin, sacred hoop, generosity
     var la_vals = alloc(3 * 8);
     store64(la_vals, "Mitakuye Oyasin");
     store64(la_vals + 8, "Sacred Hoop");
     store64(la_vals + 16, "Generosity");
-    hadara_set_values(lakota, la_vals, 3);
+    hadara_set_values(CID_LAKOTA, la_vals, 3);
 
     # Ainu: kamuy (spirit reverence), reciprocity, nature
     var ai_vals = alloc(3 * 8);
     store64(ai_vals, "Kamuy");
     store64(ai_vals + 8, "Reciprocity");
     store64(ai_vals + 16, "Nature");
-    hadara_set_values(ainu, ai_vals, 3);
+    hadara_set_values(CID_AINU, ai_vals, 3);
 
     # West Coast Hip-Hop: G-funk, laid-back, storytelling
     var wc_vals = alloc(3 * 8);
     store64(wc_vals, "G-funk");
     store64(wc_vals + 8, "Storytelling");
     store64(wc_vals + 16, "West side pride");
-    hadara_set_values(westcoast, wc_vals, 3);
+    hadara_set_values(CID_WESTCOAST, wc_vals, 3);
 
     # Southern Hip-Hop: bounce, trunk music, hospitality
     var sth_vals = alloc(3 * 8);
     store64(sth_vals, "Bounce");
     store64(sth_vals + 8, "Trunk music");
     store64(sth_vals + 16, "Southern hospitality");
-    hadara_set_values(southern, sth_vals, 3);
+    hadara_set_values(CID_SOUTHERN, sth_vals, 3);
 
     # Catalan: seny (common sense), independence, Mediterranean
     var ca_vals = alloc(3 * 8);
     store64(ca_vals, "Seny");
     store64(ca_vals + 8, "Rauxa");
     store64(ca_vals + 16, "Independence");
-    hadara_set_values(catalan, ca_vals, 3);
+    hadara_set_values(CID_CATALAN, ca_vals, 3);
 
     # Aztec: cosmic debt, warrior honor, cyclical destruction/renewal
     var az_vals = alloc(3 * 8);
     store64(az_vals, "Cosmic debt");
     store64(az_vals + 8, "Warrior honor");
     store64(az_vals + 16, "Cyclical renewal");
-    hadara_set_values(aztec, az_vals, 3);
+    hadara_set_values(CID_AZTEC, az_vals, 3);
 
     # Inca: reciprocity, sun worship, collective labor
     var ic_vals = alloc(3 * 8);
     store64(ic_vals, "Ayni");
     store64(ic_vals + 8, "Inti worship");
     store64(ic_vals + 16, "Collective labor");
-    hadara_set_values(inca, ic_vals, 3);
+    hadara_set_values(CID_INCA, ic_vals, 3);
 
     # Ottoman: state order, hospitality, cosmopolitanism
     var ot_vals = alloc(3 * 8);
     store64(ot_vals, "Nizam");
     store64(ot_vals + 8, "Hospitality");
     store64(ot_vals + 16, "Cosmopolitanism");
-    hadara_set_values(ottoman, ot_vals, 3);
+    hadara_set_values(CID_OTTOMAN, ot_vals, 3);
 
     # Khmer: merit-making, divine kingship, harmony
     var km_vals = alloc(3 * 8);
     store64(km_vals, "Merit-making");
     store64(km_vals + 8, "Devaraja");
     store64(km_vals + 16, "Harmony");
-    hadara_set_values(khmer, km_vals, 3);
+    hadara_set_values(CID_KHMER, km_vals, 3);
 
     # Swahili: trade, ustaarabu (civilized refinement), synthesis
     var sw_vals = alloc(3 * 8);
     store64(sw_vals, "Trade");
     store64(sw_vals + 8, "Ustaarabu");
     store64(sw_vals + 16, "Cultural synthesis");
-    hadara_set_values(swahili, sw_vals, 3);
+    hadara_set_values(CID_SWAHILI, sw_vals, 3);
 
     # Yoruba: Ase (life force), ancestral duty, community balance
     var yo_vals = alloc(3 * 8);
     store64(yo_vals, "Ase");
     store64(yo_vals + 8, "Ancestral duty");
     store64(yo_vals + 16, "Iwa pele");
-    hadara_set_values(yoruba, yo_vals, 3);
+    hadara_set_values(CID_YORUBA, yo_vals, 3);
 
     # Amazigh: freedom, land, oral memory
     var amz_vals = alloc(3 * 8);
     store64(amz_vals, "Tilelli");
     store64(amz_vals + 8, "Tamazirt");
     store64(amz_vals + 16, "Oral memory");
-    hadara_set_values(amazigh, amz_vals, 3);
+    hadara_set_values(CID_AMAZIGH, amz_vals, 3);
 
     # Inuit: sharing, respect for animals, resilience
     var in_vals = alloc(3 * 8);
     store64(in_vals, "Sharing");
     store64(in_vals + 8, "Animal respect");
     store64(in_vals + 16, "Resilience");
-    hadara_set_values(inuit, in_vals, 3);
+    hadara_set_values(CID_INUIT, in_vals, 3);
 
+    return 0;
+}
+
+fn hadara_seed_relations() {
+    var r = 0;
     # ================================================================
     # Phase 4c: Additional relations
     # ================================================================
@@ -2699,73 +2810,97 @@ fn hadara_seed() {
 
     # Arab↔Persian exchange — Hourani (1991): post-conquest cultural synthesis
     r = rels4;
-    store64(r + RELATION_SOURCE, arab);
-    store64(r + RELATION_TARGET, persian);
+    store64(r + RELATION_SOURCE, CID_ARAB);
+    store64(r + RELATION_TARGET, CID_PERSIAN);
     store64(r + RELATION_TYPE, REL_EXCHANGED);
     store64(r + RELATION_PERIOD_START, 651);
     store64(r + RELATION_PERIOD_END, 1258);
 
     # Vedic→Tibetan influence — Samuel (1993): Buddhist transmission
     r = rels4 + RELATION_SIZE;
-    store64(r + RELATION_SOURCE, vedic);
-    store64(r + RELATION_TARGET, tibetan);
+    store64(r + RELATION_SOURCE, CID_VEDIC);
+    store64(r + RELATION_TARGET, CID_TIBETAN);
     store64(r + RELATION_TYPE, REL_INFLUENCED);
     store64(r + RELATION_PERIOD_START, 700);
     store64(r + RELATION_PERIOD_END, 1200);
 
     # Mesopotamian→Egyptian exchange — Bronze Age trade networks
     r = rels4 + RELATION_SIZE * 2;
-    store64(r + RELATION_SOURCE, mesopotamian);
-    store64(r + RELATION_TARGET, egyptian);
+    store64(r + RELATION_SOURCE, CID_MESOPOTAMIAN);
+    store64(r + RELATION_TARGET, CID_EGYPTIAN);
     store64(r + RELATION_TYPE, REL_EXCHANGED);
     store64(r + RELATION_PERIOD_START, 0 - 3000);
     store64(r + RELATION_PERIOD_END, 0 - 1200);
 
     # Byzantine branched from Roman — Mango (1980)
     r = rels4 + RELATION_SIZE * 3;
-    store64(r + RELATION_SOURCE, roman);
-    store64(r + RELATION_TARGET, byzantine);
+    store64(r + RELATION_SOURCE, CID_ROMAN);
+    store64(r + RELATION_TARGET, CID_BYZANTINE);
     store64(r + RELATION_TYPE, REL_BRANCHED_FROM);
     store64(r + RELATION_PERIOD_START, 330);
     store64(r + RELATION_PERIOD_END, 476);
 
     # Chinese→Korean influence — Eckert et al. (1990): Confucianism, writing
     r = rels4 + RELATION_SIZE * 4;
-    store64(r + RELATION_SOURCE, chinese);
-    store64(r + RELATION_TARGET, korean);
+    store64(r + RELATION_SOURCE, CID_CHINESE);
+    store64(r + RELATION_TARGET, CID_KOREAN);
     store64(r + RELATION_TYPE, REL_INFLUENCED);
     store64(r + RELATION_PERIOD_START, 0 - 100);
     store64(r + RELATION_PERIOD_END, 900);
 
     # Jewish↔Arab syncretism — Judeo-Arabic philosophical tradition
     r = rels4 + RELATION_SIZE * 5;
-    store64(r + RELATION_SOURCE, jewish);
-    store64(r + RELATION_TARGET, arab);
+    store64(r + RELATION_SOURCE, CID_JEWISH);
+    store64(r + RELATION_TARGET, CID_ARAB);
     store64(r + RELATION_TYPE, REL_SYNCRETIZED);
     store64(r + RELATION_PERIOD_START, 800);
     store64(r + RELATION_PERIOD_END, 1200);
 
-    hadara_set_relations(arab, rels4, 1);
-    hadara_set_relations(tibetan, rels4 + RELATION_SIZE, 1);
-    hadara_set_relations(mesopotamian, rels4 + RELATION_SIZE * 2, 1);
-    hadara_set_relations(byzantine, rels4 + RELATION_SIZE * 3, 1);
-    hadara_set_relations(korean, rels4 + RELATION_SIZE * 4, 1);
+    hadara_set_relations(CID_ARAB, rels4, 1);
+    hadara_set_relations(CID_TIBETAN, rels4 + RELATION_SIZE, 1);
+    hadara_set_relations(CID_MESOPOTAMIAN, rels4 + RELATION_SIZE * 2, 1);
+    hadara_set_relations(CID_BYZANTINE, rels4 + RELATION_SIZE * 3, 1);
+    hadara_set_relations(CID_KOREAN, rels4 + RELATION_SIZE * 4, 1);
 
     # Jewish: syncretism with Arab
-    hadara_set_relations(jewish, rels4 + RELATION_SIZE * 5, 1);
+    hadara_set_relations(CID_JEWISH, rels4 + RELATION_SIZE * 5, 1);
 
-    # Update Persian: now has original exchange + Arab exchange
+    # Update Persian: original exchange + Arab exchange (built fresh)
     var pe_rels2 = alloc(RELATION_SIZE * 2);
-    memcpy(pe_rels2, rels, RELATION_SIZE);          # original Persian↔Egyptian exchange
-    memcpy(pe_rels2 + RELATION_SIZE, rels4, RELATION_SIZE);  # Arab↔Persian exchange
-    hadara_set_relations(persian, pe_rels2, 2);
+    r = pe_rels2;
+    store64(r + RELATION_SOURCE, CID_PERSIAN);
+    store64(r + RELATION_TARGET, CID_EGYPTIAN);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 0 - 525);
+    store64(r + RELATION_PERIOD_END, 0 - 404);
+    r = pe_rels2 + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, CID_ARAB);
+    store64(r + RELATION_TARGET, CID_PERSIAN);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 651);
+    store64(r + RELATION_PERIOD_END, 1258);
+    hadara_set_relations(CID_PERSIAN, pe_rels2, 2);
 
-    # Update Vedic: exchange with Chinese + influence on Tibetan
+    # Update Vedic: exchange with Chinese + influence on Tibetan (built fresh)
     var ve_rels2 = alloc(RELATION_SIZE * 2);
-    memcpy(ve_rels2, rels3 + RELATION_SIZE, RELATION_SIZE);           # Vedic↔Chinese exchange
-    memcpy(ve_rels2 + RELATION_SIZE, rels4 + RELATION_SIZE, RELATION_SIZE);  # Vedic→Tibetan influence
-    hadara_set_relations(vedic, ve_rels2, 2);
+    r = ve_rels2;
+    store64(r + RELATION_SOURCE, CID_VEDIC);
+    store64(r + RELATION_TARGET, CID_CHINESE);
+    store64(r + RELATION_TYPE, REL_EXCHANGED);
+    store64(r + RELATION_PERIOD_START, 0 - 100);
+    store64(r + RELATION_PERIOD_END, 800);
+    r = ve_rels2 + RELATION_SIZE;
+    store64(r + RELATION_SOURCE, CID_VEDIC);
+    store64(r + RELATION_TARGET, CID_TIBETAN);
+    store64(r + RELATION_TYPE, REL_INFLUENCED);
+    store64(r + RELATION_PERIOD_START, 700);
+    store64(r + RELATION_PERIOD_END, 1200);
+    hadara_set_relations(CID_VEDIC, ve_rels2, 2);
 
+    return 0;
+}
+
+fn hadara_seed_evolution() {
     # ================================================================
     # Evolution tracking — historical status transitions
     # ================================================================
@@ -2773,43 +2908,50 @@ fn hadara_seed() {
     hadara_evo_init();
 
     # Scottish Gaelic: Active → Dormant (Highland Clearances, 1750s) → Revived (20th c.)
-    hadara_evo_record(scottish, 843, 0 - 1, CULTURE_ACTIVE);    # emergence
-    hadara_evo_record(scottish, 1746, CULTURE_ACTIVE, CULTURE_DORMANT);  # Culloden
-    hadara_evo_record(scottish, 1970, CULTURE_DORMANT, CULTURE_REVIVED); # Gaelic revival
+    hadara_evo_record(CID_SCOTTISH, 843, 0 - 1, CULTURE_ACTIVE);    # emergence
+    hadara_evo_record(CID_SCOTTISH, 1746, CULTURE_ACTIVE, CULTURE_DORMANT);  # Culloden
+    hadara_evo_record(CID_SCOTTISH, 1970, CULTURE_DORMANT, CULTURE_REVIVED); # Gaelic revival
 
     # Norse: Active → Historical (end of Viking Age)
-    hadara_evo_record(norse, 793, 0 - 1, CULTURE_ACTIVE);       # Viking Age begins
-    hadara_evo_record(norse, 1066, CULTURE_ACTIVE, CULTURE_HISTORICAL); # Battle of Stamford Bridge
+    hadara_evo_record(CID_NORSE, 793, 0 - 1, CULTURE_ACTIVE);       # Viking Age begins
+    hadara_evo_record(CID_NORSE, 1066, CULTURE_ACTIVE, CULTURE_HISTORICAL); # Battle of Stamford Bridge
 
     # Egyptian: Active → Historical (Arab conquest)
-    hadara_evo_record(egyptian, 0 - 3100, 0 - 1, CULTURE_ACTIVE);
-    hadara_evo_record(egyptian, 641, CULTURE_ACTIVE, CULTURE_HISTORICAL);
+    hadara_evo_record(CID_EGYPTIAN, 0 - 3100, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(CID_EGYPTIAN, 641, CULTURE_ACTIVE, CULTURE_HISTORICAL);
 
     # Greek: Active → Historical (Roman conquest)
-    hadara_evo_record(greek, 0 - 800, 0 - 1, CULTURE_ACTIVE);
-    hadara_evo_record(greek, 0 - 146, CULTURE_ACTIVE, CULTURE_HISTORICAL);
+    hadara_evo_record(CID_GREEK, 0 - 800, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(CID_GREEK, 0 - 146, CULTURE_ACTIVE, CULTURE_HISTORICAL);
 
     # Byzantine: Active → Historical (Ottoman conquest)
-    hadara_evo_record(byzantine, 330, 0 - 1, CULTURE_ACTIVE);
-    hadara_evo_record(byzantine, 1453, CULTURE_ACTIVE, CULTURE_HISTORICAL);
+    hadara_evo_record(CID_BYZANTINE, 330, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(CID_BYZANTINE, 1453, CULTURE_ACTIVE, CULTURE_HISTORICAL);
 
     # Ainu: Active → Dormant (Meiji assimilation) → Revived (modern recognition)
-    hadara_evo_record(ainu, 0 - 1000, 0 - 1, CULTURE_ACTIVE);
-    hadara_evo_record(ainu, 1869, CULTURE_ACTIVE, CULTURE_DORMANT);  # Hokkaido colonization
-    hadara_evo_record(ainu, 2008, CULTURE_DORMANT, CULTURE_REVIVED); # official recognition
+    hadara_evo_record(CID_AINU, 0 - 1000, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(CID_AINU, 1869, CULTURE_ACTIVE, CULTURE_DORMANT);  # Hokkaido colonization
+    hadara_evo_record(CID_AINU, 2008, CULTURE_DORMANT, CULTURE_REVIVED); # official recognition
 
     # Aztec: Active → Historical (Spanish conquest)
-    hadara_evo_record(aztec, 1325, 0 - 1, CULTURE_ACTIVE);
-    hadara_evo_record(aztec, 1521, CULTURE_ACTIVE, CULTURE_HISTORICAL);
+    hadara_evo_record(CID_AZTEC, 1325, 0 - 1, CULTURE_ACTIVE);
+    hadara_evo_record(CID_AZTEC, 1521, CULTURE_ACTIVE, CULTURE_HISTORICAL);
 
     # ================================================================
     # Relation descriptions — seed desc_ptr/desc_len on existing relations
     # ================================================================
 
-    # We can't easily retrofit descriptions onto already-stored relations
-    # because they're allocated inline. Instead, add a lookup function.
-    # (Relation descriptions are looked up via hadara_relation_desc below)
+    return 0;
+}
 
+fn hadara_seed() {
+    hadara_seed_cultures();
+    hadara_seed_subentities();
+    hadara_seed_subentities_1b();
+    hadara_seed_subentities_2();
+    hadara_seed_values();
+    hadara_seed_relations();
+    hadara_seed_evolution();
     return hadara_count;
 }
 
