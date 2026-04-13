@@ -536,126 +536,126 @@ fn http_get_param(path, name) {
 fn json_stats() {
     var sb = str_builder_new();
     str_builder_add_cstr(sb, "{\"cultures\":");
-    str_builder_add_int(sb, hadara_count);
-    str_builder_add_cstr(sb, ",\"active\":");
-    str_builder_add_int(sb, hadara_count_by_status(CULTURE_ACTIVE));
-    str_builder_add_cstr(sb, ",\"historical\":");
-    str_builder_add_int(sb, hadara_count_by_status(CULTURE_HISTORICAL));
-    str_builder_add_cstr(sb, ",\"revived\":");
-    str_builder_add_int(sb, hadara_count_by_status(CULTURE_REVIVED));
+        str_builder_add_int(sb, hadara_count);
+        str_builder_add_cstr(sb, ",\"active\":");
+        str_builder_add_int(sb, hadara_count_by_status(CULTURE_ACTIVE));
+        str_builder_add_cstr(sb, ",\"historical\":");
+        str_builder_add_int(sb, hadara_count_by_status(CULTURE_HISTORICAL));
+        str_builder_add_cstr(sb, ",\"revived\":");
+        str_builder_add_int(sb, hadara_count_by_status(CULTURE_REVIVED));
 
-    # totals
-    var tp = 0;
-    var ta = 0;
-    var tf = 0;
-    var tr = 0;
-    var i = 0;
-    while (i < hadara_count) {
-        var c = hadara_get(i);
-        tp = tp + culture_practices_count(c);
-        ta = ta + culture_art_forms_count(c);
-        tf = tf + culture_figures_count(c);
-        tr = tr + culture_relations_count(c);
-        i = i + 1;
-    }
-    str_builder_add_cstr(sb, ",\"practices\":");
-    str_builder_add_int(sb, tp);
-    str_builder_add_cstr(sb, ",\"art_forms\":");
-    str_builder_add_int(sb, ta);
-    str_builder_add_cstr(sb, ",\"figures\":");
-    str_builder_add_int(sb, tf);
-    str_builder_add_cstr(sb, ",\"relations\":");
-    str_builder_add_int(sb, tr);
-    str_builder_add_cstr(sb, "}");
+        # totals
+        var tp = 0;
+        var ta = 0;
+        var tf = 0;
+        var tr = 0;
+        var i = 0;
+        while (i < hadara_count) {
+            var c = hadara_get(i);
+            tp = tp + culture_practices_count(c);
+            ta = ta + culture_art_forms_count(c);
+            tf = tf + culture_figures_count(c);
+            tr = tr + culture_relations_count(c);
+            i = i + 1;
+        }
+        str_builder_add_cstr(sb, ",\"practices\":");
+        str_builder_add_int(sb, tp);
+        str_builder_add_cstr(sb, ",\"art_forms\":");
+        str_builder_add_int(sb, ta);
+        str_builder_add_cstr(sb, ",\"figures\":");
+        str_builder_add_int(sb, tf);
+        str_builder_add_cstr(sb, ",\"relations\":");
+        str_builder_add_int(sb, tr);
+        str_builder_add_cstr(sb, "}");
     return str_builder_build(sb);
 }
 
 fn json_culture(c) {
     var sb = str_builder_new();
     str_builder_add_cstr(sb, "{\"id\":");
-    str_builder_add_int(sb, culture_id(c));
-    str_builder_add_cstr(sb, ",\"name\":\"");
-    str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
-    str_builder_add_cstr(sb, "\"");
-
-    var eptr = load64(c + CULTURE_ENDONYM_PTR);
-    var elen = load64(c + CULTURE_ENDONYM_LEN);
-    if (eptr != 0) {
-        str_builder_add_cstr(sb, ",\"endonym\":\"");
-        str_builder_add_buf(sb, eptr, elen);
+        str_builder_add_int(sb, culture_id(c));
+        str_builder_add_cstr(sb, ",\"name\":\"");
+        str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
         str_builder_add_cstr(sb, "\"");
-    }
 
-    str_builder_add_cstr(sb, ",\"status\":\"");
-    var s = culture_status(c);
-    if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
-    elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
-    elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
-    elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
-    elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
-    str_builder_add_cstr(sb, "\"");
-
-    str_builder_add_cstr(sb, ",\"time_start\":");
-    str_builder_add_int(sb, culture_time_start(c));
-    str_builder_add_cstr(sb, ",\"time_end\":");
-    str_builder_add_int(sb, culture_time_end(c));
-
-    # Practices
-    var pc = culture_practices_count(c);
-    if (pc > 0) {
-        str_builder_add_cstr(sb, ",\"practices\":[");
-        var pptr = culture_practices_ptr(c);
-        var pi = 0;
-        while (pi < pc) {
-            var p = pptr + pi * PRACTICE_SIZE;
-            if (pi > 0) { str_builder_add_cstr(sb, ","); }
-            str_builder_add_cstr(sb, "{\"name\":\"");
-            str_builder_add_buf(sb, practice_name_ptr(p), practice_name_len(p));
-            str_builder_add_cstr(sb, "\",\"sacred\":");
-            str_builder_add_int(sb, practice_is_sacred(p));
-            str_builder_add_cstr(sb, "}");
-            pi = pi + 1;
+        var eptr = load64(c + CULTURE_ENDONYM_PTR);
+        var elen = load64(c + CULTURE_ENDONYM_LEN);
+        if (eptr != 0) {
+            str_builder_add_cstr(sb, ",\"endonym\":\"");
+            str_builder_add_buf(sb, eptr, elen);
+            str_builder_add_cstr(sb, "\"");
         }
-        str_builder_add_cstr(sb, "]");
-    }
 
-    # Art forms
-    var ac = culture_art_forms_count(c);
-    if (ac > 0) {
-        str_builder_add_cstr(sb, ",\"art_forms\":[");
-        var aptr = culture_art_forms_ptr(c);
-        var ai = 0;
-        while (ai < ac) {
-            var af = aptr + ai * ART_FORM_SIZE;
-            if (ai > 0) { str_builder_add_cstr(sb, ","); }
-            str_builder_add_cstr(sb, "{\"name\":\"");
-            str_builder_add_buf(sb, art_form_name_ptr(af), art_form_name_len(af));
-            str_builder_add_cstr(sb, "\"}");
-            ai = ai + 1;
+        str_builder_add_cstr(sb, ",\"status\":\"");
+        var s = culture_status(c);
+        if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
+        elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
+        elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
+        elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
+        elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
+        str_builder_add_cstr(sb, "\"");
+
+        str_builder_add_cstr(sb, ",\"time_start\":");
+        str_builder_add_int(sb, culture_time_start(c));
+        str_builder_add_cstr(sb, ",\"time_end\":");
+        str_builder_add_int(sb, culture_time_end(c));
+
+        # Practices
+        var pc = culture_practices_count(c);
+        if (pc > 0) {
+            str_builder_add_cstr(sb, ",\"practices\":[");
+            var pptr = culture_practices_ptr(c);
+            var pi = 0;
+            while (pi < pc) {
+                var p = pptr + pi * PRACTICE_SIZE;
+                if (pi > 0) { str_builder_add_cstr(sb, ","); }
+                str_builder_add_cstr(sb, "{\"name\":\"");
+                    str_builder_add_buf(sb, practice_name_ptr(p), practice_name_len(p));
+                    str_builder_add_cstr(sb, "\",\"sacred\":");
+                    str_builder_add_int(sb, practice_is_sacred(p));
+                    str_builder_add_cstr(sb, "}");
+                pi = pi + 1;
+            }
+            str_builder_add_cstr(sb, "]");
         }
-        str_builder_add_cstr(sb, "]");
-    }
 
-    # Figures
-    var fc = culture_figures_count(c);
-    if (fc > 0) {
-        str_builder_add_cstr(sb, ",\"figures\":[");
-        var fptr = culture_figures_ptr(c);
-        var fi = 0;
-        while (fi < fc) {
-            var fig = fptr + fi * FIGURE_SIZE;
-            if (fi > 0) { str_builder_add_cstr(sb, ","); }
-            str_builder_add_cstr(sb, "{\"name\":\"");
-            str_builder_add_buf(sb, figure_name_ptr(fig), figure_name_len(fig));
-            str_builder_add_cstr(sb, "\",\"role\":\"");
-            str_builder_add_buf(sb, figure_role_ptr(fig), load64(fig + FIGURE_ROLE_LEN));
-            str_builder_add_cstr(sb, "\"}");
-            fi = fi + 1;
+        # Art forms
+        var ac = culture_art_forms_count(c);
+        if (ac > 0) {
+            str_builder_add_cstr(sb, ",\"art_forms\":[");
+            var aptr = culture_art_forms_ptr(c);
+            var ai = 0;
+            while (ai < ac) {
+                var af = aptr + ai * ART_FORM_SIZE;
+                if (ai > 0) { str_builder_add_cstr(sb, ","); }
+                str_builder_add_cstr(sb, "{\"name\":\"");
+                    str_builder_add_buf(sb, art_form_name_ptr(af), art_form_name_len(af));
+                    str_builder_add_cstr(sb, "\"}");
+                ai = ai + 1;
+            }
+            str_builder_add_cstr(sb, "]");
         }
-        str_builder_add_cstr(sb, "]");
-    }
 
-    str_builder_add_cstr(sb, "}");
+        # Figures
+        var fc = culture_figures_count(c);
+        if (fc > 0) {
+            str_builder_add_cstr(sb, ",\"figures\":[");
+            var fptr = culture_figures_ptr(c);
+            var fi = 0;
+            while (fi < fc) {
+                var fig = fptr + fi * FIGURE_SIZE;
+                if (fi > 0) { str_builder_add_cstr(sb, ","); }
+                str_builder_add_cstr(sb, "{\"name\":\"");
+                    str_builder_add_buf(sb, figure_name_ptr(fig), figure_name_len(fig));
+                    str_builder_add_cstr(sb, "\",\"role\":\"");
+                    str_builder_add_buf(sb, figure_role_ptr(fig), load64(fig + FIGURE_ROLE_LEN));
+                    str_builder_add_cstr(sb, "\"}");
+                fi = fi + 1;
+            }
+            str_builder_add_cstr(sb, "]");
+        }
+
+        str_builder_add_cstr(sb, "}");
     return str_builder_build(sb);
 }
 
@@ -667,17 +667,17 @@ fn json_list() {
         var c = hadara_get(i);
         if (i > 0) { str_builder_add_cstr(sb, ","); }
         str_builder_add_cstr(sb, "{\"id\":");
-        str_builder_add_int(sb, i);
-        str_builder_add_cstr(sb, ",\"name\":\"");
-        str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
-        str_builder_add_cstr(sb, "\",\"status\":\"");
-        var s = culture_status(c);
-        if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
-        elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
-        elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
-        elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
-        elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
-        str_builder_add_cstr(sb, "\"}");
+            str_builder_add_int(sb, i);
+            str_builder_add_cstr(sb, ",\"name\":\"");
+            str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
+            str_builder_add_cstr(sb, "\",\"status\":\"");
+            var s = culture_status(c);
+            if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
+            elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
+            elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
+            elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
+            elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
+            str_builder_add_cstr(sb, "\"}");
         i = i + 1;
     }
     str_builder_add_cstr(sb, "]");
@@ -689,57 +689,57 @@ fn json_at_year(year) {
     var n = hadara_coexisting_at(year, buf, REGISTRY_MAX);
     var sb = str_builder_new();
     str_builder_add_cstr(sb, "{\"year\":");
-    str_builder_add_int(sb, year);
-    str_builder_add_cstr(sb, ",\"count\":");
-    str_builder_add_int(sb, n);
-    str_builder_add_cstr(sb, ",\"cultures\":[");
-    var i = 0;
-    while (i < n) {
-        var cid = load64(buf + i * 8);
-        var c = hadara_get(cid);
-        if (i > 0) { str_builder_add_cstr(sb, ","); }
-        str_builder_add_cstr(sb, "{\"id\":");
-        str_builder_add_int(sb, cid);
-        str_builder_add_cstr(sb, ",\"name\":\"");
-        str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
-        str_builder_add_cstr(sb, "\"}");
-        i = i + 1;
-    }
-    str_builder_add_cstr(sb, "]}");
+        str_builder_add_int(sb, year);
+        str_builder_add_cstr(sb, ",\"count\":");
+        str_builder_add_int(sb, n);
+        str_builder_add_cstr(sb, ",\"cultures\":[");
+        var i = 0;
+        while (i < n) {
+            var cid = load64(buf + i * 8);
+            var c = hadara_get(cid);
+            if (i > 0) { str_builder_add_cstr(sb, ","); }
+            str_builder_add_cstr(sb, "{\"id\":");
+                str_builder_add_int(sb, cid);
+                str_builder_add_cstr(sb, ",\"name\":\"");
+                str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
+                str_builder_add_cstr(sb, "\"}");
+            i = i + 1;
+        }
+        str_builder_add_cstr(sb, "]}");
     return str_builder_build(sb);
 }
 
 fn json_search(query, qlen) {
     var sb = str_builder_new();
     str_builder_add_cstr(sb, "{\"query\":\"");
-    str_builder_add_buf(sb, query, qlen);
-    str_builder_add_cstr(sb, "\",\"results\":[");
-    var first = 1;
-    var i = 0;
-    while (i < hadara_count) {
-        var c = hadara_get(i);
-        var nptr = culture_name_ptr(c);
-        var nlen = culture_name_len(c);
-        var match = 0;
-        if (qlen <= nlen) {
-            var j = 0;
-            while (j <= nlen - qlen) {
-                if (memeq(nptr + j, query, qlen) == 1) { match = 1; j = nlen; }
-                j = j + 1;
+        str_builder_add_buf(sb, query, qlen);
+        str_builder_add_cstr(sb, "\",\"results\":[");
+        var first = 1;
+        var i = 0;
+        while (i < hadara_count) {
+            var c = hadara_get(i);
+            var nptr = culture_name_ptr(c);
+            var nlen = culture_name_len(c);
+            var match = 0;
+            if (qlen <= nlen) {
+                var j = 0;
+                while (j <= nlen - qlen) {
+                    if (memeq(nptr + j, query, qlen) == 1) { match = 1; j = nlen; }
+                    j = j + 1;
+                }
             }
+            if (match == 1) {
+                if (first == 0) { str_builder_add_cstr(sb, ","); }
+                str_builder_add_cstr(sb, "{\"id\":");
+                    str_builder_add_int(sb, i);
+                    str_builder_add_cstr(sb, ",\"name\":\"");
+                    str_builder_add_buf(sb, nptr, nlen);
+                    str_builder_add_cstr(sb, "\"}");
+                first = 0;
+            }
+            i = i + 1;
         }
-        if (match == 1) {
-            if (first == 0) { str_builder_add_cstr(sb, ","); }
-            str_builder_add_cstr(sb, "{\"id\":");
-            str_builder_add_int(sb, i);
-            str_builder_add_cstr(sb, ",\"name\":\"");
-            str_builder_add_buf(sb, nptr, nlen);
-            str_builder_add_cstr(sb, "\"}");
-            first = 0;
-        }
-        i = i + 1;
-    }
-    str_builder_add_cstr(sb, "]}");
+        str_builder_add_cstr(sb, "]}");
     return str_builder_build(sb);
 }
 
@@ -750,21 +750,21 @@ fn json_lineage(culture_id) {
     var n = hadara_lineage(culture_id, buf, 32);
     var sb = str_builder_new();
     str_builder_add_cstr(sb, "{\"culture_id\":");
-    str_builder_add_int(sb, culture_id);
-    str_builder_add_cstr(sb, ",\"ancestors\":[");
-    var i = 0;
-    while (i < n) {
-        var aid = load64(buf + i * 8);
-        var ac = hadara_get(aid);
-        if (i > 0) { str_builder_add_cstr(sb, ","); }
-        str_builder_add_cstr(sb, "{\"id\":");
-        str_builder_add_int(sb, aid);
-        str_builder_add_cstr(sb, ",\"name\":\"");
-        str_builder_add_buf(sb, culture_name_ptr(ac), culture_name_len(ac));
-        str_builder_add_cstr(sb, "\"}");
-        i = i + 1;
-    }
-    str_builder_add_cstr(sb, "]}");
+        str_builder_add_int(sb, culture_id);
+        str_builder_add_cstr(sb, ",\"ancestors\":[");
+        var i = 0;
+        while (i < n) {
+            var aid = load64(buf + i * 8);
+            var ac = hadara_get(aid);
+            if (i > 0) { str_builder_add_cstr(sb, ","); }
+            str_builder_add_cstr(sb, "{\"id\":");
+                str_builder_add_int(sb, aid);
+                str_builder_add_cstr(sb, ",\"name\":\"");
+                str_builder_add_buf(sb, culture_name_ptr(ac), culture_name_len(ac));
+                str_builder_add_cstr(sb, "\"}");
+            i = i + 1;
+        }
+        str_builder_add_cstr(sb, "]}");
     return str_builder_build(sb);
 }
 
@@ -775,21 +775,21 @@ fn json_influence(culture_id) {
     var n = hadara_influence_chain(culture_id, buf, 32);
     var sb = str_builder_new();
     str_builder_add_cstr(sb, "{\"culture_id\":");
-    str_builder_add_int(sb, culture_id);
-    str_builder_add_cstr(sb, ",\"influenced\":[");
-    var i = 0;
-    while (i < n) {
-        var tid = load64(buf + i * 8);
-        var tc = hadara_get(tid);
-        if (i > 0) { str_builder_add_cstr(sb, ","); }
-        str_builder_add_cstr(sb, "{\"id\":");
-        str_builder_add_int(sb, tid);
-        str_builder_add_cstr(sb, ",\"name\":\"");
-        str_builder_add_buf(sb, culture_name_ptr(tc), culture_name_len(tc));
-        str_builder_add_cstr(sb, "\"}");
-        i = i + 1;
-    }
-    str_builder_add_cstr(sb, "]}");
+        str_builder_add_int(sb, culture_id);
+        str_builder_add_cstr(sb, ",\"influenced\":[");
+        var i = 0;
+        while (i < n) {
+            var tid = load64(buf + i * 8);
+            var tc = hadara_get(tid);
+            if (i > 0) { str_builder_add_cstr(sb, ","); }
+            str_builder_add_cstr(sb, "{\"id\":");
+                str_builder_add_int(sb, tid);
+                str_builder_add_cstr(sb, ",\"name\":\"");
+                str_builder_add_buf(sb, culture_name_ptr(tc), culture_name_len(tc));
+                str_builder_add_cstr(sb, "\"}");
+            i = i + 1;
+        }
+        str_builder_add_cstr(sb, "]}");
     return str_builder_build(sb);
 }
 
@@ -894,20 +894,20 @@ fn http_route(cfd, path) {
         var en = hadara_evo_for(id, ebuf, 32);
         var esb = str_builder_new();
         str_builder_add_cstr(esb, "{\"culture_id\":");
-        str_builder_add_int(esb, id);
-        str_builder_add_cstr(esb, ",\"transitions\":[");
-        for (var ei = 0; ei < en; ei = ei + 1) {
-            var et = load64(ebuf + ei * 8);
-            if (ei > 0) { str_builder_add_cstr(esb, ","); }
-            str_builder_add_cstr(esb, "{\"year\":");
-            str_builder_add_int(esb, trans_year(et));
-            str_builder_add_cstr(esb, ",\"old\":");
-            str_builder_add_int(esb, trans_old(et));
-            str_builder_add_cstr(esb, ",\"new\":");
-            str_builder_add_int(esb, trans_new(et));
-            str_builder_add_cstr(esb, "}");
-        }
-        str_builder_add_cstr(esb, "]}");
+            str_builder_add_int(esb, id);
+            str_builder_add_cstr(esb, ",\"transitions\":[");
+            for (var ei = 0; ei < en; ei = ei + 1) {
+                var et = load64(ebuf + ei * 8);
+                if (ei > 0) { str_builder_add_cstr(esb, ","); }
+                str_builder_add_cstr(esb, "{\"year\":");
+                    str_builder_add_int(esb, trans_year(et));
+                    str_builder_add_cstr(esb, ",\"old\":");
+                    str_builder_add_int(esb, trans_old(et));
+                    str_builder_add_cstr(esb, ",\"new\":");
+                    str_builder_add_int(esb, trans_new(et));
+                    str_builder_add_cstr(esb, "}");
+            }
+            str_builder_add_cstr(esb, "]}");
         var ebody = str_builder_build(esb);
         return http_ok(cfd, str_data(ebody), str_len(ebody));
     }

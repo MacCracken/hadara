@@ -128,39 +128,39 @@ fn hadara_context_json(culture_id) {
 
     var sb = str_builder_new();
     str_builder_add_cstr(sb, "{\"culture\":\"");
-    str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
-    str_builder_add_cstr(sb, "\",\"status\":\"");
-    var s = culture_status(c);
-    if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
-    elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
-    elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
-    elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
-    elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
-    str_builder_add_cstr(sb, "\"");
+        str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
+        str_builder_add_cstr(sb, "\",\"status\":\"");
+        var s = culture_status(c);
+        if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
+        elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
+        elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
+        elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
+        elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
+        str_builder_add_cstr(sb, "\"");
 
-    # Values
-    var vc = culture_values_count(c);
-    if (vc > 0) {
-        str_builder_add_cstr(sb, ",\"values\":[");
-        var vp = culture_values_ptr(c);
-        for (var i = 0; i < vc; i = i + 1) {
-            if (i > 0) { str_builder_add_cstr(sb, ","); }
-            str_builder_add_cstr(sb, "\"");
-            str_builder_add_cstr(sb, load64(vp + i * 8));
-            str_builder_add_cstr(sb, "\"");
+        # Values
+        var vc = culture_values_count(c);
+        if (vc > 0) {
+            str_builder_add_cstr(sb, ",\"values\":[");
+            var vp = culture_values_ptr(c);
+            for (var i = 0; i < vc; i = i + 1) {
+                if (i > 0) { str_builder_add_cstr(sb, ","); }
+                str_builder_add_cstr(sb, "\"");
+                str_builder_add_cstr(sb, load64(vp + i * 8));
+                str_builder_add_cstr(sb, "\"");
+            }
+            str_builder_add_cstr(sb, "]");
         }
-        str_builder_add_cstr(sb, "]");
-    }
 
-    str_builder_add_cstr(sb, ",\"formality\":");
-    str_builder_add_int(sb, culture_formality(c));
-    str_builder_add_cstr(sb, ",\"expressiveness\":");
-    str_builder_add_int(sb, culture_expressiveness(c));
-    str_builder_add_cstr(sb, ",\"individualism\":");
-    str_builder_add_int(sb, culture_individualism(c));
-    str_builder_add_cstr(sb, ",\"directness\":");
-    str_builder_add_int(sb, culture_directness(c));
-    str_builder_add_cstr(sb, "}");
+        str_builder_add_cstr(sb, ",\"formality\":");
+        str_builder_add_int(sb, culture_formality(c));
+        str_builder_add_cstr(sb, ",\"expressiveness\":");
+        str_builder_add_int(sb, culture_expressiveness(c));
+        str_builder_add_cstr(sb, ",\"individualism\":");
+        str_builder_add_int(sb, culture_individualism(c));
+        str_builder_add_cstr(sb, ",\"directness\":");
+        str_builder_add_int(sb, culture_directness(c));
+        str_builder_add_cstr(sb, "}");
     return str_builder_build(sb);
 }
 
@@ -199,31 +199,31 @@ fn hadara_ask(culture_id, question, hoosh_port) {
     # Build JSON body for /v1/chat/completions
     var sb = str_builder_new();
     str_builder_add_cstr(sb, "{\"model\":\"default\",\"messages\":[");
-    str_builder_add_cstr(sb, "{\"role\":\"system\",\"content\":\"");
-    # Escape the context string for JSON (replace newlines with \\n, quotes with \\")
-    var ci = 0;
-    while (load8(ctx_cstr + ci) != 0) {
-        var ch = load8(ctx_cstr + ci);
-        if (ch == 10) { str_builder_add_cstr(sb, "\\n"); }
-        elif (ch == 13) { }  # skip CR
-        elif (ch == 34) { str_builder_add_cstr(sb, "\\\""); }
-        elif (ch == 92) { str_builder_add_cstr(sb, "\\\\"); }
-        else { str_builder_add_byte(sb, ch); }
-        ci = ci + 1;
-    }
-    str_builder_add_cstr(sb, "\"},");
-    str_builder_add_cstr(sb, "{\"role\":\"user\",\"content\":\"");
-    # Escape question
-    var qi = 0;
-    while (load8(question + qi) != 0) {
-        var ch = load8(question + qi);
-        if (ch == 34) { str_builder_add_cstr(sb, "\\\""); }
-        elif (ch == 92) { str_builder_add_cstr(sb, "\\\\"); }
-        elif (ch == 10) { str_builder_add_cstr(sb, "\\n"); }
-        else { str_builder_add_byte(sb, ch); }
-        qi = qi + 1;
-    }
-    str_builder_add_cstr(sb, "\"}]}");
+        str_builder_add_cstr(sb, "{\"role\":\"system\",\"content\":\"");
+            # Escape the context string for JSON (replace newlines with \\n, quotes with \\")
+            var ci = 0;
+            while (load8(ctx_cstr + ci) != 0) {
+                var ch = load8(ctx_cstr + ci);
+                if (ch == 10) { str_builder_add_cstr(sb, "\\n"); }
+                elif (ch == 13) { }  # skip CR
+                elif (ch == 34) { str_builder_add_cstr(sb, "\\\""); }
+                elif (ch == 92) { str_builder_add_cstr(sb, "\\\\"); }
+                else { str_builder_add_byte(sb, ch); }
+                ci = ci + 1;
+            }
+            str_builder_add_cstr(sb, "\"},");
+        str_builder_add_cstr(sb, "{\"role\":\"user\",\"content\":\"");
+            # Escape question
+            var qi = 0;
+            while (load8(question + qi) != 0) {
+                var ch = load8(question + qi);
+                if (ch == 34) { str_builder_add_cstr(sb, "\\\""); }
+                elif (ch == 92) { str_builder_add_cstr(sb, "\\\\"); }
+                elif (ch == 10) { str_builder_add_cstr(sb, "\\n"); }
+                else { str_builder_add_byte(sb, ch); }
+                qi = qi + 1;
+            }
+            str_builder_add_cstr(sb, "\"}]}");
     var body = str_builder_build(sb);
     var body_cstr = to_cstr(body);
     var body_len = str_len(body);
