@@ -942,6 +942,55 @@ fn main() {
     assert_eq(desc, 0, "unknown relation has no description");
 
     prints("part 10: relation descriptions — PASS\n");
+
+    # ================================================================
+    # Part 11: Hoosh integration — context builder
+    # ================================================================
+
+    # Build context for Japanese culture
+    var jp_ctx = hadara_context(4);
+    assert_neq(jp_ctx, 0, "japanese context not null");
+    var jp_ctx_len = str_len(jp_ctx);
+    var ctx_long = 0;
+    if (jp_ctx_len > 100) { ctx_long = 1; }
+    assert_eq(ctx_long, 1, "japanese context > 100 chars");
+
+    # Build context for Hip-Hop
+    var hp_ctx = hadara_context(9);
+    assert_neq(hp_ctx, 0, "hiphop context not null");
+
+    # Build context for unknown culture
+    var unk_ctx = hadara_context(999);
+    assert_eq(unk_ctx, 0, "unknown culture context is null");
+
+    # JSON context
+    var jp_json = hadara_context_json(4);
+    assert_neq(jp_json, 0, "japanese json context not null");
+
+    # Verify the context contains expected data
+    # The context should mention "Japanese" somewhere
+    var jp_data = str_data(jp_ctx);
+    var found_jp = 0;
+    var ji = 0;
+    while (ji < jp_ctx_len - 8) {
+        if (memeq(jp_data + ji, "Japanese", 8) == 1) { found_jp = 1; ji = jp_ctx_len; }
+        ji = ji + 1;
+    }
+    assert_eq(found_jp, 1, "japanese context contains 'Japanese'");
+
+    # Context for a culture with values should include them
+    var ve_ctx = hadara_context(2);
+    var ve_data = str_data(ve_ctx);
+    var ve_len = str_len(ve_ctx);
+    var found_dharma = 0;
+    var di = 0;
+    while (di < ve_len - 6) {
+        if (memeq(ve_data + di, "Dharma", 6) == 1) { found_dharma = 1; di = ve_len; }
+        di = di + 1;
+    }
+    assert_eq(found_dharma, 1, "vedic context contains 'Dharma'");
+
+    prints("part 11: hoosh integration — PASS\n");
     prints("hadara: all tests passed\n");
     return 0;
 }

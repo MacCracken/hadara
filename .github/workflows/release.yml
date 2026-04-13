@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 env:
-  CYRIUS_VERSION: "3.6.3"
+  CYRIUS_VERSION: "3.7.0"
 
 jobs:
   # ── CI Gate (must pass before release) ──
@@ -16,7 +16,7 @@ jobs:
     name: CI Gate
     uses: ./.github/workflows/ci.yml
 
-  # ── Build release binary ──
+  # ── Build release ──
   build:
     name: Build Release
     needs: [ci]
@@ -50,7 +50,7 @@ jobs:
           chmod +x "$HOME/.cyrius/bin/"* 2>/dev/null || true
           echo "$HOME/.cyrius/bin" >> $GITHUB_PATH
 
-      - name: Build x86_64 binary
+      - name: Build hadara binary
         run: |
           mkdir -p build
           cat src/main.cyr | cc3 > build/hadara 2>/tmp/cc3_stderr
@@ -64,10 +64,9 @@ jobs:
 
       - name: Run tests
         run: |
-          cat tests/hadara.tcyr | cc3 > build/test 2>&1
-          chmod +x build/test
-          ./build/test 2>&1 | tee /tmp/test_output
-          grep -q "all tests passed" /tmp/test_output
+          cat tests/hadara.tcyr | cc3 > /tmp/hadara_test 2>/dev/null
+          chmod +x /tmp/hadara_test
+          /tmp/hadara_test 2>&1 | grep -q "all tests passed"
           echo "PASS: test suite"
 
       - name: Extract changelog
@@ -94,7 +93,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-binaries
+          name: release-artifacts
           path: |
             hadara-x86_64
             hadara-*-src.tar.gz
@@ -113,14 +112,13 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: release-binaries
+          name: release-artifacts
 
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           name: "hadara ${{ github.ref_name }}"
           body_path: release-body.md
-          prerelease: ${{ startsWith(github.ref_name, '0.') }}
           files: |
             hadara-x86_64
             hadara-${{ github.ref_name }}-src.tar.gz

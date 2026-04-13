@@ -1,0 +1,282 @@
+# hoosh.cyr -- LLM integration via hoosh gateway
+#
+# Two modes:
+#   1. Context builder — hadara_context(culture_id) returns a system prompt
+#      string with cultural data. Callers pass this to hoosh themselves.
+#   2. Ask endpoint — hadara_ask(culture_id, question, hoosh_port) POSTs to
+#      hoosh /v1/chat/completions with cultural context and returns the response.
+#
+# Requires: lib/net.cyr, lib/syscalls.cyr, lib/tagged.cyr for HTTP client mode.
+
+# ================================================================
+# Context Builder (approach 1 — library function, no network)
+# ================================================================
+
+# Build a cultural context string for a given culture.
+# Returns a Str (fat string) suitable for use as LLM system prompt enrichment.
+fn hadara_context(culture_id) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "Cultural context for ");
+    str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
+    str_builder_add_cstr(sb, ":\n");
+
+    # Endonym
+    var eptr = load64(c + CULTURE_ENDONYM_PTR);
+    if (eptr != 0) {
+        str_builder_add_cstr(sb, "Endonym: ");
+        str_builder_add_buf(sb, eptr, load64(c + CULTURE_ENDONYM_LEN));
+        str_builder_add_cstr(sb, "\n");
+    }
+
+    # Region + Language
+    var rptr = culture_region_ptr(c);
+    if (rptr != 0) {
+        str_builder_add_cstr(sb, "Region: ");
+        str_builder_add_buf(sb, rptr, culture_region_len(c));
+        str_builder_add_cstr(sb, "\n");
+    }
+    var lptr = culture_language_ptr(c);
+    if (lptr != 0) {
+        str_builder_add_cstr(sb, "Language: ");
+        str_builder_add_buf(sb, lptr, culture_language_len(c));
+        str_builder_add_cstr(sb, "\n");
+    }
+
+    # Status
+    str_builder_add_cstr(sb, "Status: ");
+    var s = culture_status(c);
+    if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "Active (living culture)"); }
+    elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "Dormant"); }
+    elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "Revived"); }
+    elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "Historical"); }
+    elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "Extinct"); }
+    str_builder_add_cstr(sb, "\n");
+
+    # Values
+    var vc = culture_values_count(c);
+    if (vc > 0) {
+        str_builder_add_cstr(sb, "Core values: ");
+        var vp = culture_values_ptr(c);
+        for (var i = 0; i < vc; i = i + 1) {
+            if (i > 0) { str_builder_add_cstr(sb, ", "); }
+            var vstr = load64(vp + i * 8);
+            str_builder_add_cstr(sb, vstr);
+        }
+        str_builder_add_cstr(sb, "\n");
+    }
+
+    # Display dimensions
+    str_builder_add_cstr(sb, "Communication style: formality=");
+    str_builder_add_int(sb, culture_formality(c));
+    str_builder_add_cstr(sb, "/10, expressiveness=");
+    str_builder_add_int(sb, culture_expressiveness(c));
+    str_builder_add_cstr(sb, "/10, individualism=");
+    str_builder_add_int(sb, culture_individualism(c));
+    str_builder_add_cstr(sb, "/10, directness=");
+    str_builder_add_int(sb, culture_directness(c));
+    str_builder_add_cstr(sb, "/10\n");
+
+    # Practices
+    var pc = culture_practices_count(c);
+    if (pc > 0) {
+        str_builder_add_cstr(sb, "Key practices: ");
+        var pp = culture_practices_ptr(c);
+        for (var i = 0; i < pc; i = i + 1) {
+            if (i > 0) { str_builder_add_cstr(sb, ", "); }
+            var p = pp + i * PRACTICE_SIZE;
+            str_builder_add_buf(sb, practice_name_ptr(p), practice_name_len(p));
+        }
+        str_builder_add_cstr(sb, "\n");
+    }
+
+    # Art forms
+    var ac = culture_art_forms_count(c);
+    if (ac > 0) {
+        str_builder_add_cstr(sb, "Art forms: ");
+        var ap = culture_art_forms_ptr(c);
+        for (var i = 0; i < ac; i = i + 1) {
+            if (i > 0) { str_builder_add_cstr(sb, ", "); }
+            var af = ap + i * ART_FORM_SIZE;
+            str_builder_add_buf(sb, art_form_name_ptr(af), art_form_name_len(af));
+        }
+        str_builder_add_cstr(sb, "\n");
+    }
+
+    # Key figures
+    var fc = culture_figures_count(c);
+    if (fc > 0) {
+        str_builder_add_cstr(sb, "Key figures: ");
+        var fp = culture_figures_ptr(c);
+        for (var i = 0; i < fc; i = i + 1) {
+            if (i > 0) { str_builder_add_cstr(sb, ", "); }
+            var fig = fp + i * FIGURE_SIZE;
+            str_builder_add_buf(sb, figure_name_ptr(fig), figure_name_len(fig));
+        }
+        str_builder_add_cstr(sb, "\n");
+    }
+
+    return str_builder_build(sb);
+}
+
+# Build a compact JSON context object for a culture (for embedding in API calls)
+fn hadara_context_json(culture_id) {
+    var c = hadara_get(culture_id);
+    if (c == 0) { return 0; }
+
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "{\"culture\":\"");
+    str_builder_add_buf(sb, culture_name_ptr(c), culture_name_len(c));
+    str_builder_add_cstr(sb, "\",\"status\":\"");
+    var s = culture_status(c);
+    if (s == CULTURE_ACTIVE) { str_builder_add_cstr(sb, "active"); }
+    elif (s == CULTURE_DORMANT) { str_builder_add_cstr(sb, "dormant"); }
+    elif (s == CULTURE_REVIVED) { str_builder_add_cstr(sb, "revived"); }
+    elif (s == CULTURE_HISTORICAL) { str_builder_add_cstr(sb, "historical"); }
+    elif (s == CULTURE_EXTINCT) { str_builder_add_cstr(sb, "extinct"); }
+    str_builder_add_cstr(sb, "\"");
+
+    # Values
+    var vc = culture_values_count(c);
+    if (vc > 0) {
+        str_builder_add_cstr(sb, ",\"values\":[");
+        var vp = culture_values_ptr(c);
+        for (var i = 0; i < vc; i = i + 1) {
+            if (i > 0) { str_builder_add_cstr(sb, ","); }
+            str_builder_add_cstr(sb, "\"");
+            str_builder_add_cstr(sb, load64(vp + i * 8));
+            str_builder_add_cstr(sb, "\"");
+        }
+        str_builder_add_cstr(sb, "]");
+    }
+
+    str_builder_add_cstr(sb, ",\"formality\":");
+    str_builder_add_int(sb, culture_formality(c));
+    str_builder_add_cstr(sb, ",\"expressiveness\":");
+    str_builder_add_int(sb, culture_expressiveness(c));
+    str_builder_add_cstr(sb, ",\"individualism\":");
+    str_builder_add_int(sb, culture_individualism(c));
+    str_builder_add_cstr(sb, ",\"directness\":");
+    str_builder_add_int(sb, culture_directness(c));
+    str_builder_add_cstr(sb, "}");
+    return str_builder_build(sb);
+}
+
+# ================================================================
+# Ask Endpoint (approach 2 — POST to hoosh, return response)
+# ================================================================
+
+# Build an HTTP POST header for Content-Type: application/json
+fn _hadara_build_post(hdr, path, host, content_len) {
+    var off = 0;
+    var s = "POST ";
+    memcpy(hdr + off, s, 5); off = off + 5;
+    var plen = strlen(path);
+    memcpy(hdr + off, path, plen); off = off + plen;
+    s = " HTTP/1.1\r\nHost: ";
+    memcpy(hdr + off, s, 17); off = off + 17;
+    var hlen = strlen(host);
+    memcpy(hdr + off, host, hlen); off = off + hlen;
+    s = "\r\nContent-Type: application/json\r\nContent-Length: ";
+    memcpy(hdr + off, s, 48); off = off + 48;
+    var nbuf = alloc(32);
+    var nlen = fmt_int_buf(content_len, nbuf);
+    memcpy(hdr + off, nbuf, nlen); off = off + nlen;
+    s = "\r\nConnection: close\r\n\r\n";
+    memcpy(hdr + off, s, 23); off = off + 23;
+    return off;
+}
+
+# POST a culturally-grounded question to hoosh and return the response body.
+# Returns a C string (response text) or 0 on failure.
+fn hadara_ask(culture_id, question, hoosh_port) {
+    var ctx = hadara_context(culture_id);
+    if (ctx == 0) { return 0; }
+    var ctx_cstr = to_cstr(ctx);
+
+    # Build JSON body for /v1/chat/completions
+    var sb = str_builder_new();
+    str_builder_add_cstr(sb, "{\"model\":\"default\",\"messages\":[");
+    str_builder_add_cstr(sb, "{\"role\":\"system\",\"content\":\"");
+    # Escape the context string for JSON (replace newlines with \\n, quotes with \\")
+    var ci = 0;
+    while (load8(ctx_cstr + ci) != 0) {
+        var ch = load8(ctx_cstr + ci);
+        if (ch == 10) { str_builder_add_cstr(sb, "\\n"); }
+        elif (ch == 13) { }  # skip CR
+        elif (ch == 34) { str_builder_add_cstr(sb, "\\\""); }
+        elif (ch == 92) { str_builder_add_cstr(sb, "\\\\"); }
+        else { str_builder_add_byte(sb, ch); }
+        ci = ci + 1;
+    }
+    str_builder_add_cstr(sb, "\"},");
+    str_builder_add_cstr(sb, "{\"role\":\"user\",\"content\":\"");
+    # Escape question
+    var qi = 0;
+    while (load8(question + qi) != 0) {
+        var ch = load8(question + qi);
+        if (ch == 34) { str_builder_add_cstr(sb, "\\\""); }
+        elif (ch == 92) { str_builder_add_cstr(sb, "\\\\"); }
+        elif (ch == 10) { str_builder_add_cstr(sb, "\\n"); }
+        else { str_builder_add_byte(sb, ch); }
+        qi = qi + 1;
+    }
+    str_builder_add_cstr(sb, "\"}]}");
+    var body = str_builder_build(sb);
+    var body_cstr = to_cstr(body);
+    var body_len = str_len(body);
+
+    # Connect to hoosh
+    var fd = syscall(41, 2, 1, 0);  # socket(AF_INET, SOCK_STREAM, 0)
+    if (fd < 0) { return 0; }
+
+    # Build sockaddr_in for 127.0.0.1:port
+    var sa = alloc(16);
+    store16(sa, 2);  # AF_INET
+    store8(sa + 2, hoosh_port / 256);
+    store8(sa + 3, hoosh_port % 256);
+    store8(sa + 4, 127);
+    store8(sa + 5, 0);
+    store8(sa + 6, 0);
+    store8(sa + 7, 1);
+
+    var cr = syscall(42, fd, sa, 16);  # connect
+    if (cr < 0) { syscall(3, fd); return 0; }
+
+    # Send request
+    var hdr = alloc(2048);
+    var hlen = _hadara_build_post(hdr, "/v1/chat/completions", "localhost", body_len);
+    syscall(1, fd, hdr, hlen);
+    syscall(1, fd, body_cstr, body_len);
+
+    # Read response
+    var rbuf = alloc(65536);
+    var total = 0;
+    var n = 1;
+    while (n > 0) {
+        n = syscall(0, fd, rbuf + total, 65536 - total);
+        if (n > 0) { total = total + n; }
+    }
+    syscall(3, fd);  # close
+
+    if (total == 0) { return 0; }
+    store8(rbuf + total, 0);
+
+    # Find response body (after \r\n\r\n)
+    var i = 0;
+    while (i < total - 3) {
+        if (load8(rbuf + i) == 13) {
+            if (load8(rbuf + i + 1) == 10) {
+                if (load8(rbuf + i + 2) == 13) {
+                    if (load8(rbuf + i + 3) == 10) {
+                        return rbuf + i + 4;
+                    }
+                }
+            }
+        }
+        i = i + 1;
+    }
+    return rbuf;  # fallback: return entire response
+}

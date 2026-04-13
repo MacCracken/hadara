@@ -855,6 +855,62 @@ fn http_route(cfd, path) {
         if (body == 0) { return http_not_found(cfd); }
         return http_ok(cfd, str_data(body), str_len(body));
     }
+    # GET /context/{id} — cultural context as plain text (for LLM system prompts)
+    if (memeq(path, "/context/", 9) == 1) {
+        var seg = http_path_segment(path, 2);
+        if (seg == 0) { return http_bad_request(cfd); }
+        var id = parse_int(seg);
+        var ctx = hadara_context(id);
+        if (ctx == 0) { return http_not_found(cfd); }
+        # Return as text/plain
+        var cr = make_crlf();
+        var hsb = str_builder_new();
+        str_builder_add_cstr(hsb, "HTTP/1.1 200 OK");
+        str_builder_add_cstr(hsb, cr);
+        str_builder_add_cstr(hsb, "Content-Type: text/plain");
+        str_builder_add_cstr(hsb, cr);
+        str_builder_add_cstr(hsb, "Connection: close");
+        str_builder_add_cstr(hsb, cr);
+        str_builder_add_cstr(hsb, "Content-Length: ");
+        str_builder_add_int(hsb, str_len(ctx));
+        str_builder_add_cstr(hsb, cr);
+        str_builder_add_cstr(hsb, cr);
+        var hdr = str_builder_build(hsb);
+        sys_write(cfd, to_cstr(hdr), str_len(hdr));
+        sys_write(cfd, str_data(ctx), str_len(ctx));
+        return 0;
+    }
+    # GET /context/{id}/json — cultural context as JSON
+    if (memeq(path, "/context/", 9) == 1) {
+        # Already handled above for plain text — this won't match.
+        # JSON context available via /culture/{id} which includes all fields.
+    }
+    # GET /evolution/{id} — status transitions for a culture
+    if (memeq(path, "/evolution/", 11) == 1) {
+        var seg = http_path_segment(path, 2);
+        if (seg == 0) { return http_bad_request(cfd); }
+        var id = parse_int(seg);
+        var ebuf = alloc(32 * 8);
+        var en = hadara_evo_for(id, ebuf, 32);
+        var esb = str_builder_new();
+        str_builder_add_cstr(esb, "{\"culture_id\":");
+        str_builder_add_int(esb, id);
+        str_builder_add_cstr(esb, ",\"transitions\":[");
+        for (var ei = 0; ei < en; ei = ei + 1) {
+            var et = load64(ebuf + ei * 8);
+            if (ei > 0) { str_builder_add_cstr(esb, ","); }
+            str_builder_add_cstr(esb, "{\"year\":");
+            str_builder_add_int(esb, trans_year(et));
+            str_builder_add_cstr(esb, ",\"old\":");
+            str_builder_add_int(esb, trans_old(et));
+            str_builder_add_cstr(esb, ",\"new\":");
+            str_builder_add_int(esb, trans_new(et));
+            str_builder_add_cstr(esb, "}");
+        }
+        str_builder_add_cstr(esb, "]}");
+        var ebody = str_builder_build(esb);
+        return http_ok(cfd, str_data(ebody), str_len(ebody));
+    }
     return http_not_found(cfd);
 }
 
@@ -884,7 +940,8 @@ fn cmd_serve(port) {
     prints("hadara serving on http://localhost:");
     print_num(_http_port);
     prints("\n");
-    prints("endpoints: /stats /list /culture/{id} /at?year=N /search?q=... /lineage/{id} /influence/{id}\n");
+    prints("endpoints: /stats /list /culture/{id} /at?year=N /search?q=...\n");
+    prints("           /lineage/{id} /influence/{id} /context/{id} /evolution/{id}\n");
     sakshi_info("server started", 14);
 
     # Accept loop
@@ -933,6 +990,8 @@ fn usage() {
     println("  lineage <id>      show cultural ancestors (influence chain backward)");
     println("  influence <id>    show downstream influence chain (forward)");
     println("  relations <id>    show all relations for a culture");
+    println("  context <id>      cultural context for LLM system prompts");
+    println("  ask <id> <q>      ask a culturally-grounded question via hoosh");
     println("  stats             corpus statistics");
     println("  serve [port]      HTTP JSON API (default: 8391)");
     println("  help              show this help");
@@ -990,6 +1049,32 @@ fn main() {
         if (argc() < 3) { prints("usage: hadara relations <id>\n"); return 1; }
         var id = parse_int(argv(2));
         return cmd_relations(id);
+    }
+
+    if (streq(cmd, "context") == 1) {
+        if (argc() < 3) { prints("usage: hadara context <id>\n"); return 1; }
+        var id = parse_int(argv(2));
+        var ctx = hadara_context(id);
+        if (ctx == 0) { prints("error: culture not found\n"); return 1; }
+        sys_write(1, str_data(ctx), str_len(ctx));
+        return 0;
+    }
+
+    if (streq(cmd, "ask") == 1) {
+        if (argc() < 4) { prints("usage: hadara ask <id> <question> [hoosh_port]\n"); return 1; }
+        var id = parse_int(argv(2));
+        var question = argv(3);
+        var port = 8088;
+        if (argc() >= 5) { port = parse_int(argv(4)); }
+        var resp = hadara_ask(id, question, port);
+        if (resp == 0) {
+            prints("error: could not reach hoosh at localhost:");
+            print_num(port);
+            prints("\n");
+            return 1;
+        }
+        println(resp);
+        return 0;
     }
 
     if (streq(cmd, "serve") == 1) {

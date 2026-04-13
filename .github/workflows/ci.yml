@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  CYRIUS_VERSION: "3.6.3"
+  CYRIUS_VERSION: "3.7.0"
 
 jobs:
   # ── Build ──
@@ -33,7 +33,7 @@ jobs:
           chmod +x "$HOME/.cyrius/bin/"* 2>/dev/null || true
           echo "$HOME/.cyrius/bin" >> $GITHUB_PATH
 
-      - name: Build hadara
+      - name: Build hadara program
         run: |
           mkdir -p build
           cat src/main.cyr | cc3 > build/hadara 2>/tmp/cc3_stderr
@@ -44,6 +44,11 @@ jobs:
           chmod +x build/hadara
           echo "hadara: $(wc -c < build/hadara) bytes"
           grep -v '^$' /tmp/cc3_stderr 2>/dev/null || true
+
+      - name: Smoke test
+        run: |
+          ./build/hadara stats 2>&1 | tee /tmp/smoke_output
+          grep -q "Cultures:" /tmp/smoke_output
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -93,12 +98,12 @@ jobs:
       - name: Scan for dangerous patterns
         run: |
           WARN=0
-          if grep -rn 'syscall(59' src/ 2>/dev/null | grep -v "# " | grep -v logging; then
-            echo "WARN: raw execve syscall"
+          if grep -rn 'syscall(59' src/ 2>/dev/null | grep -v "# "; then
+            echo "WARN: raw execve in source"
             WARN=1
           fi
-          if grep -rn 'syscall(57' src/ 2>/dev/null | grep -v "# "; then
-            echo "WARN: raw fork syscall"
+          if grep -rn '"/etc/shadow"' src/ 2>/dev/null; then
+            echo "WARN: direct shadow file access"
             WARN=1
           fi
           echo "security scan complete (warnings: $WARN)"
@@ -122,12 +127,11 @@ jobs:
           chmod +x "$HOME/.cyrius/bin/"* 2>/dev/null || true
           echo "$HOME/.cyrius/bin" >> $GITHUB_PATH
 
-      - name: Run test suite
+      - name: Run test suite (hadara.tcyr)
         run: |
-          mkdir -p build
-          cat tests/hadara.tcyr | cc3 > build/test 2>&1
-          chmod +x build/test
-          ./build/test 2>&1 | tee /tmp/test_output
+          cat tests/hadara.tcyr | cc3 > /tmp/hadara_test 2>/dev/null
+          chmod +x /tmp/hadara_test
+          /tmp/hadara_test 2>&1 | tee /tmp/test_output
           grep -q "all tests passed" /tmp/test_output
 
   # ── Documentation ──
