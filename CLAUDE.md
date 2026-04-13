@@ -8,7 +8,7 @@
 - **License**: GPL-3.0-only
 - **Language**: Cyrius (native, not ported from Rust)
 - **Version**: SemVer, version file at `VERSION`
-- **Status**: v0.1.0 — scaffolded, core types defined, initial test suite
+- **Status**: v1.0.0 — 50 cultures, 329 assertions, 33 benchmarks, CLI + HTTP + library
 - **Genesis repo**: [agnosticos](https://github.com/MacCracken/agnosticos)
 - **Standards**: [First-Party Standards](https://github.com/MacCracken/agnosticos/blob/main/docs/development/applications/first-party-standards.md)
 - **Shared crates**: [shared-crates.md](https://github.com/MacCracken/agnosticos/blob/main/docs/development/applications/shared-crates.md)
@@ -31,20 +31,26 @@
 ```
 src/
   lib.cyr         — public API (includes all modules)
-  main.cyr        — CLI + HTTP server program
-  seed.cyr        — pre-built culture data (12 cultures, cited)
-  culture.cyr     — Culture entity, CultureStatus, layout, accessors
+  main.cyr        — CLI (13 commands) + HTTP server (9 endpoints)
+  seed.cyr        — 50 pre-built cultures (7 seed functions, cited)
+  culture.cyr     — Culture entity (336 bytes), CultureStatus, CultureId enum
   practice.cyr    — Practice, PracticeCategory, Frequency
-  art.cyr         — ArtForm, ArtMedium
+  art.cyr         — ArtForm, ArtMedium (11 media)
   figure.cyr      — Figure (key cultural figures)
   text.cyr        — Text (sacred/canonical texts)
-  artifact.cyr    — Artifact (material culture)
-  relation.cyr    — CultureRelation, RelationType
-  registry.cyr    — in-memory culture registry, add/get/set
-  query.cyr       — query helpers (status, temporal, graph traversal, lineage)
-  consumer.cyr    — consumer integration (bhava, joshua, natya, jnana)
+  artifact.cyr    — Artifact (9 categories)
+  relation.cyr    — CultureRelation, RelationType (7 types)
+  registry.cyr    — in-memory registry (256 max), add/get/set
+  query.cyr       — 20+ query types (temporal, graph, search, diaspora)
+  consumer.cyr    — bhava, joshua, natya, jnana integrations
+  evolution.cyr   — status transition tracking, point-in-time queries
+  bridge.cyr      — avatara (19 traditions) + itihas (16 civilizations) cross-refs
+  hoosh.cyr       — LLM context builder + ask endpoint
 docs/
-  sources/        — per-module academic citations (itihas pattern)
+  architecture/   — overview, 6 ADRs
+  guides/         — usage guide
+  sources/        — 7 per-module academic citation files (40+ references)
+  development/    — roadmap, P(-1) audit
 ```
 
 ## Key Design Constraints
