@@ -228,15 +228,15 @@ fn cmd_search(query, qlen) {
         var nptr = culture_name_ptr(c);
         var nlen = culture_name_len(c);
         # Simple substring search (case-sensitive)
-        var match = 0;
+        var found = 0;
         if (qlen <= nlen) {
             var j = 0;
             while (j <= nlen - qlen) {
-                if (memeq(nptr + j, query, qlen) == 1) { match = 1; j = nlen; }
+                if (memeq(nptr + j, query, qlen) == 1) { found = 1; j = nlen; }
                 j = j + 1;
             }
         }
-        if (match == 1) {
+        if (found == 1) {
             prints("[");
             print_num(i);
             prints("] ");
@@ -720,15 +720,15 @@ fn json_search(query, qlen) {
             var c = hadara_get(i);
             var nptr = culture_name_ptr(c);
             var nlen = culture_name_len(c);
-            var match = 0;
+            var found = 0;
             if (qlen <= nlen) {
                 var j = 0;
                 while (j <= nlen - qlen) {
-                    if (memeq(nptr + j, query, qlen) == 1) { match = 1; j = nlen; }
+                    if (memeq(nptr + j, query, qlen) == 1) { found = 1; j = nlen; }
                     j = j + 1;
                 }
             }
-            if (match == 1) {
+            if (found == 1) {
                 if (first == 0) { str_builder_add_cstr(sb, ","); }
                 str_builder_add_cstr(sb, "{\"id\":");
                     str_builder_add_int(sb, i);
