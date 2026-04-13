@@ -1087,3 +1087,6 @@ fn main() {
     println(cmd);
     return usage();
 }
+
+var exit_code = main();
+syscall(60, exit_code);
