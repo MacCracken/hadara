@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - Added `[package].language = "cyrius"` and switched `[build]` to the `entry`/`output` keys
 - Stdlib is now auto-included via `cyrius.cyml` `[deps]` — removed all manual `include "lib/*.cyr"` lines from `src/`, `tests/hadara.tcyr`, and `tests/hadara.bcyr`
 - Resolved dependencies (`lib/`) are now populated by `cyrius deps` and git-ignored rather than vendored
+- Replaced the `json` and `toml` stdlib deps with `bayan` (the consolidated serialization module in Cyrius 6.2.11)
 
 #### Consumer Distribution Bundle
 - Added `[lib].modules` to `cyrius.cyml` and committed `dist/hadara.cyr`, a single bundled library (built by `cyrius distlib`) for consumers (bhava, joshua, natya, jnana, kshetra, varna, itihas) to include directly
