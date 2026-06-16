@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.0] — 2026-06-15
+
+### Changed
+
+#### Toolchain & Build Modernization
+- Migrated `cyrius.toml` → `cyrius.cyml`; `[package].version` now derives from the `VERSION` file via the `${file:VERSION}` template, making `VERSION` the single source of truth
+- Pinned Cyrius toolchain to **6.2.11** in `cyrius.cyml` `[package].cyrius` (was 3.7.0); removed the standalone `.cyrius-toolchain` pin
+- Added `[package].language = "cyrius"` and switched `[build]` to the `entry`/`output` keys
+- Stdlib is now auto-included via `cyrius.cyml` `[deps]` — removed all manual `include "lib/*.cyr"` lines from `src/`, `tests/hadara.tcyr`, and `tests/hadara.bcyr`
+- Resolved dependencies (`lib/`) are now populated by `cyrius deps` and git-ignored rather than vendored
+
+#### Consumer Distribution Bundle
+- Added `[lib].modules` to `cyrius.cyml` and committed `dist/hadara.cyr`, a single bundled library (built by `cyrius distlib`) for consumers (bhava, joshua, natya, jnana, kshetra, varna, itihas) to include directly
+
+#### CI / Release
+- CI installs the toolchain from the `cyrius.cyml` pin via the upstream `install.sh`; added a lint gate, DCE build, ELF verification, benchmark run, dist-bundle freshness check, and version-consistency check (`VERSION` ↔ `cyrius.cyml` ↔ `CHANGELOG.md`)
+- Release workflow verifies the tag against `VERSION` and `cyrius.cyml`, regenerates the bundle, and attaches the source archive, `hadara.cyr`, binary, and `SHA256SUMS`
+- `scripts/version-bump.sh` now bumps `VERSION` (manifest derives automatically), stubs a `CHANGELOG` section, updates the `CLAUDE.md` status line, and regenerates the dist bundle
+
 ## [1.0.0] — 2026-04-12
 
 ### Added

@@ -2,13 +2,7 @@
 #
 # Tests: registry, culture creation, status checks, queries, seed data
 
-include "lib/string.cyr"
-include "lib/alloc.cyr"
-include "lib/fmt.cyr"
-include "lib/str.cyr"
-include "lib/vec.cyr"
-include "lib/syscalls.cyr"
-include "lib/assert.cyr"
+# Stdlib auto-included via cyrius.cyml [deps]
 
 # prints — write string without newline
 fn prints(s) {

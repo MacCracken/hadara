@@ -77,8 +77,12 @@ GET /evolution/{id}        status transitions over time
 
 ## Library Usage
 
+Consumers include the single bundled library `dist/hadara.cyr` (built by
+`cyrius distlib`); stdlib is supplied by the consumer's own `[deps] stdlib`.
+In-repo, include `src/lib.cyr` directly.
+
 ```cyrius
-include "src/lib.cyr"
+include "dist/hadara.cyr"   # consumers; or "src/lib.cyr" in-repo
 include "src/seed.cyr"
 
 alloc_init();

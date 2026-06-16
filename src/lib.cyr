@@ -19,7 +19,7 @@
 # No heap allocation in core types — callers provide buffers for queries.
 # Pure data modeling — no I/O, no rendering, no network.
 
-include "lib/sakshi.cyr"
+# Stdlib auto-included via cyrius.cyml [deps]
 
 include "src/culture.cyr"
 include "src/practice.cyr"

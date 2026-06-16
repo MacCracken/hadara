@@ -1,0 +1,36 @@
+[package]
+name = "hadara"
+version = "${file:VERSION}"
+description = "Hadara — Culture as a first-class entity. Cultures with practices, values, art forms, lineage, evolution, diaspora, and relationships."
+license = "GPL-3.0-only"
+language = "cyrius"
+cyrius = "6.2.11"
+repository = "https://github.com/MacCracken/hadara"
+
+[build]
+entry = "src/main.cyr"
+output = "build/hadara"
+
+[lib]
+# `cyrius distlib` reads this section to build dist/hadara.cyr — the single
+# bundle consumers (bhava, joshua, natya, jnana, kshetra, varna, itihas)
+# include. Order matches src/lib.cyr's include order; lib.cyr itself is last.
+modules = [
+    "src/culture.cyr",
+    "src/practice.cyr",
+    "src/art.cyr",
+    "src/figure.cyr",
+    "src/text.cyr",
+    "src/artifact.cyr",
+    "src/relation.cyr",
+    "src/registry.cyr",
+    "src/query.cyr",
+    "src/consumer.cyr",
+    "src/evolution.cyr",
+    "src/bridge.cyr",
+    "src/hoosh.cyr",
+    "src/lib.cyr",
+]
+
+[deps]
+stdlib = ["string", "fmt", "alloc", "io", "vec", "str", "hashmap", "args", "syscalls", "tagged", "assert", "bench", "freelist", "chrono", "json", "math", "regex", "toml", "net", "http", "fs", "sakshi"]

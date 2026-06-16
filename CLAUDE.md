@@ -7,8 +7,9 @@
 - **Type**: Shared library — cultural foundation for bhava, joshua, natya, jnana, time-machine
 - **License**: GPL-3.0-only
 - **Language**: Cyrius (native, not ported from Rust)
-- **Version**: SemVer, version file at `VERSION`
-- **Status**: v1.0.0 — 50 cultures, 329 assertions, 33 benchmarks, CLI + HTTP + library
+- **Version**: SemVer, version file at `VERSION` (manifest derives via `${file:VERSION}`)
+- **Toolchain**: Cyrius 6.2.11 (pinned in `cyrius.cyml` `[package].cyrius`)
+- **Status**: v1.1.0 — 50 cultures, 329 assertions, 33 benchmarks, CLI + HTTP + library + dist bundle
 - **Genesis repo**: [agnosticos](https://github.com/MacCracken/agnosticos)
 - **Standards**: [First-Party Standards](https://github.com/MacCracken/agnosticos/blob/main/docs/development/applications/first-party-standards.md)
 - **Shared crates**: [shared-crates.md](https://github.com/MacCracken/agnosticos/blob/main/docs/development/applications/shared-crates.md)
@@ -46,6 +47,8 @@ src/
   evolution.cyr   — status transition tracking, point-in-time queries
   bridge.cyr      — avatara (19 traditions) + itihas (16 civilizations) cross-refs
   hoosh.cyr       — LLM context builder + ask endpoint
+dist/
+  hadara.cyr      — bundled library for consumers (built by `cyrius distlib`)
 docs/
   architecture/   — overview, 6 ADRs
   guides/         — usage guide
@@ -70,8 +73,11 @@ docs/
 ## Quick Start
 
 ```bash
+# Resolve stdlib deps (populates ./lib/ from the pinned toolchain)
+cyrius deps
+
 # Build program
-cat src/main.cyr | cc3 > build/hadara && chmod +x build/hadara
+cyrius build src/main.cyr build/hadara
 
 # Run
 ./build/hadara list              # list all cultures
@@ -84,8 +90,8 @@ cat src/main.cyr | cc3 > build/hadara && chmod +x build/hadara
 # Run tests
 cyrius test tests/hadara.tcyr
 
-# Or manually:
-cat tests/hadara.tcyr | cc3 > build/test && ./build/test
+# Regenerate the consumer bundle (dist/hadara.cyr)
+cyrius distlib
 ```
 
 ## Development Process
@@ -93,8 +99,8 @@ cat tests/hadara.tcyr | cc3 > build/test && ./build/test
 ### P(-1): Scaffold Hardening (before any new features)
 
 0. Read roadmap, CHANGELOG, and open issues — know what was intended before auditing what was built
-1. Build check: `cat src/main.cyr | cc3 > build/hadara && chmod +x build/hadara`
-2. Test sweep: `cyrius test tests/hadara.tcyr` — all 190 assertions pass
+1. Build check: `cyrius deps && CYRIUS_DCE=1 cyrius build src/main.cyr build/hadara`
+2. Test sweep: `cyrius test tests/hadara.tcyr` — all 329 assertions pass
 3. Internal deep review — correctness (culture data accuracy vs. cited sources), completeness (all fields populated), relationships (graph consistency), consumer API correctness
 4. External research — are dates accurate? newer scholarship? missing cultures that consumers need?
 5. Build + test again — must be clean after review
@@ -105,12 +111,13 @@ cat tests/hadara.tcyr | cc3 > build/test && ./build/test
 ### Work Loop (continuous)
 
 1. Work phase — implement types, seed data, queries, consumer APIs
-2. Build check: `cyrius build` or manual `cc3` pipeline
+2. Build check: `CYRIUS_DCE=1 cyrius build src/main.cyr build/hadara`
 3. Run tests: `cyrius test tests/hadara.tcyr` — assert "0 failed"
 4. Review — correctness (culture data accuracy), completeness (all fields populated), relationships (graph consistency)
-5. Documentation — CHANGELOG, roadmap
-6. Version check — VERSION, cyrius.toml in sync
-7. Return to step 1
+5. Bundle — `cyrius distlib` so `dist/hadara.cyr` stays current for consumers
+6. Documentation — CHANGELOG, roadmap
+7. Version check — `VERSION` is the source of truth; `cyrius.cyml` derives via `${file:VERSION}`. Bump with `scripts/version-bump.sh <version>`
+8. Return to step 1
 
 ### Task Sizing
 
