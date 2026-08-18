@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.1] — 2026-08-17
+
+### Changed
+
+- **Cyrius pin `6.2.11` -> `6.5.27`** (2026-08-17, ecosystem-wide ML/AI-arc realign ahead of
+  the arc reopening). `cyrius lib sync --full` re-vendored the whole version-matched stdlib
+  snapshot, clearing the toolchain-drift warning. Suite green at the new pin, identical to the
+  pre-bump baseline.
+
 ## [1.1.0] — 2026-06-15
 
 ### Changed
