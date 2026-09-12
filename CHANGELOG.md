@@ -123,3 +123,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 #### Test Suite
 - 329 assertions across 11 test sections
 - Coverage: registry operations, seed data integrity, graph traversal, temporal relations, consumer APIs, bridge cross-references, query enhancements, subcultures, evolution tracking, relation descriptions, hoosh context builder
+
+## [Unreleased]
+
+## [1.1.2] - 2026-09-11
+
+### Changed
+
+- **Toolchain `6.5.27` → `6.6.2`.** Migrated to the `Result` value form:
+  1 first-party file(s) changed. Every surface re-verified — build, tests, and any
+  bench/fuzz/distlib target the repo ships.

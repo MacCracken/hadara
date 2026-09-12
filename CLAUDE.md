@@ -9,7 +9,7 @@
 - **Language**: Cyrius (native, not ported from Rust)
 - **Version**: SemVer, version file at `VERSION` (manifest derives via `${file:VERSION}`)
 - **Toolchain**: Cyrius 6.2.11 (pinned in `cyrius.cyml` `[package].cyrius`)
-- **Status**: v1.1.1 — 50 cultures, 329 assertions, 33 benchmarks, CLI + HTTP + library + dist bundle
+- **Status**: v1.1.2 — 50 cultures, 329 assertions, 33 benchmarks, CLI + HTTP + library + dist bundle
 - **Genesis repo**: [agnosticos](https://github.com/MacCracken/agnosticos)
 - **Standards**: [First-Party Standards](https://github.com/MacCracken/agnosticos/blob/main/docs/development/applications/first-party-standards.md)
 - **Shared crates**: [shared-crates.md](https://github.com/MacCracken/agnosticos/blob/main/docs/development/applications/shared-crates.md)
